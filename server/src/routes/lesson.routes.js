@@ -1,5 +1,5 @@
 import { Router } from 'express'
-import { requireAuth, requireAdmin } from '../middlewares/auth.middleware.js'
+import { requireAuth, requireAdmin } from '../middleware/auth.js'
 import {
     createLesson,
     updateLesson,
