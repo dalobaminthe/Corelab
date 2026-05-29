@@ -18,8 +18,6 @@ const verifyToken = (req, res, next) => {};
 // Middleware de contrôle de rôle — à brancher après verifyToken.
 // Réserve l'accès aux utilisateurs dont req.user.role === 'admin'.
 //
-// Doit être utilisé APRÈS verifyToken (dépend de req.user).
-//
 // Erreurs retournées :
 //   403 { error: "Admin access required" }
 const requireAdmin = (req, res, next) => {};
@@ -27,10 +25,6 @@ const requireAdmin = (req, res, next) => {};
 // ─── requireStudent ───────────────────────────────────────────────────────────
 // Middleware de contrôle de rôle — à brancher après verifyToken.
 // Réserve l'accès aux utilisateurs dont req.user.role === 'student'.
-//
-// Doit être utilisé APRÈS verifyToken (dépend de req.user).
-// Note : les admins n'ont pas accès aux routes étudiant par ce middleware —
-// si tu veux qu'un admin puisse aussi y accéder, ne pas utiliser requireStudent.
 //
 // Erreurs retournées :
 //   403 { error: "Student access required" }
