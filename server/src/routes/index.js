@@ -1,14 +1,15 @@
-const express = require("express");
-const mongoose = require("mongoose");
-const cors = require("cors");
-const dotenv = require("dotenv");
+import { Router } from 'express'
+import adminContentRouter from './admin.content.js'
+import adminUsersRouter from './admin.users.js'
+import studentRouter from './student.js'
+import authRouter from './auth.js'
 
-dotenv.config();
+const router = Router()
 
-const app = express();
-
-app.use(cors());
-app.use(express.json());
+router.use('/auth', authRouter)
+router.use('/admin', adminContentRouter)
+router.use('/admin', adminUsersRouter)
+router.use('/student', studentRouter)
 
 // routes à venir : /health, /api/auth, /api/admin, /api/notifications, /api
 
@@ -16,4 +17,4 @@ app.use(express.json());
 
 // MongoDB + listen à venir
 
-module.exports = app;
+export default router

@@ -1,5 +1,5 @@
-const express = require("express");
-const router = express.Router();
+import { Router } from 'express'
+const router = Router()
 
 // Toutes les routes protégées :
 // - verifyToken  → vérifie le JWT
@@ -39,4 +39,4 @@ router.get("/lessons", (req, res) => {});
 // PATCH /api/admin/lessons/:id
 router.patch("/lessons/:id", (req, res) => {});
 
-module.exports = router;
+export default router
