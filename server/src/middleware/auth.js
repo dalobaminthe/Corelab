@@ -1,4 +1,4 @@
-const jwt = require("jsonwebtoken");
+import jwt from 'jsonwebtoken'
 
 // ─── verifyToken ─────────────────────────────────────────────────────────────
 // Middleware de vérification JWT — à brancher sur toutes les routes protégées.
@@ -30,4 +30,4 @@ const requireAdmin = (req, res, next) => {};
 //   403 { error: "Student access required" }
 const requireStudent = (req, res, next) => {};
 
-module.exports = { verifyToken, requireAdmin, requireStudent };
+export { verifyToken, requireAdmin, requireStudent }
