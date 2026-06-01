@@ -1,5 +1,6 @@
 {
   "name": "corelab-server",
+  "type": "module",
   "version": "1.0.0",
   "description": "Corelab LMS — API Node/Express",
   "main": "src/index.js",

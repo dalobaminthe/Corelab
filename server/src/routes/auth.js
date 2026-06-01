@@ -1,5 +1,5 @@
-const express = require("express");
-const router = express.Router();
+import { Router } from 'express'
+const router = Router()
 
 // POST /api/auth/register
 router.post("/register", (req, res) => {});
@@ -13,4 +13,4 @@ router.post("/set-password", (req, res) => {});
 // GET /api/auth/me
 router.get("/me", (req, res) => {});
 
-module.exports = router;
+export default router

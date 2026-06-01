@@ -1,5 +1,5 @@
 import { Router } from 'express'
-import { requireAuth } from '../middleware/auth.js'
+import { verifyToken, requireAdmin } from '../middleware/auth.js'
 import Lesson from '../models/Lesson.js'
 import Quiz from '../models/Quiz.js'
 import Attempt from '../models/Attempt.js'
@@ -8,7 +8,7 @@ import { validate, submitAttemptSchema } from '../middleware/validate.js'
 const router = Router()
 
 // GET - liste leçons disponibles
-router.get('/lessons', requireAuth, async (req, res) => {
+router.get('/lessons', verifyToken, async (req, res) => {
     try {
         const { courseId } = req.query
         const lessons = await Lesson.find({
@@ -23,7 +23,7 @@ router.get('/lessons', requireAuth, async (req, res) => {
 })
 
 // GET /api/student/lessons/:id - accéder au contenu d'une leçon
-router.get('/lessons/:id', requireAuth, async (req, res) => {
+router.get('/lessons/:id', verifyToken, async (req, res) => {
     try {
         const lesson = await Lesson.findById(req.params.id)
         if (!lesson) return res.status(404).json({ 
@@ -40,7 +40,7 @@ router.get('/lessons/:id', requireAuth, async (req, res) => {
 })
 
 // GET - récupérer un quiz sans les réponses
-router.get('/quizzes/:id', requireAuth, async (req, res) => {
+router.get('/quizzes/:id', verifyToken, async (req, res) => {
   try {
     const quiz = await Quiz.findById(req.params.id).select('-questions.correctIndexes')
     if (!quiz) return res.status(404).json({ error: 'Quiz not found' })
@@ -51,7 +51,7 @@ router.get('/quizzes/:id', requireAuth, async (req, res) => {
 })
 
 // POST - soumettre ses réponses
-router.post('/quizzes/submit', requireAuth, validate(submitAttemptSchema), async (req, res) => {
+router.post('/quizzes/submit', verifyToken, validate(submitAttemptSchema), async (req, res) => {
   try {
     const { quizId, answers } = req.body
 

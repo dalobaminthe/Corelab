@@ -1,5 +1,5 @@
 import { Router } from 'express'
-import { requireAuth, requireAdmin } from '../middleware/auth.js'
+import { verifyToken, requireAdmin } from '../middleware/auth.js'
 import Lesson from '../models/Lesson.js'
 import Quiz from '../models/Quiz.js'
 import { validate, importQuizSchema } from '../middleware/validate.js'
@@ -7,7 +7,7 @@ import { validate, importQuizSchema } from '../middleware/validate.js'
 const router = Router()
 
 // POST - import leçon HTML
-router.post('/lessons', requireAuth, requireAdmin, async (req, res) => {
+router.post('/lessons', verifyToken, requireAdmin, async (req, res) => {
     try {
         const { title, content, courseId, availableFrom } = req.body
         const lesson = await Lesson.create({ title, content, courseId, availableFrom })
@@ -18,7 +18,7 @@ router.post('/lessons', requireAuth, requireAdmin, async (req, res) => {
 })
 
 // PUT - modifier une leçon existante
-router.put('/lessons/:id', requireAuth, requireAdmin, async (req, res) => {
+router.put('/lessons/:id', verifyToken, requireAdmin, async (req, res) => {
     try {
         const lesson = await Lesson.findByIdAndUpdate(req.params.id,
             { ...req.body, updatedAt: Date.now() },
@@ -31,7 +31,7 @@ router.put('/lessons/:id', requireAuth, requireAdmin, async (req, res) => {
 })
 
 // PATCH - planifier date de mise à dispo
-router.patch('/lessons/:id/schedule', requireAuth, requireAdmin, async (req, res) => {
+router.patch('/lessons/:id/schedule', verifyToken, requireAdmin, async (req, res) => {
     try {
         const { availableFrom } = req.body
         const lesson = await Lesson.findByIdAndUpdate(req.params.id,
@@ -46,7 +46,7 @@ router.patch('/lessons/:id/schedule', requireAuth, requireAdmin, async (req, res
 })
 
 // POST - import QCM depuis JSON
-router.post('/quizzes/import', requireAuth, requireAdmin, validate(importQuizSchema), async (req, res) => {
+router.post('/quizzes/import', verifyToken, requireAdmin, validate(importQuizSchema), async (req, res) => {
   try {
     // vérifie que correctIndexes sont valides pour chaque question
     for (const q of req.body.questions) {
@@ -66,7 +66,7 @@ router.post('/quizzes/import', requireAuth, requireAdmin, validate(importQuizSch
 })
 
 // PATCH - modifier le seuil de réussite
-router.patch('/quizzes/:id/passing-score', requireAuth, requireAdmin, async (req, res) => {
+router.patch('/quizzes/:id/passing-score', verifyToken, requireAdmin, async (req, res) => {
   try {
     const { passingScore } = req.body
     if (passingScore === undefined || passingScore < 0 || passingScore > 100) {

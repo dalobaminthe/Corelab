@@ -67,7 +67,7 @@ const validate = (schema) => (req, res, next) => {};
 // ─── Schémas QCM & Attempt (Dev C) ───────────
 const objectIdRegex = /^[a-f\d]{24}$/i
 
-export const importQuizSchema = z.object({
+const importQuizSchema = z.object({
   title: z.string().min(1),
   lesson: z.string().regex(objectIdRegex),
   passingScore: z.number().min(0).max(100),
@@ -78,7 +78,7 @@ export const importQuizSchema = z.object({
   })).min(1),
 })
 
-export const submitAttemptSchema = z.object({
+const submitAttemptSchema = z.object({
   quizId: z.string().regex(objectIdRegex),
   answers: z.array(z.number()),
 })
