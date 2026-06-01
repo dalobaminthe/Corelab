@@ -22,4 +22,4 @@
 //   - code 11000 (duplicate key)     → 409 "Already exists"
 const errorHandler = (err, req, res, next) => {};
 
-module.exports = errorHandler;
+export default errorHandler

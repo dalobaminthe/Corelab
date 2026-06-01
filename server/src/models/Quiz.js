@@ -1,4 +1,4 @@
-const mongoose = require("mongoose");
+import mongoose from 'mongoose';
 
 // Sous-schéma pour chaque question du QCM
 // quiz a des questions, chaque question a un prompt, des choix et les indices des bonnes réponses
@@ -50,4 +50,4 @@ const quizSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-module.exports = mongoose.model("Quiz", quizSchema);
+export default mongoose.model("Quiz", quizSchema);

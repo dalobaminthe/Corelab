@@ -1,4 +1,4 @@
-const mongoose = require("mongoose");
+import mongoose from 'mongoose';
 
 const attemptSchema = new mongoose.Schema(
   {
@@ -39,4 +39,4 @@ const attemptSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-module.exports = mongoose.model("Attempt", attemptSchema);
+export default mongoose.model("Attempt", attemptSchema);
