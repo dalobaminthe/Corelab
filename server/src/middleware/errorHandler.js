@@ -1,25 +1,35 @@
 // ─── errorHandler ─────────────────────────────────────────────────────────────
 // Middleware de gestion globale des erreurs Express.
-// Doit être branché EN DERNIER dans index.js, après tous les routers :
-//   app.use(errorHandler)
-//
-// Express reconnaît un error handler à sa signature à 4 arguments (err, req, res, next).
-//
-// Fonctionnement :
-//   1. Logue l'erreur en console (stack en développement uniquement)
-//   2. Lit err.statusCode si défini par le code appelant, sinon 500
-//   3. Retourne une réponse JSON uniforme :
-//      { error: err.message || "Internal server error" }
+// Brancher EN DERNIER dans index.js, après tous les routers : app.use(errorHandler)
+
+
 //
 // Utilisation depuis une route :
-//   const err = new Error("Not found");
-//   err.statusCode = 404;
-//   return next(err);
-//
-// Erreurs Mongoose gérées spécifiquement :
-//   - CastError (ObjectId invalide)  → 400 "Invalid id"
-//   - ValidationError                → 400 avec message Mongoose
-//   - code 11000 (duplicate key)     → 409 "Already exists"
-const errorHandler = (err, req, res, next) => {};
+//   const err = new Error("Not found")
+//   err.statusCode = 404
+//   return next(err)
+const errorHandler = (err, req, res, next) => {
+  if (process.env.NODE_ENV !== 'production') {
+    console.error(err.stack)
+  }
+
+  // ObjectId invalide
+  if (err.name === 'CastError') {
+    return res.status(400).json({ error: 'Invalid id' })
+  }
+
+  // Validation Mongoose
+  if (err.name === 'ValidationError') {
+    return res.status(400).json({ error: err.message })
+  }
+
+  // Clé dupliquée (ex: email déjà utilisé)
+  if (err.code === 11000) {
+    return res.status(409).json({ error: 'Already exists' })
+  }
+
+  const status = err.statusCode || 500
+  res.status(status).json({ error: err.message || 'Internal server error' })
+}
 
 export default errorHandler
