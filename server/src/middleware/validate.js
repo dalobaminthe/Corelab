@@ -1,71 +1,49 @@
 import { z } from 'zod'
 
-// ─── schemas ──────────────────────────────────────────────────────────────────
-// Schémas Zod pour validation des payloads entrants.
-// Chaque schéma correspond à une route ou un ensemble de routes.
-// Dev C ajoutera ses schémas QCM/attempt dans ce même fichier (section dédiée).
-
-// Auth
-const registerSchema = z.object({
-  // name : String non vide
-  // email : format email valide
-  // password : min 8 caractères
-});
+// ─── Schemas ──────────────────────────────────────────────────────────────────
+// ─── Schémas Auth ─────────────────────────────────────────────────────────────
 
 const loginSchema = z.object({
-  // email : format email valide
-  // password : String non vide
-});
+  email: z.string().email(),
+  password: z.string().min(1),
+})
 
 const setPasswordSchema = z.object({
-  // newPassword : min 8 caractères
-});
+  newPassword: z.string().min(8),
+})
 
-// Cours
+// ─── Schémas Cours ────────────────────────────────────────────────────────────
+
 const createCourseSchema = z.object({
-  // title : String non vide
-  // description : String optionnel
-});
+  title: z.string().min(1),
+  description: z.string().optional(),
+})
 
-// Leçon (import)
+// ─── Schémas Leçon ────────────────────────────────────────────────────────────
+
 const importLessonSchema = z.object({
-  // title : String non vide
-  // courseId : String (ObjectId valide — z.string().regex(/^[a-f\d]{24}$/i))
-  // order : Number optionnel, défaut 0
-  // availableAt : String ISO date optionnel
-});
+  title: z.string().min(1),
+  courseId: z.string().regex(objectIdRegex),
+  order: z.number().optional().default(0),
+  availableAt: z.string().datetime().optional(),
+})
 
-// Leçon (patch)
+// Champs optionnels — on ne met à jour que ce qui est envoyé
 const patchLessonSchema = z.object({
-  // title : String optionnel
-  // htmlContent : String optionnel
-  // availableAt : String ISO date optionnel, nullable
-  // order : Number optionnel
-  // cohort : tableau d'ObjectId optionnel
-}).partial();
+  title: z.string().min(1).optional(),
+  htmlContent: z.string().optional(),
+  availableAt: z.string().datetime().nullable().optional(),
+  order: z.number().optional(),
+  cohort: z.array(z.string().regex(objectIdRegex)).optional(),
+})
 
-// Attribution de cours à un étudiant
+// ─── Schémas Utilisateurs ─────────────────────────────────────────────────────
+
 const assignCoursesSchema = z.object({
-  // courseIds : tableau d'ObjectId (min 0 éléments)
-});
+  courseIds: z.array(z.string().regex(objectIdRegex)).min(0),
+})
 
-// ─── validate (factory) ───────────────────────────────────────────────────────
-// Middleware factory — prend un schéma Zod et retourne un middleware Express.
-//
-// Fonctionnement :
-//   1. Appelle schema.safeParse(req.body)
-//   2. Si succès → remplace req.body par les données parsées (strip des champs
-//      inconnus grâce à .strip() implicite de Zod) et appelle next()
-//   3. Si échec  → retourne 400 { error: "Validation error", details: issues }
-//      où issues est le tableau ZodError.errors formaté
-//
-// Utilisation dans une route :
-//   router.post("/register", validate(registerSchema), (req, res) => { ... })
-const validate = (schema) => (req, res, next) => {};
-
-
-// ─── Schémas QCM & Attempt (Dev C) ───────────
-const objectIdRegex = /^[a-f\d]{24}$/i
+// ─── Schémas QCM & Attempt ────────────────────────────────────────────────────
 
 const importQuizSchema = z.object({
   title: z.string().min(1),
@@ -83,9 +61,23 @@ const submitAttemptSchema = z.object({
   answers: z.array(z.number()),
 })
 
+// ─── validate (factory) ───────────────────────────────────────────────────────
+
+const validate = (schema) => (req, res, next) => {
+  const result = schema.safeParse(req.body)
+  if (!result.success) {
+    return res.status(400).json({
+      error: 'Validation error',
+      details: result.error.errors,
+    })
+  }
+  req.body = result.data
+  next()
+}
+
+
 export {
-  validate,
-    registerSchema,
+    validate,
     loginSchema,
     setPasswordSchema,
     createCourseSchema,

@@ -2,7 +2,7 @@ import jwt from 'jsonwebtoken'
 
 // ─── verifyToken  / requireAuth (pour matcher autres fichiers) ───────────────────────────────────────────────────────
 // Middleware de vérification JWT — à brancher sur toutes les routes protégées.
-const verifyToken = (req, res, next) => { // req, res, next : signature standard des middlewares Express
+const verifyToken = (req, res, next) => { // req, res, next : signat<ure standard des middlewares Express
     const authHeader = req.headers.authorization // authorization = bearer <token>
 
     if (!authHeader || !authHeader.startsWith('Bearer ')) {
