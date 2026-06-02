@@ -1,9 +1,35 @@
 import "./Login.css";
 import { useLocation } from "react-router-dom";
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
+import { loginUser } from "../api/auth";
 
 function LoginPage() {
   const location = useLocation();
   const role = location.state?.role;
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const navigate = useNavigate();
+  const { login } = useAuth();
+  const [error, setError] = useState("");
+
+  async function handleSubmit(e) {
+    e.preventDefault();
+    setError("");
+    try {
+      const data = await loginUser(email, password);
+      login(data.user, data.token);
+      if (data.user.role === "admin") {
+        navigate("/admin");
+      } else {
+        navigate("/dashboard");
+      }
+    } catch (err) {
+      setError(err.message);
+    }
+  }
+
   return (
     <div className={`login-page ${role === `student` ? `student` : ""}`}>
       <video
@@ -48,15 +74,26 @@ function LoginPage() {
           <h2>Connexion</h2>
           <p>Accédez à votre espace formation mode.</p>
 
-          <form>
+          <form onSubmit={handleSubmit}>
             <label>Adresse email</label>
-            <input type="email" placeholder="exemple@ecole-mode.fr" />
+            <input
+              type="email"
+              placeholder="exemple@ecole-mode.fr"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+            />
 
             <label>Mot de passe</label>
-            <input type="password" placeholder="••••••••" />
+            <input
+              type="password"
+              placeholder="••••••••"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+            />
             <a href="#">Mot de passe oublié ?</a>
 
             <button type="submit">SE CONNECTER</button>
+            {error && <p className="error">{error}</p>}
           </form>
 
           <div className="divider">ou</div>
