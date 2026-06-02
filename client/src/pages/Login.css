@@ -1,0 +1,246 @@
+/* ── Variables de couleurs ── */
+:root {
+  --bg: #1c1a17;
+  --gold: #c9a84c;
+  --accent: #c9a84c;
+  --text: #f5f5f5;
+  --card-bg: #252220;
+  --border: rgba(201, 168, 76, 0.3);
+}
+
+/* ── Mise en page générale ── */
+
+.login-page.student {
+  --accent: #64b4a0;
+  --border: rgba(100, 180, 160, 0.3);
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: sans-serif;
+}
+
+.login-page {
+  display: flex;
+  min-height: 100vh;
+  position: relative;
+  overflow: hidden;
+}
+
+.left-panel {
+  /* existant */
+  z-index: 1;
+  position: relative;
+}
+.right-panel {
+  /* existant */
+  z-index: 1;
+  position: relative;
+}
+
+.video-bg {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  z-index: 0;
+  opacity: 0.15;
+}
+
+/* ── Colonne gauche ── */
+.left-panel {
+  flex: 1.2;
+  padding: 48px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  border-right: 1px solid var(--border);
+}
+
+.tag {
+  display: inline-block;
+  border: 1px solid var(--accent);
+  color: var(--accent);
+  padding: 4px 12px;
+  font-size: 12px;
+  width: fit-content;
+}
+
+.left-panel h1 {
+  font-size: 48px;
+  font-weight: 800;
+  border-bottom: 3px solid var(--accent);
+  padding-bottom: 8px;
+  width: fit-content;
+}
+
+.subtitle {
+  font-weight: 700;
+  font-size: 18px;
+}
+
+.description {
+  color: #9a9a9a;
+  font-size: 14px;
+}
+
+.course-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.course-list li {
+  border: 1px solid #333;
+  padding: 14px 16px;
+  font-size: 14px;
+}
+
+.course-list li::before {
+  content: "✦ ";
+  color: var(--accent);
+}
+
+.collection-card {
+  border: 1px solid #333;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.collection-card span {
+  color: var(--accent);
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.collection-card p {
+  font-weight: 700;
+}
+
+.collection-card small {
+  color: #9a9a9a;
+  font-size: 12px;
+}
+
+footer {
+  color: #555;
+  font-size: 12px;
+  margin-top: auto;
+}
+
+/* ── Colonne droite ── */
+.right-panel {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 48px;
+}
+
+.login-card {
+  width: 100%;
+  max-width: 420px;
+  border: 1px solid var(--border);
+  background: var(--card-bg);
+  padding: 40px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.login-card h2 {
+  font-size: 28px;
+  border-bottom: 3px solid var(--accent);
+  padding-bottom: 8px;
+  width: fit-content;
+}
+
+.login-card p {
+  color: #9a9a9a;
+  font-size: 14px;
+}
+
+/* ── Formulaire ── */
+form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+label {
+  font-size: 13px;
+  color: #ccc;
+}
+
+input {
+  background: #1a1a1a;
+  border: 1px solid #444;
+  color: var(--text);
+  padding: 12px;
+  font-size: 14px;
+  outline: none;
+  width: 100%;
+}
+
+input:focus {
+  border-color: var(--accent);
+}
+
+form a {
+  color: var(--accent);
+  font-size: 13px;
+  text-align: right;
+  text-decoration: none;
+}
+
+button[type="submit"] {
+  background: var(--accent);
+  color: #1c1a17;
+  border: none;
+  padding: 14px;
+  font-weight: 700;
+  font-size: 14px;
+  letter-spacing: 1px;
+  cursor: pointer;
+  margin-top: 8px;
+}
+
+/* ── Séparateur "ou" ── */
+.divider {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  color: #555;
+  font-size: 13px;
+}
+
+.divider::before,
+.divider::after {
+  content: "";
+  flex: 1;
+  height: 1px;
+  background: #333;
+}
+
+/* ── Bouton première connexion ── */
+.first-login {
+  background: transparent;
+  border: 1px solid #444;
+  color: var(--text);
+  padding: 14px;
+  font-size: 14px;
+  cursor: pointer;
+  width: 100%;
+}
