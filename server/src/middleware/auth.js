@@ -27,14 +27,15 @@ const requireAdmin = (req, res, next) => {
         return res.status(403).json({ error: 'Admin access required' }) // rôle insuffisant
     }
     next() // rôle admin, on continue
-};
+}
 
 // ─── requireStudent ───────────────────────────────────────────────────────────
 // Middleware de contrôle de rôle — à brancher après verifyToken.
-// Réserve l'accès aux utilisateurs dont req.user.role === 'student'.
-//
-// Erreurs retournées :
-//   403 { error: "Student access required" }
-const requireStudent = (req, res, next) => {};
+const requireStudent = (req, res, next) => {
+    if (req.user?.role !== 'student') { // vérifie que req.user existe et que son rôle (===) est student
+        return res.status(403).json({ error: 'Student access required' }) // rôle insuffisant
+    }
+    next() // rôle student, on continue
+}
 
-export { verifyToken, requireAdmin, requireStudent }
+export { verifyToken, verifyToken as requireAuth, requireAdmin, requireStudent }
