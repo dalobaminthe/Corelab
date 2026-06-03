@@ -1,0 +1,39 @@
+/* eslint-disable react-refresh/only-export-components */
+import { createContext, useContext, useState } from "react";
+
+// La "boîte" vide qui contiendra les données de l'utilisateur connecté
+const AuthContext = createContext(null);
+
+// AuthProvider enveloppe toute l'app (dans main.jsx) pour rendre le context accessible partout
+export function AuthProvider({ children }) {
+  // user : les infos de l'utilisateur connecté (id, rôle, nom...)
+  const [user, setUser] = useState(null);
+  // token : le JWT récupéré depuis le localStorage au démarrage (persiste après rechargement)
+  const [token, setToken] = useState(localStorage.getItem("token"));
+
+  // Appelée après un login réussi : stocke l'utilisateur et le token
+  function login(userData, jwt) {
+    setUser(userData);
+    setToken(jwt);
+    localStorage.setItem("token", jwt);
+  }
+
+  // Appelée lors de la déconnexion : efface tout
+  function logout() {
+    setUser(null);
+    setToken(null);
+    localStorage.removeItem("token");
+  }
+
+  // On met user, token, login et logout dans value pour les rendre accessibles à toute l'app
+  return (
+    <AuthContext.Provider value={{ user, token, login, logout }}>
+      {children}
+    </AuthContext.Provider>
+  );
+}
+
+// Hook personnalisé : permet d'accéder au context depuis n'importe quel composant avec useAuth()
+export function useAuth() {
+  return useContext(AuthContext);
+}
