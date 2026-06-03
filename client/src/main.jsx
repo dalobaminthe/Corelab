@@ -9,12 +9,23 @@ import RoleSelection from "./pages/RoleSelection.jsx";
 import LoginPage from "./pages/Login.jsx";
 import StudentDashboard from "./pages/StudentDashboard.jsx";
 import AdminDashboard from "./pages/AdminDashboard.jsx";
+import StudentLayout from "./layouts/StudentLayout.jsx";
+import ProtectedRoute from "./components/ProtectedRoute.jsx";
 
 // Définition des routes : path = URL, element = composant à afficher
 const router = createBrowserRouter([
   { path: "/", element: <RoleSelection /> },
   { path: "/login", element: <LoginPage /> },
-  { path: "/dashboard", element: <StudentDashboard /> },
+  {
+    path: "/dashboard",
+    element: (
+      <ProtectedRoute>
+        {" "}
+        <StudentLayout />{" "}
+      </ProtectedRoute>
+    ),
+    children: [{ index: true, element: <StudentDashboard /> }],
+  },
   { path: "/admin", element: <AdminDashboard /> },
 ]);
 
