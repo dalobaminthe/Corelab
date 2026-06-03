@@ -1,32 +1,36 @@
-/* ── Variables de couleurs ── */
+/* ── Variables ── */
 :root {
-  --bg: #1c1a17;
-  --gold: #c9a84c;
-  --accent: #c9a84c;
+  --bg: #0f0e0c;
+  --card-bg: #1a1916;
   --text: #f5f5f5;
-  --card-bg: #252220;
-  --border: rgba(201, 168, 76, 0.3);
+  --muted: #9a9a9a;
+  --border-dark: rgba(255, 255, 255, 0.08);
 }
 
-/* ── Mise en page générale ── */
-
+.login-page.admin {
+  --accent: #c9a84c;
+  --accent-faint: rgba(201, 168, 76, 0.12);
+}
 .login-page.student {
   --accent: #64b4a0;
-  --border: rgba(100, 180, 160, 0.3);
+  --accent-faint: rgba(100, 180, 160, 0.12);
 }
 
-* {
+/* ── Reset ── */
+*,
+*::before,
+*::after {
   box-sizing: border-box;
   margin: 0;
   padding: 0;
 }
-
 body {
   background: var(--bg);
   color: var(--text);
   font-family: sans-serif;
 }
 
+/* ── Layout ── */
 .login-page {
   display: flex;
   min-height: 100vh;
@@ -34,114 +38,158 @@ body {
   overflow: hidden;
 }
 
-.left-panel {
-  /* existant */
-  z-index: 1;
-  position: relative;
-}
-.right-panel {
-  /* existant */
-  z-index: 1;
-  position: relative;
-}
-
 .video-bg {
   position: fixed;
-  top: 0;
-  left: 0;
+  inset: 0;
   width: 100%;
   height: 100%;
   object-fit: cover;
   z-index: 0;
-  opacity: 0.15;
+  opacity: 0.12;
 }
 
-/* ── Colonne gauche ── */
+/* ── Panneau gauche ── */
 .left-panel {
-  flex: 1.2;
-  padding: 48px;
+  position: relative;
+  z-index: 1;
+  width: 420px;
+  min-height: 100vh;
+  background: var(--card-bg);
+  border-right: 1px solid var(--border-dark);
+  padding: 48px 40px;
   display: flex;
   flex-direction: column;
-  gap: 24px;
-  border-right: 1px solid var(--border);
+  gap: 32px;
 }
 
-.tag {
+.panel-logo h1 {
+  font-size: 22px;
+  font-weight: 800;
+  color: var(--accent);
+  letter-spacing: 3px;
+}
+
+.panel-logo span {
+  display: block;
+  font-size: 12px;
+  color: var(--muted);
+  margin-top: 4px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--border-dark);
+}
+
+.panel-espace {
+  font-size: 36px;
+  color: #444;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.panel-title h2 {
+  font-size: 36px;
+  font-weight: 800;
+  line-height: 1;
+  margin-bottom: 16px;
+}
+
+.panel-divider {
+  width: 48px;
+  height: 2px;
+  background: var(--accent);
+  margin-bottom: 16px;
+}
+
+.panel-badge {
   display: inline-block;
+  background: var(--accent-faint);
   border: 1px solid var(--accent);
   color: var(--accent);
-  padding: 4px 12px;
   font-size: 12px;
-  width: fit-content;
+  padding: 4px 10px;
+  margin-bottom: 16px;
 }
 
-.left-panel h1 {
-  font-size: 48px;
-  font-weight: 800;
-  border-bottom: 3px solid var(--accent);
-  padding-bottom: 8px;
-  width: fit-content;
-}
-
-.subtitle {
-  font-weight: 700;
-  font-size: 18px;
-}
-
-.description {
-  color: #9a9a9a;
+.panel-desc {
   font-size: 14px;
+  color: var(--muted);
+  line-height: 1.6;
 }
 
-.course-list {
-  list-style: none;
+/* Stats admin */
+.admin-stats {
   display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-
-.course-list li {
-  border: 1px solid #333;
-  padding: 14px 16px;
-  font-size: 14px;
-}
-
-.course-list li::before {
-  content: "✦ ";
-  color: var(--accent);
-}
-
-.collection-card {
-  border: 1px solid #333;
-  padding: 16px;
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-}
-
-.collection-card span {
-  color: var(--accent);
-  font-size: 12px;
-  font-weight: 600;
-}
-
-.collection-card p {
-  font-weight: 700;
-}
-
-.collection-card small {
-  color: #9a9a9a;
-  font-size: 12px;
-}
-
-footer {
-  color: #555;
-  font-size: 12px;
+  gap: 0;
   margin-top: auto;
 }
 
-/* ── Colonne droite ── */
+.admin-stats div {
+  flex: 1;
+  padding-right: 20px;
+  border-right: 1px solid var(--border-dark);
+  margin-right: 20px;
+}
+
+.admin-stats div:last-child {
+  border: none;
+  margin: 0;
+}
+
+.admin-stats strong {
+  display: block;
+  font-size: 28px;
+  font-weight: 800;
+  color: var(--accent);
+}
+
+.admin-stats small {
+  font-size: 11px;
+  color: var(--muted);
+}
+
+/* Liste modules student */
+.module-list {
+  margin-top: auto;
+}
+.module-list > small {
+  color: var(--muted);
+  font-size: 11px;
+  display: block;
+  margin-bottom: 10px;
+}
+.module-list ul {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.module-list li {
+  font-size: 13px;
+  color: #ccc;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.module-list li::before {
+  content: "■";
+  font-size: 7px;
+  color: var(--accent);
+}
+
+.change-space {
+  color: var(--muted);
+  font-size: 13px;
+  text-decoration: none;
+  margin-top: auto;
+}
+
+.change-space:hover {
+  color: var(--text);
+}
+
+/* ── Panneau droit ── */
 .right-panel {
+  position: relative;
+  z-index: 1;
   flex: 1;
   display: flex;
   align-items: center;
@@ -151,24 +199,22 @@ footer {
 
 .login-card {
   width: 100%;
-  max-width: 420px;
-  border: 1px solid var(--border);
-  background: var(--card-bg);
-  padding: 40px;
+  max-width: 440px;
   display: flex;
   flex-direction: column;
   gap: 20px;
 }
 
 .login-card h2 {
-  font-size: 28px;
-  border-bottom: 3px solid var(--accent);
-  padding-bottom: 8px;
+  font-size: 32px;
+  font-weight: 700;
+  border-bottom: 2px solid var(--accent);
+  padding-bottom: 10px;
   width: fit-content;
 }
 
-.login-card p {
-  color: #9a9a9a;
+.login-card > p {
+  color: var(--muted);
   font-size: 14px;
 }
 
@@ -176,71 +222,94 @@ footer {
 form {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 12px;
 }
-
 label {
   font-size: 13px;
-  color: #ccc;
+  color: var(--muted);
 }
 
 input {
-  background: #1a1a1a;
-  border: 1px solid #444;
+  width: 100%;
+  background: transparent;
+  border: 1px solid var(--accent);
   color: var(--text);
-  padding: 12px;
+  padding: 12px 14px;
   font-size: 14px;
   outline: none;
-  width: 100%;
 }
 
 input:focus {
   border-color: var(--accent);
+  background: var(--accent-faint);
 }
 
-form a {
-  color: var(--accent);
-  font-size: 13px;
-  text-align: right;
-  text-decoration: none;
+.password-wrapper {
+  position: relative;
+}
+.password-wrapper input {
+  padding-right: 44px;
 }
 
-button[type="submit"] {
-  background: var(--accent);
-  color: #1c1a17;
+.toggle-password {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
   border: none;
-  padding: 14px;
-  font-weight: 700;
-  font-size: 14px;
-  letter-spacing: 1px;
   cursor: pointer;
-  margin-top: 8px;
+  font-size: 16px;
+  color: var(--muted);
 }
 
-/* ── Séparateur "ou" ── */
-.divider {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  color: #555;
+.info-banner {
+  background: var(--accent-faint);
+  border: 1px solid var(--accent);
+  color: var(--accent);
+  padding: 12px 14px;
   font-size: 13px;
 }
 
-.divider::before,
-.divider::after {
-  content: "";
-  flex: 1;
-  height: 1px;
-  background: #333;
-}
-
-/* ── Bouton première connexion ── */
-.first-login {
-  background: transparent;
-  border: 1px solid #444;
-  color: var(--text);
-  padding: 14px;
+.submit-btn {
+  background: var(--accent);
+  color: #0f0e0c;
+  border: none;
+  padding: 15px;
+  font-weight: 700;
   font-size: 14px;
   cursor: pointer;
   width: 100%;
+  letter-spacing: 0.5px;
+}
+
+.error {
+  color: #e07070;
+  font-size: 13px;
+}
+
+.forgot {
+  font-size: 13px;
+  color: var(--muted);
+  text-align: center;
+}
+
+.card-divider {
+  height: 1px;
+  background: var(--border-dark);
+}
+
+.switch-role {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.switch-role p {
+  font-size: 13px;
+  color: var(--muted);
+}
+.switch-role a {
+  color: var(--accent);
+  font-size: 13px;
+  text-decoration: none;
 }

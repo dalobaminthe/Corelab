@@ -1,7 +1,6 @@
 import "./Login.css";
-import { useLocation } from "react-router-dom";
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate, Link } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { loginUser } from "../api/auth";
 
@@ -10,6 +9,7 @@ function LoginPage() {
   const role = location.state?.role;
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
   const { login } = useAuth();
   const [error, setError] = useState("");
@@ -30,8 +30,10 @@ function LoginPage() {
     }
   }
 
+  const isAdmin = role === "admin";
+
   return (
-    <div className={`login-page ${role === `student` ? `student` : ""}`}>
+    <div className={`login-page ${isAdmin ? "admin" : "student"}`}>
       <video
         className="video-bg"
         autoPlay
@@ -40,67 +42,144 @@ function LoginPage() {
         playsInline
         src="/bg-video.mp4"
       />
-      {/* Colonne gauche — présentation */}
+
+      {/* Panneau gauche */}
       <div className="left-panel">
-        <span className="tag">SS 2026</span>
-        <h1>Corelab</h1>
-        <p className="subtitle">
-          La plateforme d'excellence pour les métiers de la Mode.
-        </p>
-        <p className="description">
-          Apprenez auprès des meilleurs experts en stylisme, textile et culture
-          mode.
-        </p>
-
-        <ul className="course-list">
-          <li>Histoire & Culture de la Mode</li>
-          <li>Stylisme, Couture & Patronage</li>
-          <li>Mode Mondiale — Paris, Tokyo, Lagos, NYC</li>
-          <li>Textile, Matières & Tendances Saisonnières</li>
-        </ul>
-
-        <div className="collection-card">
-          <span>Collection en cours</span>
-          <p>Automne — Hiver 2026 · Régions : Europe, Asie, Afrique</p>
-          <small>12 nouvelles leçons disponibles ce trimestre</small>
+        <div className="panel-logo">
+          <h1>CORLAB</h1>
+          <span>Atelier Numérique de la Mode</span>
         </div>
 
-        <footer>© 2026 Corelab — École de Mode Digitale</footer>
+        <div className="panel-title">
+          <p className="panel-espace">Espace</p>
+          <h2>{isAdmin ? "Administrateur" : "Étudiant"}</h2>
+          <div className="panel-divider" />
+          <span className="panel-badge">
+            {isAdmin ? "⬛ Accès restreint" : "◈ AW 2026 en cours"}
+          </span>
+          <p className="panel-desc">
+            {isAdmin
+              ? "Gérez votre plateforme, vos cohortes et vos contenus depuis un espace dédié."
+              : "Suivez vos cours, progressez à votre rythme et obtenez vos certificats de mode."}
+          </p>
+        </div>
+
+        {isAdmin ? (
+          <div className="admin-stats">
+            <div>
+              <strong>42</strong>
+              <small>Étudiants actifs</small>
+            </div>
+            <div>
+              <strong>6</strong>
+              <small>Modules en cours</small>
+            </div>
+            <div>
+              <strong>AW</strong>
+              <small>Saison 2026</small>
+            </div>
+          </div>
+        ) : (
+          <div className="module-list">
+            <small>Modules disponibles</small>
+            <ul>
+              <li>Histoire de la Mode</li>
+              <li>Stylisme & Création</li>
+              <li>Textile & Matières</li>
+              <li>Couture & Patronage</li>
+              <li>Mode Digitale</li>
+              <li>Mode Mondiale</li>
+            </ul>
+          </div>
+        )}
+
+        <Link to="/" className="change-space">
+          ← Changer d'espace
+        </Link>
       </div>
 
-      {/* Colonne droite — formulaire */}
+      {/* Panneau droit — formulaire */}
       <div className="right-panel">
         <div className="login-card">
-          <h2>Connexion</h2>
-          <p>Accédez à votre espace formation mode.</p>
+          <h2>{isAdmin ? "Connexion Admin" : "Connexion Étudiant"}</h2>
+          <p>
+            {isAdmin
+              ? "Entrez vos identifiants administrateur"
+              : "Entrez vos identifiants pour accéder à vos cours"}
+          </p>
 
           <form onSubmit={handleSubmit}>
-            <label>Adresse email</label>
+            <label>Adresse e-mail</label>
             <input
               type="email"
-              placeholder="exemple@ecole-mode.fr"
+              placeholder={
+                isAdmin ? "admin@corlab.fr" : "prenom.nom@ecole-mode.fr"
+              }
               value={email}
               onChange={(e) => setEmail(e.target.value)}
             />
 
             <label>Mot de passe</label>
-            <input
-              type="password"
-              placeholder="••••••••"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-            />
-            <a href="#">Mot de passe oublié ?</a>
+            <div className="password-wrapper">
+              <input
+                type={showPassword ? "text" : "password"}
+                placeholder="••••••••••••"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+              />
+              <button
+                type="button"
+                className="toggle-password"
+                onClick={() => setShowPassword(!showPassword)}
+              >
+                {showPassword ? "🙈" : "👁"}
+              </button>
+            </div>
 
-            <button type="submit">SE CONNECTER</button>
+            <div className="info-banner">
+              {isAdmin
+                ? "⬛ Vous vous connectez en tant qu'Administrateur"
+                : "◈ Cohorte détectée : Stylisme 2024 — Paris · Milan"}
+            </div>
+
+            <button type="submit" className="submit-btn">
+              {isAdmin
+                ? "Se connecter — Espace Admin"
+                : "Se connecter — Espace Étudiant"}
+            </button>
             {error && <p className="error">{error}</p>}
           </form>
 
-          <div className="divider">ou</div>
+          <p className="forgot">
+            {isAdmin
+              ? "Mot de passe oublié ? Contactez l'équipe Corlab"
+              : "Mot de passe oublié ? Contactez votre professeur référent"}
+          </p>
+          <div className="card-divider" />
 
-          <button className="first-login">
-            Première connexion ? Activer mon compte →
-          </button>
+          {isAdmin ? (
+            <div className="switch-role">
+              <p>Vous êtes étudiant ?</p>
+              <Link to="/login" state={{ role: "student" }}>
+                → Accéder à l'espace Étudiant
+              </Link>
+            </div>
+          ) : (
+            <div className="switch-role">
+              <p>
+                Première connexion ?{" "}
+                <Link to="/login" state={{ role: "student" }}>
+                  → Configurer mon compte
+                </Link>
+              </p>
+              <p>
+                Vous êtes admin ?{" "}
+                <Link to="/login" state={{ role: "admin" }}>
+                  → Accéder à l'espace Admin
+                </Link>
+              </p>
+            </div>
+          )}
         </div>
       </div>
     </div>
