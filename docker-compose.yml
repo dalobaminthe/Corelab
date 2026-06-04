@@ -1,0 +1,45 @@
+services:
+
+  mongo:
+    image: mongo:7
+    restart: unless-stopped
+    volumes:
+      - mongo_data:/data/db
+    networks:
+      - corelab
+
+  server:
+    build:
+      context: ./server
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    ports:
+      - "4242:4242"
+    env_file:
+      - .env
+    environment:
+      MONGODB_URI: mongodb://mongo:27017/corelab
+    depends_on:
+      - mongo
+    networks:
+      - corelab
+
+  client:
+    build:
+      context: ./client
+      dockerfile: Dockerfile
+      args:
+        VITE_API_URL: ${VITE_API_URL}
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    depends_on:
+      - server
+    networks:
+      - corelab
+
+volumes:
+  mongo_data:
+
+networks:
+  corelab:
