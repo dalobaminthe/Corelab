@@ -15,3 +15,18 @@ export async function loginUser(email, password) {
 
   return data;
 }
+
+export async function setPassword(newPassword, token) {
+  const response = await fetch(`${API_URL}/auth/set-password`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify({ newPassword }),
+  });
+
+  const data = await response.json();
+  if (!response.ok) throw new Error(data.error || "Erreur");
+  return data;
+}

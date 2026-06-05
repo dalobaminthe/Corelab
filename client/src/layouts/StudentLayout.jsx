@@ -21,10 +21,8 @@ function StudentLayout() {
         </nav>
 
         <div className="sidebar-user">
-          <div className="user-avatar">{user?.firstName?.[0] ?? "E"}</div>
-          <span>
-            {user?.firstName} {user?.lastName}
-          </span>
+          <div className="user-avatar">{user?.name?.[0] ?? "E"}</div>
+          <span>{user?.name ?? "Étudiant"}</span>
           <small>AW 2026 — Saison Active</small>
         </div>
       </aside>
