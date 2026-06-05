@@ -20,7 +20,9 @@ function LoginPage() {
     try {
       const data = await loginUser(email, password);
       login(data.user, data.token);
-      if (data.user.role === "admin") {
+      if (data.isFirstLogin) {
+        navigate("/set-password");
+      } else if (data.user.role === "admin") {
         navigate("/admin");
       } else {
         navigate("/dashboard");

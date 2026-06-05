@@ -11,6 +11,7 @@ import StudentDashboard from "./pages/StudentDashboard.jsx";
 import AdminDashboard from "./pages/AdminDashboard.jsx";
 import StudentLayout from "./layouts/StudentLayout.jsx";
 import ProtectedRoute from "./components/ProtectedRoute.jsx";
+import SetPassword from "./pages/SetPassword.jsx";
 
 // Définition des routes : path = URL, element = composant à afficher
 const router = createBrowserRouter([
@@ -27,6 +28,14 @@ const router = createBrowserRouter([
     children: [{ index: true, element: <StudentDashboard /> }],
   },
   { path: "/admin", element: <AdminDashboard /> },
+  {
+    path: "/set-password",
+    element: (
+      <ProtectedRoute>
+        <SetPassword />
+      </ProtectedRoute>
+    ),
+  },
 ]);
 
 // AuthProvider englobe tout pour que le context soit accessible dans toutes les pages
