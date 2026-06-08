@@ -4,6 +4,7 @@ import Lesson from '../models/Lesson.js'
 import Quiz from '../models/Quiz.js'
 import Attempt from '../models/Attempt.js'
 import { validate, submitAttemptSchema } from '../middleware/validate.js'
+import mongoose from 'mongoose'
 
 const router = Router()
 
@@ -89,6 +90,40 @@ router.post('/quizzes/submit', verifyToken, validate(submitAttemptSchema), async
     res.status(201).json({ score, passed, passingScore: quiz.passingScore, results, attempt })
   } catch (err) {
     res.status(400).json({ error: err.message })
+  }
+})
+
+
+// ─── GET /api/student/progress/:courseId ─────────────────────────────────────
+// Retourne la progression d'un étudiant dans un cours.
+// Calcule combien de leçons ont été validées (quiz passé avec passed: true).
+router.get('/progress/:courseId', verifyToken, async (req, res, next) => {
+  try {
+    const studentId = new mongoose.Types.ObjectId(req.user.userId)
+    const courseId = new mongoose.Types.ObjectId(req.params.courseId)
+
+    const lessons = await Lesson.find({ courseId })
+    const totalLessons = lessons.length
+
+    if (totalLessons === 0) {
+      return res.json({ courseId: req.params.courseId, totalLessons: 0, completedLessons: 0, progressPercent: 0 })
+    }
+
+    const lessonIds = lessons.map(l => l._id)
+    const quizzes = await Quiz.find({ lesson: { $in: lessonIds } }).select('_id lesson')
+    const quizIds = quizzes.map(q => q._id)
+
+    const passedQuizzes = await Attempt.aggregate([
+      { $match: { student: studentId, quiz: { $in: quizIds }, passed: true } },
+      { $group: { _id: '$quiz' } },
+    ])
+
+    const completedLessons = passedQuizzes.length
+    const progressPercent = Math.round((completedLessons / totalLessons) * 100)
+
+    res.json({ courseId: req.params.courseId, totalLessons, completedLessons, progressPercent })
+  } catch (err) {
+    next(err)
   }
 })
 
