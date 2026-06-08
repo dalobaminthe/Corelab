@@ -3,6 +3,7 @@ import { verifyToken, requireAdmin } from '../middleware/auth.js'
 import Lesson from '../models/Lesson.js'
 import Quiz from '../models/Quiz.js'
 import { validate, importQuizSchema } from '../middleware/validate.js'
+import { parse } from 'csv-parse/sync'
 
 const router = Router()
 
@@ -45,11 +46,48 @@ router.patch('/lessons/:id/schedule', verifyToken, requireAdmin, async (req, res
     }
 })
 
-// POST - import QCM depuis JSON
-router.post('/quizzes/import', verifyToken, requireAdmin, validate(importQuizSchema), async (req, res) => {
+// POST - import QCM depuis JSON ou CSV
+router.post('/quizzes/import', verifyToken, requireAdmin, async (req, res) => {
   try {
-    // vérifie que correctIndexes sont valides pour chaque question
-    for (const q of req.body.questions) {
+    const contentType = req.headers['content-type'] || ''
+    let quizData
+
+    if (contentType.includes('text/csv')) {
+      // parsing CSV
+      const csvText = req.body
+      const records = parse(csvText, {
+        columns: true,
+        skip_empty_lines: true,
+        trim: true,
+      })
+
+      // on reconstruit le format attendu
+      quizData = {
+        title: req.query.title || 'Quiz importé',
+        lesson: req.query.lesson,
+        passingScore: Number(req.query.passingScore) || 50,
+        questions: records.map(row => ({
+          prompt: row.prompt,
+          choices: row.choices.split('|'),
+          correctIndexes: row.correctIndexes.split(',').map(Number),
+        })),
+      }
+    } else {
+      // JSON — comportement existant
+      quizData = req.body
+    }
+
+    // validation Zod sur les deux formats
+    const parsed = importQuizSchema.safeParse(quizData)
+    if (!parsed.success) {
+      return res.status(400).json({ 
+        error: 'Validation error', 
+        details: parsed.error.errors 
+      })
+    }
+
+    // vérifie que correctIndexes sont valides
+    for (const q of parsed.data.questions) {
       for (const idx of q.correctIndexes) {
         if (idx < 0 || idx >= q.choices.length) {
           return res.status(400).json({
@@ -58,7 +96,8 @@ router.post('/quizzes/import', verifyToken, requireAdmin, validate(importQuizSch
         }
       }
     }
-    const quiz = await Quiz.create(req.body)
+
+    const quiz = await Quiz.create(parsed.data)
     res.status(201).json(quiz)
   } catch (err) {
     res.status(400).json({ error: err.message })
