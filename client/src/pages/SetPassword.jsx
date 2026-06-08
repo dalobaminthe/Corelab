@@ -4,6 +4,8 @@ import { useAuth } from "../context/AuthContext.jsx";
 import { setPassword } from "../api/auth.js";
 import "./SetPassword.css";
 
+// Page affichée quand isFirstLogin === true
+// Permet au nouvel utilisateur de choisir son mot de passe personnel
 function SetPassword() {
   const [newPassword, setNewPassword] = useState("");
   const [confirm, setConfirm] = useState("");
@@ -15,6 +17,7 @@ function SetPassword() {
     e.preventDefault();
     setError("");
 
+    // Validation locale AVANT l'appel API — inutile d'appeler le backend si invalide
     if (newPassword !== confirm) {
       setError("Les mots de passe ne correspondent pas.");
       return;
@@ -26,7 +29,9 @@ function SetPassword() {
     }
 
     try {
+      // Le backend renvoie un nouveau token avec isFirstLogin: false
       const data = await setPassword(newPassword, token);
+      // On met à jour le context avec le nouveau token
       login(data.user, data.token);
       if (data.user.role === "admin") {
         navigate("/admin");

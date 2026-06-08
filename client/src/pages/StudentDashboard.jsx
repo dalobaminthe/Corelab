@@ -46,11 +46,13 @@ function StudentDashboard() {
 
   useEffect(() => {
     async function loadProgress() {
+      // Si l'utilisateur n'a pas de cours assignés, on arrête le chargement
       if (!user?.courses?.length) {
         setLoading(false);
         return;
       }
       try {
+        // Promise.all lance tous les appels API en parallèle (plus rapide qu'un par un)
         const progressData = await Promise.all(
           user.courses.map((courseId, i) =>
             fetchProgress(courseId, token).then((data) => ({
@@ -64,11 +66,12 @@ function StudentDashboard() {
       } catch (err) {
         console.error(err);
       } finally {
+        // finally s'exécute toujours, succès ou erreur — on arrête le chargement
         setLoading(false);
       }
     }
     loadProgress();
-  }, [user, token]);
+  }, [user, token]); // se relance si user ou token change
 
   return (
     <div className="dashboard">
