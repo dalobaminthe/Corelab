@@ -1,12 +1,15 @@
+import { useState, useEffect } from "react";
+import { useAuth } from "../context/AuthContext.jsx";
+import { fetchProgress } from "../api/student.js";
 import "./StudentDashboard.css";
 
-const mockModules = [
-  { name: "Histoire de la Mode", progress: 85, lessons: "6/7" },
-  { name: "Stylisme & Création", progress: 60, lessons: "3/5" },
-  { name: "Textile & Matières", progress: 40, lessons: "2/5" },
-  { name: "Couture & Patronage", progress: 75, lessons: "3/4" },
-  { name: "Mode Digitale", progress: 20, lessons: "1/5" },
-  { name: "Mode Mondiale", progress: 50, lessons: "2/4" },
+const courseNames = [
+  "Histoire de la Mode",
+  "Stylisme & Création",
+  "Textile & Matières",
+  "Couture & Patronage",
+  "Mode Digitale",
+  "Mode Mondiale",
 ];
 
 const mockActivity = [
@@ -37,32 +40,58 @@ const mockActivity = [
 ];
 
 function StudentDashboard() {
+  const { user, token } = useAuth();
+  const [modules, setModules] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    async function loadProgress() {
+      if (!user?.courses?.length) {
+        setLoading(false);
+        return;
+      }
+      try {
+        const progressData = await Promise.all(
+          user.courses.map((courseId, i) =>
+            fetchProgress(courseId, token).then((data) => ({
+              name: courseNames[i] || `Cours ${i + 1}`,
+              progress: data.progressPercent,
+              lessons: `${data.completedLessons}/${data.totalLessons}`,
+            })),
+          ),
+        );
+        setModules(progressData);
+      } catch (err) {
+        console.error(err);
+      } finally {
+        setLoading(false);
+      }
+    }
+    loadProgress();
+  }, [user, token]);
+
   return (
     <div className="dashboard">
-      {/* Header */}
       <div className="dashboard-header">
         <div>
           <h1>Mon Parcours</h1>
-          <p>Bienvenue, Amara</p>
+          <p>Bienvenue, {user?.name}</p>
         </div>
         <span className="season-badge">AW 2026</span>
       </div>
 
       <div className="dashboard-body">
-        {/* Colonne gauche */}
         <div className="dashboard-left">
-          {/* Carte bienvenue */}
           <div className="welcome-card">
-            <h2>Bonne reprise, Amara ✦</h2>
+            <h2>Bonne reprise, {user?.name} ✦</h2>
             <p>Stylisme 2024 · Paris — Milan · Semestre 3 en cours · AW 2026</p>
           </div>
 
-          {/* Stats */}
           <div className="stats-grid">
             <div className="stat-card">
               <small>Cours suivis</small>
-              <strong>8 / 12</strong>
-              <span>67% complété</span>
+              <strong>{user?.courses?.length ?? 0}</strong>
+              <span>cours assignés</span>
             </div>
             <div className="stat-card">
               <small>Moyenne générale</small>
@@ -81,29 +110,33 @@ function StudentDashboard() {
             </div>
           </div>
 
-          {/* Progression */}
           <div className="progress-section">
             <h3>Progression par Module</h3>
-            {mockModules.map((module) => (
-              <div key={module.name} className="progress-row">
-                <div className="progress-info">
-                  <span>{module.name}</span>
-                  <span>
-                    {module.lessons} leçons · {module.progress}%
-                  </span>
+            {loading ? (
+              <p style={{ color: "#9a9a9a", fontSize: "13px" }}>
+                Chargement...
+              </p>
+            ) : (
+              modules.map((module) => (
+                <div key={module.name} className="progress-row">
+                  <div className="progress-info">
+                    <span>{module.name}</span>
+                    <span>
+                      {module.lessons} leçons · {module.progress}%
+                    </span>
+                  </div>
+                  <div className="progress-bar">
+                    <div
+                      className="progress-fill"
+                      style={{ width: `${module.progress}%` }}
+                    />
+                  </div>
                 </div>
-                <div className="progress-bar">
-                  <div
-                    className="progress-fill"
-                    style={{ width: `${module.progress}%` }}
-                  />
-                </div>
-              </div>
-            ))}
+              ))
+            )}
           </div>
         </div>
 
-        {/* Panneau droit */}
         <div className="dashboard-right">
           <div className="next-lesson-card">
             <small>Prochaine Leçon</small>
