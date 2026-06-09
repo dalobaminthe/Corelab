@@ -12,6 +12,7 @@ import AdminDashboard from "./pages/AdminDashboard.jsx";
 import StudentLayout from "./layouts/StudentLayout.jsx";
 import ProtectedRoute from "./components/ProtectedRoute.jsx";
 import SetPassword from "./pages/SetPassword.jsx";
+import QuizPage from "./pages/QuizPage.jsx";
 
 // Définition des routes : path = URL, element = composant à afficher
 const router = createBrowserRouter([
@@ -33,6 +34,14 @@ const router = createBrowserRouter([
     element: (
       <ProtectedRoute>
         <SetPassword />
+      </ProtectedRoute>
+    ),
+  },
+  {
+    path: "/quiz/:quizId",
+    element: (
+      <ProtectedRoute>
+        <QuizPage />
       </ProtectedRoute>
     ),
   },
