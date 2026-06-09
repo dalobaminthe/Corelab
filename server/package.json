@@ -19,6 +19,7 @@
     "jsonwebtoken": "^9.0.3",
     "mongoose": "^9.6.2",
     "multer": "^2.1.1",
+    "node-cron": "^4.2.1",
     "zod": "^4.4.3"
   },
   "devDependencies": {
@@ -29,9 +30,11 @@
     "supertest": "^7.2.2"
   },
   "jest": {
-  "testEnvironment": "node",
-  "testMatch": ["**/tests/**/*.test.js"],
-  "setupFilesAfterEnv": [],
-  "transform": {}
-}
+    "testEnvironment": "node",
+    "testMatch": [
+      "**/tests/**/*.test.js"
+    ],
+    "setupFilesAfterEnv": [],
+    "transform": {}
+  }
 }
