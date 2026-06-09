@@ -3,3 +3,7 @@ node_modules/
 client/dist/
 server/dist/
 .DS_Store
+
+# Docker
+.env.local
+*.env.local

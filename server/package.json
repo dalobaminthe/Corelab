@@ -7,8 +7,8 @@
   "scripts": {
     "start": "node src/index.js",
     "dev": "nodemon src/index.js",
-    "test": "jest --runInBand --forceExit",
-    "test:watch": "jest --watch"
+    "test": "node --experimental-vm-modules node_modules/.bin/jest --runInBand --forceExit",
+    "test:watch": "node --experimental-vm-modules node_modules/.bin/jest --watch"
   },
   "dependencies": {
     "bcrypt": "^6.0.0",
@@ -22,16 +22,16 @@
     "zod": "^4.4.3"
   },
   "devDependencies": {
+    "@jest/globals": "^30.4.1",
     "jest": "^30.4.2",
-    "mongodb-memory-server": "^10.0.0",
+    "mongodb-memory-server": "^10.4.3",
     "nodemon": "^3.1.14",
-    "supertest": "^7.0.0"
+    "supertest": "^7.2.2"
   },
   "jest": {
-    "testEnvironment": "node",
-    "testMatch": [
-      "**/tests/**/*.test.js"
-    ],
-    "setupFilesAfterFramework": []
-  }
+  "testEnvironment": "node",
+  "testMatch": ["**/tests/**/*.test.js"],
+  "setupFilesAfterEnv": [],
+  "transform": {}
+}
 }
