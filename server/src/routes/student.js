@@ -3,6 +3,7 @@ import { verifyToken, requireAdmin } from '../middleware/auth.js'
 import Lesson from '../models/Lesson.js'
 import Quiz from '../models/Quiz.js'
 import Attempt from '../models/Attempt.js'
+import Notification from '../models/Notification.js'
 import { validate, submitAttemptSchema } from '../middleware/validate.js'
 import mongoose from 'mongoose'
 
@@ -122,6 +123,35 @@ router.get('/progress/:courseId', verifyToken, async (req, res, next) => {
     const progressPercent = Math.round((completedLessons / totalLessons) * 100)
 
     res.json({ courseId: req.params.courseId, totalLessons, completedLessons, progressPercent })
+  } catch (err) {
+    next(err)
+  }
+})
+
+// ─── GET /api/student/notifications ──────────────────────────────────────────
+// Retourne toutes les notifications de l'étudiant connecté, les non-lues en premier.
+router.get('/notifications', verifyToken, async (req, res, next) => {
+  try {
+    const notifications = await Notification.find({ student: req.user.userId })
+      .populate('lesson', 'title')
+      .sort({ read: 1, sentAt: -1 })
+    res.json(notifications)
+  } catch (err) {
+    next(err)
+  }
+})
+
+// ─── PATCH /api/student/notifications/:id/read ────────────────────────────────
+// Marque une notification comme lue.
+router.patch('/notifications/:id/read', verifyToken, async (req, res, next) => {
+  try {
+    const notification = await Notification.findOneAndUpdate(
+      { _id: req.params.id, student: req.user.userId },
+      { read: true },
+      { new: true }
+    )
+    if (!notification) return res.status(404).json({ error: 'Notification not found' })
+    res.json(notification)
   } catch (err) {
     next(err)
   }
