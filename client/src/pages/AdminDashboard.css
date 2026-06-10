@@ -1,0 +1,210 @@
+/* ── Page wrapper ── */
+.admin-dashboard {
+  padding: 40px 48px;
+  max-width: 1100px;
+}
+
+/* ── Header ── */
+.admin-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 32px;
+}
+
+.admin-header h1 {
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.admin-header p {
+  color: var(--text-muted);
+  font-size: 14px;
+  margin-top: 4px;
+}
+
+.admin-header-right {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.season-badge {
+  border: 1px solid var(--gold);
+  color: var(--gold);
+  font-size: 11px;
+  padding: 4px 10px;
+  letter-spacing: 1px;
+}
+
+.admin-avatar {
+  width: 38px;
+  height: 38px;
+  background: var(--gold);
+  color: var(--bg-dark);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 15px;
+}
+
+/* ── Bloc bienvenue ── */
+.admin-welcome {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  padding: 24px 28px;
+  margin-bottom: 32px;
+}
+
+.admin-welcome h2 {
+  font-size: 20px;
+  color: var(--gold);
+  margin-bottom: 6px;
+}
+
+.admin-welcome p {
+  color: var(--text-muted);
+  font-size: 14px;
+}
+
+/* ── Cartes stats ── */
+.admin-stats {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+  margin-bottom: 32px;
+}
+
+.admin-stat-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  padding: 24px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.admin-stat-card strong {
+  font-size: 32px;
+  font-weight: 700;
+  color: var(--text);
+  line-height: 1;
+}
+
+.admin-stat-card span {
+  font-size: 13px;
+  color: var(--text-muted);
+}
+
+.admin-stat-card small {
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+.admin-stat-card small.positive {
+  color: #6fcf97;
+}
+
+.admin-stat-card small.warning {
+  color: #f2994a;
+}
+
+/* ── Actions rapides ── */
+.admin-actions {
+  margin-bottom: 32px;
+}
+
+.section-label {
+  font-size: 11px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin-bottom: 12px;
+}
+
+.actions-grid {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.action-btn {
+  background: var(--gold);
+  color: var(--bg-dark);
+  border: none;
+  padding: 10px 20px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: opacity 0.15s;
+}
+
+.action-btn:hover {
+  opacity: 0.85;
+}
+
+.action-btn.outline {
+  background: transparent;
+  border: 1px solid var(--gold);
+  color: var(--gold);
+}
+
+.action-btn.outline:hover {
+  background: rgba(201, 168, 76, 0.08);
+}
+
+/* ── Tableau activité ── */
+.admin-activity {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  padding: 24px;
+}
+
+.admin-activity .section-label {
+  margin-bottom: 16px;
+}
+
+.activity-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+
+.activity-table th {
+  text-align: left;
+  color: var(--text-muted);
+  font-weight: 500;
+  padding: 8px 12px;
+  border-bottom: 1px solid var(--border);
+}
+
+.activity-table td {
+  padding: 12px 12px;
+  border-bottom: 1px solid rgba(201, 168, 76, 0.08);
+  color: var(--text);
+}
+
+.activity-table tr:last-child td {
+  border-bottom: none;
+}
+
+.activity-table .bold {
+  font-weight: 600;
+}
+
+.activity-table .muted {
+  color: var(--text-muted);
+}
+
+.activity-table .success {
+  color: #6fcf97;
+  font-weight: 600;
+}
+
+.activity-table .fail {
+  color: #eb5757;
+  font-weight: 600;
+}
