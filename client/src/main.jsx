@@ -15,6 +15,7 @@ import SetPassword from "./pages/SetPassword.jsx";
 import QuizPage from "./pages/QuizPage.jsx";
 import AdminLayout from "./layouts/AdminLayout.jsx";
 import AdminEtudiants from "./pages/AdminEtudiants.jsx";
+import AdminContenu from "./pages/AdminContenu.jsx";
 
 // Définition des routes : path = URL, element = composant à afficher
 const router = createBrowserRouter([
@@ -40,6 +41,7 @@ const router = createBrowserRouter([
     children: [
       { index: true, element: <AdminDashboard /> },
       { path: "etudiants", element: <AdminEtudiants /> },
+      { path: "contenu", element: <AdminContenu /> },
     ],
   },
   {
