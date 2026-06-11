@@ -14,9 +14,12 @@ export async function fetchProgress(courseId, token) {
 }
 
 export async function getLessons(courseId) {
-  const response = await fetch(`${API_URL}/student/lessons?courseId=${courseId}`, {
-    headers: { Authorization: `Bearer ${getToken()}` },
-  });
+  const response = await fetch(
+    `${API_URL}/student/lessons?courseId=${courseId}`,
+    {
+      headers: { Authorization: `Bearer ${getToken()}` },
+    },
+  );
   const data = await response.json();
   if (!response.ok) throw new Error(data.error || "Erreur");
   return data;
@@ -48,6 +51,25 @@ export async function submitQuiz(quizId, answers) {
       Authorization: `Bearer ${getToken()}`,
     },
     body: JSON.stringify({ quizId, answers }),
+  });
+  const data = await response.json();
+  if (!response.ok) throw new Error(data.error || "Erreur");
+  return data;
+}
+
+export async function getNotifications(token) {
+  const response = await fetch(`${API_URL}/student/notifications`, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+  const data = await response.json();
+  if (!response.ok) throw new Error(data.error || "Erreur");
+  return data;
+}
+
+export async function markNotificationRead(id, token) {
+  const response = await fetch(`${API_URL}/student/notifications/${id}/read`, {
+    method: "PATCH",
+    headers: { Authorization: `Bearer ${token}` },
   });
   const data = await response.json();
   if (!response.ok) throw new Error(data.error || "Erreur");
