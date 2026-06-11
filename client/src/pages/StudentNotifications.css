@@ -1,0 +1,93 @@
+.student-notifications {
+  padding: 40px 48px;
+  max-width: 800px;
+}
+
+.notif-header {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 32px;
+}
+
+.notif-header h1 {
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.unread-badge {
+  background: rgba(201, 168, 76, 0.15);
+  border: 1px solid var(--gold);
+  color: var(--gold);
+  font-size: 12px;
+  padding: 3px 10px;
+}
+
+.notif-state {
+  color: var(--text-muted);
+  font-size: 14px;
+}
+
+.notif-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.notif-item {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 16px 20px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  cursor: pointer;
+  transition: border-color 0.15s;
+}
+
+.notif-item.unread {
+  border-left: 3px solid var(--gold);
+}
+
+.notif-item.read {
+  opacity: 0.5;
+  cursor: default;
+}
+
+.notif-item.unread:hover {
+  border-color: var(--gold);
+}
+
+.notif-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--gold);
+  flex-shrink: 0;
+}
+
+.notif-item.read .notif-dot {
+  background: var(--text-muted);
+}
+
+.notif-body {
+  flex: 1;
+}
+
+.notif-body p {
+  font-size: 14px;
+  color: var(--text);
+  margin-bottom: 4px;
+}
+
+.notif-body small {
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+.notif-cta {
+  font-size: 11px;
+  color: var(--gold);
+  white-space: nowrap;
+}
