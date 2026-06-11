@@ -246,4 +246,57 @@ describe('PUT /api/admin/users/:id/courses', () => {
       .send({ courseIds: ['pasunobjid'] })
     expect(res.status).toBe(400)
   })
+
+  it('retourne 400 si courseIds contient un cours inexistant', async () => {
+    const admin = await makeAdmin()
+    const student = await makeStudent()
+    const token = tokenFor(admin)
+    const fakeId = new mongoose.Types.ObjectId()
+    const res = await request(app)
+      .put(`/api/admin/users/${student._id}/courses`)
+      .set('Authorization', `Bearer ${token}`)
+      .send({ courseIds: [fakeId.toString()] })
+    expect(res.status).toBe(400)
+  })
+})
+
+// ─── POST /api/admin/courses ──────────────────────────────────────────────────
+describe('POST /api/admin/courses', () => {
+  it('crée un cours', async () => {
+    const admin = await makeAdmin()
+    const token = tokenFor(admin)
+    const res = await request(app)
+      .post('/api/admin/courses')
+      .set('Authorization', `Bearer ${token}`)
+      .send({ title: 'Nouveau cours', description: 'Description test' })
+    expect(res.status).toBe(201)
+    expect(res.body.title).toBe('Nouveau cours')
+  })
+
+  it('retourne 400 si title manquant', async () => {
+    const admin = await makeAdmin()
+    const token = tokenFor(admin)
+    const res = await request(app)
+      .post('/api/admin/courses')
+      .set('Authorization', `Bearer ${token}`)
+      .send({ description: 'Sans titre' })
+    expect(res.status).toBe(400)
+  })
+
+  it('retourne 403 si appelé par un student', async () => {
+    const student = await makeStudent()
+    const token = tokenFor(student)
+    const res = await request(app)
+      .post('/api/admin/courses')
+      .set('Authorization', `Bearer ${token}`)
+      .send({ title: 'Cours' })
+    expect(res.status).toBe(403)
+  })
+
+  it('retourne 401 sans token', async () => {
+    const res = await request(app)
+      .post('/api/admin/courses')
+      .send({ title: 'Cours' })
+    expect(res.status).toBe(401)
+  })
 })

@@ -25,6 +25,7 @@ const createCourseSchema = z.object({
 
 const importLessonSchema = z.object({
   title: z.string().min(1),
+  content: z.string().min(1),
   courseId: z.string().regex(objectIdRegex),
   order: z.number().optional().default(0),
   availableAt: z.string().datetime().optional(),
@@ -77,7 +78,6 @@ const validate = (schema) => (req, res, next) => {
   req.body = result.data
   next()
 }
-
 
 export {
     validate,

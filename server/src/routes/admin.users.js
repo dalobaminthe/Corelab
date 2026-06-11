@@ -4,7 +4,7 @@ import User from '../models/User.js'
 import Course from '../models/Course.js'
 import Attempt from '../models/Attempt.js'
 import { verifyToken, requireAdmin } from '../middleware/auth.js'
-import { validate, assignCoursesSchema } from '../middleware/validate.js'
+import { validate, assignCoursesSchema, createCourseSchema } from '../middleware/validate.js'
 
 const router = Router()
 const BCRYPT_ROUNDS = 10
@@ -99,8 +99,20 @@ router.put('/users/:id/courses', verifyToken, requireAdmin, validate(assignCours
   }
 })
 
+// ─── POST /api/admin/courses ──────────────────────────────────────────────────
+// Crée un nouveau cours, le createdBy est automatiquement l'admin connecté
+router.post('/courses', verifyToken, requireAdmin, validate(createCourseSchema), async (req, res, next) => {
+  try {
+    const { title, description } = req.body
+    const course = await Course.create({ title, description, createdBy: req.user.userId })
+    res.status(201).json(course)
+  } catch (err) {
+    next(err)
+  }
+})
+
 // ─── GET /api/admin/stats ─────────────────────────────────────────────────────
-// Statistiques globales de la plateforme pour le dashboard admin.
+// Statistiques globales de la plateforme pour le dashboard admin
 router.get('/stats', verifyToken, requireAdmin, async (req, res, next) => {
   try {
     const [totalStudents, totalCourses, attempts] = await Promise.all([
@@ -130,7 +142,7 @@ router.get('/courses', verifyToken, requireAdmin, async (req, res, next) => {
 })
 
 // ─── GET /api/admin/activity ──────────────────────────────────────────────────
-// 20 dernières tentatives avec étudiant et quiz
+// 20 dernières tentatives avec étudiant et quiz peuplés
 router.get('/activity', verifyToken, requireAdmin, async (req, res, next) => {
   try {
     const activity = await Attempt.find()
