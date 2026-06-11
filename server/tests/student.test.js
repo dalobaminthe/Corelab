@@ -79,6 +79,38 @@ const makeQuiz = async (lesson) => Quiz.create({
   ],
 })
 
+// ─── GET /api/student/courses ─────────────────────────────────────────────────
+describe('GET /api/student/courses', () => {
+  it('retourne les cours de l étudiant connecté', async () => {
+    const admin = await makeAdmin()
+    const student = await makeStudent()
+    const course = await makeCourse(admin)
+    await User.findByIdAndUpdate(student._id, { courses: [course._id] })
+    const token = tokenFor(student)
+    const res = await request(app)
+      .get('/api/student/courses')
+      .set('Authorization', `Bearer ${token}`)
+    expect(res.status).toBe(200)
+    expect(res.body).toHaveLength(1)
+    expect(res.body[0].title).toBe('Cours test')
+  })
+
+  it('retourne un tableau vide si aucun cours assigné', async () => {
+    const student = await makeStudent()
+    const token = tokenFor(student)
+    const res = await request(app)
+      .get('/api/student/courses')
+      .set('Authorization', `Bearer ${token}`)
+    expect(res.status).toBe(200)
+    expect(res.body).toHaveLength(0)
+  })
+
+  it('retourne 401 sans token', async () => {
+    const res = await request(app).get('/api/student/courses')
+    expect(res.status).toBe(401)
+  })
+})
+
 // ─── GET /api/student/lessons ─────────────────────────────────────────────────
 describe('GET /api/student/lessons', () => {
   it('retourne les leçons disponibles du cours', async () => {

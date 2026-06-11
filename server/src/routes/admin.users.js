@@ -2,8 +2,9 @@ import { Router } from 'express'
 import bcrypt from 'bcrypt'
 import User from '../models/User.js'
 import Course from '../models/Course.js'
+import Attempt from '../models/Attempt.js'
 import { verifyToken, requireAdmin } from '../middleware/auth.js'
-import { validate, assignCoursesSchema } from '../middleware/validate.js'
+import { validate, assignCoursesSchema, createCourseSchema } from '../middleware/validate.js'
 
 const router = Router()
 
@@ -86,7 +87,7 @@ router.put('/users/:id/courses', verifyToken, requireAdmin, validate(assignCours
     // Vérifie que tous les courseIds existent en base
     const existingCourses = await Course.find({ _id: { $in: courseIds } })
     if (existingCourses.length !== courseIds.length) {
-    return res.status(400).json({ error: 'One or more courseIds are invalid' })
+      return res.status(400).json({ error: 'One or more courseIds are invalid' })
     }
 
     // Retire l'étudiant des anciens cours
@@ -106,6 +107,63 @@ router.put('/users/:id/courses', verifyToken, requireAdmin, validate(assignCours
     await user.save()
 
     res.json(await user.populate('courses', 'title'))
+  } catch (err) {
+    next(err)
+  }
+})
+
+// ─── POST /api/admin/courses ──────────────────────────────────────────────────
+// Crée un nouveau cours, le createdBy est automatiquement l'admin connecté
+router.post('/courses', verifyToken, requireAdmin, validate(createCourseSchema), async (req, res, next) => {
+  try {
+    const { title, description } = req.body
+    const course = await Course.create({ title, description, createdBy: req.user.userId })
+    res.status(201).json(course)
+  } catch (err) {
+    next(err)
+  }
+})
+
+// ─── GET /api/admin/stats ─────────────────────────────────────────────────────
+// Statistiques globales de la plateforme pour le dashboard admin
+router.get('/stats', verifyToken, requireAdmin, async (req, res, next) => {
+  try {
+    const [totalStudents, totalCourses, attempts] = await Promise.all([
+      User.countDocuments({ role: 'student' }),
+      Course.countDocuments(),
+      Attempt.find(),
+    ])
+    const totalAttempts = attempts.length
+    const successRate = totalAttempts === 0
+      ? 0
+      : Math.round((attempts.filter(a => a.passed).length / totalAttempts) * 100)
+    res.json({ totalStudents, totalCourses, totalAttempts, successRate })
+  } catch (err) {
+    next(err)
+  }
+})
+
+// ─── GET /api/admin/courses ───────────────────────────────────────────────────
+// Liste des cours avec leurs étudiants
+router.get('/courses', verifyToken, requireAdmin, async (req, res, next) => {
+  try {
+    const courses = await Course.find().populate('students', 'name email')
+    res.json(courses)
+  } catch (err) {
+    next(err)
+  }
+})
+
+// ─── GET /api/admin/activity ──────────────────────────────────────────────────
+// 20 dernières tentatives avec étudiant et quiz peuplés
+router.get('/activity', verifyToken, requireAdmin, async (req, res, next) => {
+  try {
+    const activity = await Attempt.find()
+      .sort({ attemptedAt: -1 })
+      .limit(20)
+      .populate('student', 'name')
+      .populate({ path: 'quiz', select: 'title', populate: { path: 'lesson', select: 'title' } })
+    res.json(activity)
   } catch (err) {
     next(err)
   }
