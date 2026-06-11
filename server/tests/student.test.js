@@ -12,14 +12,12 @@ import Attempt from '../src/models/Attempt.js'
 
 let mongod
 
-// Configuration de la base de données en mémoire pour les tests
 beforeAll(async () => {
   mongod = await MongoMemoryServer.create()
   await mongoose.connect(mongod.getUri())
   process.env.JWT_SECRET = 'test_secret'
 })
 
-// Nettoyage de la base après chaque test
 afterEach(async () => {
   await User.deleteMany()
   await Course.deleteMany()
@@ -28,13 +26,13 @@ afterEach(async () => {
   await Attempt.deleteMany()
 })
 
-// Fermeture de la connexion après tous les tests
 afterAll(async () => {
   await mongoose.disconnect()
   await mongod.stop()
 })
 
-// Fonctions utilitaires pour créer des utilisateurs, cours, leçons et quiz
+// ─── Utilitaires ──────────────────────────────────────────────────────────────
+
 const makeStudent = async () => User.create({
   name: 'Student',
   email: 'student@test.com',
@@ -43,7 +41,6 @@ const makeStudent = async () => User.create({
   isFirstLogin: false,
 })
 
-// Génère un token JWT pour un administrateur donné
 const makeAdmin = async () => User.create({
   name: 'Admin',
   email: 'admin@test.com',
@@ -52,45 +49,33 @@ const makeAdmin = async () => User.create({
   isFirstLogin: false,
 })
 
-// Génère un token JWT pour un utilisateur donné
 const tokenFor = (user) => jwt.sign(
   { userId: user._id, role: user.role },
   process.env.JWT_SECRET,
   { expiresIn: '1h' }
 )
 
-// Crée un cours associé à un administrateur
 const makeCourse = async (admin) => Course.create({
   title: 'Cours test',
   createdBy: admin._id,
 })
 
-// Crée une leçon associée à un cours
 const makeLesson = async (course, { available = true } = {}) => Lesson.create({
   title: 'Leçon test',
   content: '<h1>Contenu</h1>',
   courseId: course._id,
   availableFrom: available
-    ? new Date(Date.now() - 1000 * 60 * 60) // hier
-    : new Date(Date.now() + 1000 * 60 * 60 * 24), // demain
+    ? new Date(Date.now() - 1000 * 60 * 60)
+    : new Date(Date.now() + 1000 * 60 * 60 * 24),
 })
 
-// Crée un quiz associé à une leçon
 const makeQuiz = async (lesson) => Quiz.create({
   title: 'Quiz test',
   lesson: lesson._id,
   passingScore: 50,
   questions: [
-    {
-      prompt: 'Question 1 ?',
-      choices: ['A', 'B', 'C'],
-      correctIndexes: [0],
-    },
-    {
-      prompt: 'Question 2 ?',
-      choices: ['X', 'Y', 'Z'],
-      correctIndexes: [1],
-    },
+    { prompt: 'Question 1 ?', choices: ['A', 'B', 'C'], correctIndexes: [0] },
+    { prompt: 'Question 2 ?', choices: ['X', 'Y', 'Z'], correctIndexes: [1] },
   ],
 })
 
@@ -112,6 +97,43 @@ describe('GET /api/student/lessons', () => {
 
   it('retourne 401 sans token', async () => {
     const res = await request(app).get('/api/student/lessons')
+    expect(res.status).toBe(401)
+  })
+})
+
+// ─── GET /api/student/lessons/:id/quiz ───────────────────────────────────────
+describe('GET /api/student/lessons/:id/quiz', () => {
+  it('retourne le quiz de la leçon sans les correctIndexes', async () => {
+    const admin = await makeAdmin()
+    const student = await makeStudent()
+    const course = await makeCourse(admin)
+    const lesson = await makeLesson(course)
+    await makeQuiz(lesson)
+    const token = tokenFor(student)
+    const res = await request(app)
+      .get(`/api/student/lessons/${lesson._id}/quiz`)
+      .set('Authorization', `Bearer ${token}`)
+    expect(res.status).toBe(200)
+    expect(res.body.questions[0].correctIndexes).toBeUndefined()
+  })
+
+  it('retourne 404 si aucun quiz pour cette leçon', async () => {
+    const admin = await makeAdmin()
+    const student = await makeStudent()
+    const course = await makeCourse(admin)
+    const lesson = await makeLesson(course)
+    const token = tokenFor(student)
+    const res = await request(app)
+      .get(`/api/student/lessons/${lesson._id}/quiz`)
+      .set('Authorization', `Bearer ${token}`)
+    expect(res.status).toBe(404)
+  })
+
+  it('retourne 401 sans token', async () => {
+    const admin = await makeAdmin()
+    const course = await makeCourse(admin)
+    const lesson = await makeLesson(course)
+    const res = await request(app).get(`/api/student/lessons/${lesson._id}/quiz`)
     expect(res.status).toBe(401)
   })
 })
@@ -210,13 +232,13 @@ describe('POST /api/student/quizzes/submit', () => {
     const res = await request(app)
       .post('/api/student/quizzes/submit')
       .set('Authorization', `Bearer ${token}`)
-      .send({ quizId: quiz._id.toString(), answers: [0, 1] }) // les deux bonnes réponses
+      .send({ quizId: quiz._id.toString(), answers: [0, 1] })
     expect(res.status).toBe(201)
     expect(res.body.score).toBe(100)
     expect(res.body.passed).toBe(true)
   })
 
-  it('retourne passed false si score insuffisant', async () => {
+  it('retourne passed true si score égal au passingScore', async () => {
     const admin = await makeAdmin()
     const student = await makeStudent()
     const course = await makeCourse(admin)
@@ -226,10 +248,10 @@ describe('POST /api/student/quizzes/submit', () => {
     const res = await request(app)
       .post('/api/student/quizzes/submit')
       .set('Authorization', `Bearer ${token}`)
-      .send({ quizId: quiz._id.toString(), answers: [1, 1] }) // Q1 incorrecte → 50% = passant
+      .send({ quizId: quiz._id.toString(), answers: [1, 1] })
     expect(res.status).toBe(201)
     expect(res.body.score).toBe(50)
-    expect(res.body.passed).toBe(true) // passingScore = 50
+    expect(res.body.passed).toBe(true)
   })
 
   it('retourne 400 si nombre de réponses incorrect', async () => {
@@ -242,7 +264,7 @@ describe('POST /api/student/quizzes/submit', () => {
     const res = await request(app)
       .post('/api/student/quizzes/submit')
       .set('Authorization', `Bearer ${token}`)
-      .send({ quizId: quiz._id.toString(), answers: [0] }) // 1 réponse au lieu de 2
+      .send({ quizId: quiz._id.toString(), answers: [0] })
     expect(res.status).toBe(400)
   })
 

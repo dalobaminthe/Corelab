@@ -83,6 +83,12 @@ router.put('/users/:id/courses', verifyToken, requireAdmin, validate(assignCours
     const user = await User.findById(req.params.id)
     if (!user) return res.status(404).json({ error: 'User not found' })
 
+    // Vérifie que tous les courseIds existent en base
+    const existingCourses = await Course.find({ _id: { $in: courseIds } })
+    if (existingCourses.length !== courseIds.length) {
+    return res.status(400).json({ error: 'One or more courseIds are invalid' })
+    }
+
     // Retire l'étudiant des anciens cours
     await Course.updateMany(
       { _id: { $in: user.courses } },

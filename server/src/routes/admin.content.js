@@ -2,14 +2,14 @@ import { Router } from 'express'
 import { verifyToken, requireAdmin } from '../middleware/auth.js'
 import Lesson from '../models/Lesson.js'
 import Quiz from '../models/Quiz.js'
-import { validate, importQuizSchema } from '../middleware/validate.js'
+import { validate, importQuizSchema, importLessonSchema } from '../middleware/validate.js'
 import { parse } from 'csv-parse/sync'
 
 const router = Router()
 
 // POST - import leçon HTML
-router.post('/lessons', verifyToken, requireAdmin, async (req, res) => {
-    try {
+router.post('/lessons', verifyToken, requireAdmin, validate(importLessonSchema), async (req, res) => {
+      try {
         const { title, content, courseId, availableFrom } = req.body
         const lesson = await Lesson.create({ title, content, courseId, availableFrom })
         res.status(201).json(lesson)
@@ -23,7 +23,7 @@ router.put('/lessons/:id', verifyToken, requireAdmin, async (req, res) => {
     try {
         const lesson = await Lesson.findByIdAndUpdate(req.params.id,
             { ...req.body, updatedAt: Date.now() },
-            { new: true })
+            { returnDocument: 'after' })
         if (!lesson) return res.status(404).json({ error: 'Lesson not found' })
         res.json(lesson)
     } catch (err) {
@@ -37,7 +37,7 @@ router.patch('/lessons/:id/schedule', verifyToken, requireAdmin, async (req, res
         const { availableFrom } = req.body
         const lesson = await Lesson.findByIdAndUpdate(req.params.id,
             { availableFrom, updatedAt: Date.now() },
-            { new: true })
+            { returnDocument: 'after' })
         if (!lesson) 
             return res.status(404).json({ error: 'Lesson not found' })
         res.json(lesson)
@@ -114,7 +114,7 @@ router.patch('/quizzes/:id/passing-score', verifyToken, requireAdmin, async (req
     const quiz = await Quiz.findByIdAndUpdate(
       req.params.id,
       { passingScore },
-      { new: true }
+      { returnDocument: 'after' }
     )
     if (!quiz) return res.status(404).json({ error: 'Quiz not found' })
     res.json(quiz)
