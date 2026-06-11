@@ -1,60 +1,37 @@
 import "./AdminDashboard.css";
 import { useAuth } from "../context/AuthContext.jsx";
-
-const mockActivity = [
-  {
-    student: "Sophie Martin",
-    course: "Stylisme & Création",
-    action: "Examen terminé",
-    date: "Aujourd'hui 14h12",
-    result: "87%",
-    passed: true,
-  },
-  {
-    student: "Lucas Bernard",
-    course: "Mode Mondiale",
-    action: "Leçon consultée",
-    date: "Aujourd'hui 13h44",
-    result: "—",
-    passed: null,
-  },
-  {
-    student: "Emma Dupont",
-    course: "Textile & Matières",
-    action: "Examen terminé",
-    date: "Aujourd'hui 11h05",
-    result: "48%",
-    passed: false,
-  },
-  {
-    student: "Antoine Leroy",
-    course: "Histoire de la Mode",
-    action: "Inscrit au cours",
-    date: "Hier 17h30",
-    result: "—",
-    passed: null,
-  },
-  {
-    student: "Chloé Rousseau",
-    course: "Couture & Patronage",
-    action: "Examen terminé",
-    date: "Hier 16h22",
-    result: "91%",
-    passed: true,
-  },
-  {
-    student: "Nathan Petit",
-    course: "Mode Digitale",
-    action: "Leçon consultée",
-    date: "Hier 09h14",
-    result: "—",
-    passed: null,
-  },
-];
+import { useEffect, useState } from "react";
 
 function AdminDashboard() {
-  const { user } = useAuth();
+  const { user, token } = useAuth();
   const firstName = user?.name?.split(" ")[0] ?? "Admin";
+  const [stats, setStats] = useState(null);
+  const [activity, setActivity] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    Promise.all([
+      fetch("http://localhost:4242/api/admin/stats", {
+        headers: { Authorization: `Bearer ${token}` },
+      }),
+      fetch("http://localhost:4242/api/admin/activity", {
+        headers: { Authorization: `Bearer ${token}` },
+      }),
+    ])
+      .then(([resStats, resActivity]) =>
+        Promise.all([resStats.json(), resActivity.json()]),
+      )
+      .then(([statsData, activityData]) => {
+        setStats(statsData);
+        setActivity(activityData);
+        setLoading(false);
+      })
+      .catch(() => {
+        setError("Impossible de charger les données.");
+        setLoading(false);
+      });
+  }, [token]);
 
   return (
     <div className="admin-dashboard">
@@ -77,24 +54,27 @@ function AdminDashboard() {
       </div>
 
       {/* Stats */}
+      {error && (
+        <p style={{ color: "#eb5757", marginBottom: "16px" }}>{error}</p>
+      )}
       <div className="admin-stats">
         <div className="admin-stat-card">
-          <strong>248</strong>
+          <strong>{loading ? "…" : stats?.totalStudents}</strong>
           <span>Étudiants inscrits</span>
-          <small className="positive">+12 ce mois</small>
+          <small className="positive">inscrits</small>
         </div>
         <div className="admin-stat-card">
-          <strong>14</strong>
+          <strong>{loading ? "…" : stats?.totalCourses}</strong>
           <span>Cours actifs</span>
-          <small>3 collections</small>
+          <small>sur la plateforme</small>
         </div>
         <div className="admin-stat-card">
-          <strong>832</strong>
+          <strong>{loading ? "…" : stats?.totalAttempts}</strong>
           <span>Examens passés</span>
-          <small>ce trimestre</small>
+          <small>au total</small>
         </div>
         <div className="admin-stat-card">
-          <strong>73%</strong>
+          <strong>{loading ? "…" : `${stats?.successRate}%`}</strong>
           <span>Taux de réussite</span>
           <small className="warning">seuil moy. 60%</small>
         </div>
@@ -125,23 +105,16 @@ function AdminDashboard() {
             </tr>
           </thead>
           <tbody>
-            {mockActivity.map((row, i) => (
-              <tr key={i}>
-                <td className="bold">{row.student}</td>
-                <td className="muted">{row.course}</td>
-                <td>{row.action}</td>
-                <td className="muted">{row.date}</td>
-                <td
-                  className={
-                    row.passed === true
-                      ? "success"
-                      : row.passed === false
-                        ? "fail"
-                        : "muted"
-                  }
-                >
-                  {row.result}{" "}
-                  {row.passed === true ? "✓" : row.passed === false ? "✗" : ""}
+            {activity.map((row) => (
+              <tr key={row._id}>
+                <td className="bold">{row.student?.name}</td>
+                <td className="muted">{row.quiz?.title}</td>
+                <td>Examen terminé</td>
+                <td className="muted">
+                  {new Date(row.attemptedAt).toLocaleDateString("fr-FR")}
+                </td>
+                <td className={row.passed ? "success" : "fail"}>
+                  {row.score}% {row.passed ? "✓" : "✗"}
                 </td>
               </tr>
             ))}
