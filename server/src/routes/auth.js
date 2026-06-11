@@ -47,7 +47,7 @@ router.post("/set-password", verifyToken, validate(setPasswordSchema), async (re
     const user = await User.findByIdAndUpdate( // on update le user avec nouveau mdp hashé et isFirstLogin à false
       req.user.userId,
       { passwordHash: hashedPassword, isFirstLogin: false },
-      { new: true }
+      { returnDocument: 'after' }
     )
 
     if (!user) return res.status(404).json({ error: 'User not found' })
