@@ -1,5 +1,5 @@
 import { Router } from 'express'
-import { verifyToken, requireAdmin } from '../middleware/auth.js'
+import { verifyToken } from '../middleware/auth.js'
 import Lesson from '../models/Lesson.js'
 import Quiz from '../models/Quiz.js'
 import Attempt from '../models/Attempt.js'
@@ -11,34 +11,42 @@ const router = Router()
 
 // GET - liste leçons disponibles
 router.get('/lessons', verifyToken, async (req, res) => {
-    try {
-        const { courseId } = req.query
-        const lessons = await Lesson.find({
-            courseId,
-            availableFrom: {
-                $lte: Date.now() }
-        })
-        res.json(lessons)
-    } catch (err) {
-        res.status(400).json({ error: err.message })
-    }
+  try {
+    const { courseId } = req.query
+    const lessons = await Lesson.find({
+      courseId,
+      availableFrom: { $lte: Date.now() }
+    })
+    res.json(lessons)
+  } catch (err) {
+    res.status(400).json({ error: err.message })
+  }
+})
+
+// GET /api/student/lessons/:id/quiz - récupérer le quiz d'une leçon (sans les réponses)
+router.get('/lessons/:id/quiz', verifyToken, async (req, res, next) => {
+  try {
+    const quiz = await Quiz.findOne({ lesson: req.params.id })
+      .select('-questions.correctIndexes')
+    if (!quiz) return res.status(404).json({ error: 'No quiz for this lesson' })
+    res.json(quiz)
+  } catch (err) {
+    next(err)
+  }
 })
 
 // GET /api/student/lessons/:id - accéder au contenu d'une leçon
 router.get('/lessons/:id', verifyToken, async (req, res) => {
-    try {
-        const lesson = await Lesson.findById(req.params.id)
-        if (!lesson) return res.status(404).json({ 
-            error: 'Lesson not found' 
-        })
-        if (lesson.availableFrom > Date.now()) {
-            return res.status(403).json({ error: 'Lesson not available yet' })
-        }
-        res.json(lesson)
-    } catch (err) {
-    res.status(400).json({ 
-        error: err.message
-    })}
+  try {
+    const lesson = await Lesson.findById(req.params.id)
+    if (!lesson) return res.status(404).json({ error: 'Lesson not found' })
+    if (lesson.availableFrom > Date.now()) {
+      return res.status(403).json({ error: 'Lesson not available yet' })
+    }
+    res.json(lesson)
+  } catch (err) {
+    res.status(400).json({ error: err.message })
+  }
 })
 
 // GET - récupérer un quiz sans les réponses
@@ -79,7 +87,6 @@ router.post('/quizzes/submit', verifyToken, validate(submitAttemptSchema), async
     const score = Math.round((correct / quiz.questions.length) * 100)
     const passed = score >= quiz.passingScore
 
-    // sauvegarde de la tentative
     const attempt = await Attempt.create({
       student: req.user.userId,
       quiz: quizId,
@@ -93,7 +100,6 @@ router.post('/quizzes/submit', verifyToken, validate(submitAttemptSchema), async
     res.status(400).json({ error: err.message })
   }
 })
-
 
 // ─── GET /api/student/progress/:courseId ─────────────────────────────────────
 // Retourne la progression d'un étudiant dans un cours.
