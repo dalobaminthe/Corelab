@@ -17,9 +17,9 @@
 }
 
 .unread-badge {
-  background: rgba(201, 168, 76, 0.15);
-  border: 1px solid var(--gold);
-  color: var(--gold);
+  background: rgba(100, 180, 160, 0.15);
+  border: 1px solid var(--green);
+  color: var(--green);
   font-size: 12px;
   padding: 3px 10px;
 }
@@ -47,7 +47,7 @@
 }
 
 .notif-item.unread {
-  border-left: 3px solid var(--gold);
+  border-left: 3px solid var(--green);
 }
 
 .notif-item.read {
@@ -56,14 +56,14 @@
 }
 
 .notif-item.unread:hover {
-  border-color: var(--gold);
+  border-color: var(--green);
 }
 
 .notif-dot {
   width: 8px;
   height: 8px;
   border-radius: 50%;
-  background: var(--gold);
+  background: var(--green);
   flex-shrink: 0;
 }
 
@@ -88,6 +88,6 @@
 
 .notif-cta {
   font-size: 11px;
-  color: var(--gold);
+  color: var(--green);
   white-space: nowrap;
 }

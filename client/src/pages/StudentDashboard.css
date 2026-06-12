@@ -28,7 +28,7 @@
   font-size: 14px;
 }
 
-.season-badge {
+.dashboard .season-badge {
   border: 1px solid rgba(100, 180, 160, 0.4);
   color: #64b4a0;
   padding: 6px 14px;

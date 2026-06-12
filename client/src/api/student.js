@@ -1,9 +1,5 @@
 const API_URL = import.meta.env.VITE_API_URL || "http://localhost:4242/api";
 
-function getToken() {
-  return localStorage.getItem("token");
-}
-
 export async function fetchProgress(courseId, token) {
   const response = await fetch(`${API_URL}/student/progress/${courseId}`, {
     headers: { Authorization: `Bearer ${token}` },
@@ -13,11 +9,11 @@ export async function fetchProgress(courseId, token) {
   return data;
 }
 
-export async function getLessons(courseId) {
+export async function getLessons(courseId, token) {
   const response = await fetch(
     `${API_URL}/student/lessons?courseId=${courseId}`,
     {
-      headers: { Authorization: `Bearer ${getToken()}` },
+      headers: { Authorization: `Bearer ${token}` },
     },
   );
   const data = await response.json();
@@ -25,30 +21,30 @@ export async function getLessons(courseId) {
   return data;
 }
 
-export async function getLesson(id) {
+export async function getLesson(id, token) {
   const response = await fetch(`${API_URL}/student/lessons/${id}`, {
-    headers: { Authorization: `Bearer ${getToken()}` },
+    headers: { Authorization: `Bearer ${token}` },
   });
   const data = await response.json();
   if (!response.ok) throw new Error(data.error || "Erreur");
   return data;
 }
 
-export async function getQuiz(id) {
+export async function getQuiz(id, token) {
   const response = await fetch(`${API_URL}/student/quizzes/${id}`, {
-    headers: { Authorization: `Bearer ${getToken()}` },
+    headers: { Authorization: `Bearer ${token}` },
   });
   const data = await response.json();
   if (!response.ok) throw new Error(data.error || "Erreur");
   return data;
 }
 
-export async function submitQuiz(quizId, answers) {
+export async function submitQuiz(quizId, answers, token) {
   const response = await fetch(`${API_URL}/student/quizzes/submit`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
-      Authorization: `Bearer ${getToken()}`,
+      Authorization: `Bearer ${token}`,
     },
     body: JSON.stringify({ quizId, answers }),
   });
