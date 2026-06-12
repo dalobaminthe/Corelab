@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useAuth } from "../context/AuthContext";
+import { getCourses, createStudent, assignCourses } from "../api/admin.js";
 import "./AdminEtudiants.css";
 
 function AdminEtudiants() {
@@ -9,21 +10,64 @@ function AdminEtudiants() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
+  const [showForm, setShowForm] = useState(false);
+  const [allCourses, setAllCourses] = useState([]);
+  const [newStudent, setNewStudent] = useState({ name: "", email: "" });
+  const [selectedCourseIds, setSelectedCourseIds] = useState([]);
+  const [formLoading, setFormLoading] = useState(false);
+  const [formError, setFormError] = useState(null);
+
   useEffect(() => {
     fetch("http://localhost:4242/api/admin/users", {
       headers: { Authorization: `Bearer ${token}` },
     })
       .then((res) => res.json())
       .then((data) => {
-        const studentsOnly = data.filter((u) => u.role === "student");
-        setStudents(studentsOnly);
+        setStudents(data.filter((u) => u.role === "student"));
         setLoading(false);
       })
       .catch(() => {
         setError("Impossible de charger les étudiants.");
         setLoading(false);
       });
+
+    getCourses(token).then(setAllCourses).catch(() => {});
   }, [token]);
+
+  function handleCourseToggle(courseId) {
+    setSelectedCourseIds((prev) =>
+      prev.includes(courseId)
+        ? prev.filter((id) => id !== courseId)
+        : [...prev, courseId]
+    );
+  }
+
+  async function handleSubmit(e) {
+    e.preventDefault();
+    setFormLoading(true);
+    setFormError(null);
+    try {
+      const result = await createStudent(
+        { name: newStudent.name, email: newStudent.email, role: "student" },
+        token
+      );
+      const created = result.created[0];
+
+      let finalStudent = created;
+      if (selectedCourseIds.length > 0) {
+        finalStudent = await assignCourses(created._id, selectedCourseIds, token);
+      }
+
+      setStudents((prev) => [...prev, finalStudent]);
+      setShowForm(false);
+      setNewStudent({ name: "", email: "" });
+      setSelectedCourseIds([]);
+    } catch (err) {
+      setFormError(err.message);
+    } finally {
+      setFormLoading(false);
+    }
+  }
 
   const filtered = students.filter(
     (s) =>
@@ -38,7 +82,56 @@ function AdminEtudiants() {
           <h1>Étudiants</h1>
           <p>{students.length} inscrits sur la plateforme</p>
         </div>
+        <button className="btn-add" onClick={() => setShowForm((v) => !v)}>
+          {showForm ? "Annuler" : "Nouvel étudiant +"}
+        </button>
       </div>
+
+      {showForm && (
+        <form className="student-form" onSubmit={handleSubmit}>
+          <h2>Ajouter un étudiant</h2>
+          {formError && <p className="state-msg error">{formError}</p>}
+          <div className="form-row">
+            <div className="form-group">
+              <label>Nom complet</label>
+              <input
+                value={newStudent.name}
+                onChange={(e) => setNewStudent((prev) => ({ ...prev, name: e.target.value }))}
+                required
+              />
+            </div>
+            <div className="form-group">
+              <label>Email</label>
+              <input
+                type="email"
+                value={newStudent.email}
+                onChange={(e) => setNewStudent((prev) => ({ ...prev, email: e.target.value }))}
+                required
+              />
+            </div>
+          </div>
+          {allCourses.length > 0 && (
+            <div className="form-group">
+              <label>Assigner à une cohorte (cours)</label>
+              <div className="courses-checkboxes">
+                {allCourses.map((course) => (
+                  <label key={course._id} className="checkbox-label">
+                    <input
+                      type="checkbox"
+                      checked={selectedCourseIds.includes(course._id)}
+                      onChange={() => handleCourseToggle(course._id)}
+                    />
+                    {course.title}
+                  </label>
+                ))}
+              </div>
+            </div>
+          )}
+          <button type="submit" className="submit-btn" disabled={formLoading}>
+            {formLoading ? "Création…" : "Créer l'étudiant"}
+          </button>
+        </form>
+      )}
 
       <div className="etudiants-toolbar">
         <input
@@ -77,9 +170,7 @@ function AdminEtudiants() {
                     <td>
                       {s.courses?.length > 0
                         ? s.courses.map((c) => (
-                            <span key={c._id} className="course-tag">
-                              {c.title}
-                            </span>
+                            <span key={c._id} className="course-tag">{c.title}</span>
                           ))
                         : <span className="muted">—</span>}
                     </td>
