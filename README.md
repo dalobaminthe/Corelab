@@ -47,7 +47,7 @@ docker compose up --build
 
 ## Lancement sans Docker
 
-### Variables d'environnement (voir env exemple)
+### Variables d'environnement
 
 **`server/.env`** (copier depuis `server/.env.example`) :
 
@@ -135,8 +135,17 @@ corelab/
 
 ---
 
+## Suivi de projet
+
+- 📋 Tableau Trello : [core-lab-user-stories](https://trello.com/b/8UYHwIST/core-lab-user-stories)
+- 🗄️ Schéma BDD : [dbdiagram.io](https://dbdiagram.io/d/6a2bd5d65c789b8acb6ddb74)
+
+---
+
 ## Équipe
 
-- **Noémie** — Backend
-- **Daloba** — Fullstack
-- **Arnold** — Frontend
+| | Membre | Rôle |
+|---|---|---|
+| <img src="https://github.com/noemie-ta-ma.png" width="32" height="32" style="border-radius:50%"> | [Noémie](https://github.com/noemie-ta-ma) | Backend & Infra |
+| <img src="https://github.com/dalobaminthe.png" width="32" height="32" style="border-radius:50%"> | [Daloba](https://github.com/dalobaminthe) | Fullstack |
+| <img src="https://github.com/stevendarboux-a11y.png" width="32" height="32" style="border-radius:50%"> | [Arnold](https://github.com/stevendarboux-a11y) | Frontend |
