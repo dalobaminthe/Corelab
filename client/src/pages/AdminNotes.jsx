@@ -5,10 +5,13 @@ import "./AdminNotes.css";
 
 function AdminNotes() {
   const { token } = useAuth();
-  const [attempts, setAttempts] = useState([]);
+
+  // ── États ──────────────────────────────────────────────────────────────────
+  const [attempts, setAttempts] = useState([]); // 20 derniers passages de quiz
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
+  // ── Charge l'activité au montage ───────────────────────────────────────────
   useEffect(() => {
     getActivity(token)
       .then((data) => {
@@ -21,6 +24,7 @@ function AdminNotes() {
       });
   }, [token]);
 
+  // ── Rendu ──────────────────────────────────────────────────────────────────
   return (
     <div className="admin-notes">
       <div className="notes-header">
@@ -35,6 +39,7 @@ function AdminNotes() {
         <p className="notes-state">Aucune tentative enregistrée.</p>
       )}
 
+      {/* Tableau : student et quiz sont "peuplés" par le back (populate) */}
       {!loading && !error && attempts.length > 0 && (
         <table className="notes-table">
           <thead>
@@ -51,6 +56,7 @@ function AdminNotes() {
             {attempts.map((attempt) => (
               <tr key={attempt._id}>
                 <td>{attempt.student?.name ?? "—"}</td>
+                {/* quiz.lesson.title : accès imbriqué grâce au populate du back */}
                 <td>{attempt.quiz?.lesson?.title ?? "—"}</td>
                 <td>{attempt.quiz?.title ?? "—"}</td>
                 <td>{attempt.score} / 100</td>

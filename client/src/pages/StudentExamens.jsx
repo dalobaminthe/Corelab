@@ -7,10 +7,15 @@ import "./StudentExamens.css";
 function StudentExamens() {
   const { user, token } = useAuth();
   const navigate = useNavigate();
-  const [lessonsByCourse, setLessonsByCourse] = useState([]);
+
+  // ── États ──────────────────────────────────────────────────────────────────
+  const [lessonsByCourse, setLessonsByCourse] = useState([]); // leçons groupées par cours
   const [loading, setLoading] = useState(true);
+  // loadingQuiz stocke l'ID de la leçon en cours (pas un booléen)
+  // → permet de désactiver uniquement le bouton cliqué, pas tous les boutons
   const [loadingQuiz, setLoadingQuiz] = useState(null);
 
+  // ── Charge les leçons de chaque cours en parallèle ─────────────────────────
   useEffect(() => {
     if (!user?.courses?.length) {
       setLoading(false);
@@ -28,6 +33,7 @@ function StudentExamens() {
       .catch(() => setLoading(false));
   }, [user, token]);
 
+  // ── Au clic : cherche le quiz de la leçon puis redirige ────────────────────
   async function handleQuizClick(lessonId) {
     setLoadingQuiz(lessonId);
     try {
@@ -40,6 +46,7 @@ function StudentExamens() {
     }
   }
 
+  // ── Rendu ──────────────────────────────────────────────────────────────────
   return (
     <div className="student-examens">
       <div className="examens-header">
@@ -53,6 +60,7 @@ function StudentExamens() {
         <p className="examens-state">Aucun cours assigné.</p>
       )}
 
+      {/* Une section par cours, avec ses leçons et le bouton quiz */}
       <div className="examens-list">
         {lessonsByCourse.map(({ courseId, lessons }) => (
           <div key={courseId} className="course-block">
@@ -66,6 +74,7 @@ function StudentExamens() {
                     <p className="lesson-title">{lesson.title}</p>
                     <small>Quiz disponible</small>
                   </div>
+                  {/* disabled si ce bouton précis est en chargement */}
                   <button
                     className="quiz-link-btn"
                     onClick={() => handleQuizClick(lesson._id)}

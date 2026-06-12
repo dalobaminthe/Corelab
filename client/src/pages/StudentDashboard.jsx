@@ -4,6 +4,7 @@ import { useAuth } from "../context/AuthContext.jsx";
 import { fetchProgress, getLessons, getAttempts } from "../api/student.js";
 import "./StudentDashboard.css";
 
+// Noms de cours en attendant que getStudentCourses soit branché ici aussi
 const courseNames = [
   "Histoire de la Mode",
   "Stylisme & Création",
@@ -13,6 +14,7 @@ const courseNames = [
   "Mode Mondiale",
 ];
 
+// Convertit une date ISO en texte lisible : "Aujourd'hui", "Il y a 1j", etc.
 function timeAgo(dateStr) {
   const days = Math.floor((Date.now() - new Date(dateStr).getTime()) / 86400000);
   if (days === 0) return "Aujourd'hui";
@@ -23,20 +25,22 @@ function timeAgo(dateStr) {
 function StudentDashboard() {
   const { user, token } = useAuth();
   const navigate = useNavigate();
-  const [modules, setModules] = useState([]);
-  const [nextLesson, setNextLesson] = useState(null);
-  const [attempts, setAttempts] = useState([]);
+
+  // ── États ──────────────────────────────────────────────────────────────────
+  const [modules, setModules] = useState([]);       // progression par cours
+  const [nextLesson, setNextLesson] = useState(null); // prochaine leçon à faire
+  const [attempts, setAttempts] = useState([]);     // historique des quiz passés
   const [loading, setLoading] = useState(true);
 
+  // ── Chargement des données ─────────────────────────────────────────────────
   useEffect(() => {
     async function loadProgress() {
-      // Si l'utilisateur n'a pas de cours assignés, on arrête le chargement
       if (!user?.courses?.length) {
         setLoading(false);
         return;
       }
       try {
-        // Promise.all lance tous les appels API en parallèle (plus rapide qu'un par un)
+        // Promise.all : 3 appels en parallèle pour ne pas les enchaîner inutilement
         const [progressData, firstLessons, attemptsData] = await Promise.all([
           Promise.all(
             user.courses.map((courseId, i) =>
@@ -51,30 +55,36 @@ function StudentDashboard() {
           getLessons(user.courses[0], token),
           getAttempts(token),
         ]);
+
         setModules(progressData);
         setAttempts(attemptsData);
+
+        // Math.min évite de dépasser le dernier index si toutes les leçons sont faites
         const completed = progressData[0]?.completedLessons ?? 0;
         const nextIndex = Math.min(completed, firstLessons.length - 1);
         setNextLesson(firstLessons[nextIndex] ?? null);
       } catch (err) {
         console.error(err);
       } finally {
-        // finally s'exécute toujours, succès ou erreur — on arrête le chargement
+        // finally s'exécute toujours, succès ou erreur
         setLoading(false);
       }
     }
     loadProgress();
-  }, [user, token]); // se relance si user ou token change
+  }, [user, token]);
 
+  // ── Moyenne calculée côté front depuis les attempts (score sur 100 → /5 → sur 20) ──
   const moyenne = attempts.length > 0
     ? Math.round((attempts.reduce((sum, a) => sum + a.score, 0) / attempts.length) / 5 * 10) / 10
     : null;
 
+  // ── Rendu ──────────────────────────────────────────────────────────────────
   return (
     <div className="dashboard">
       <div className="dashboard-header">
         <div>
           <h1>Mon Parcours</h1>
+          {/* split(" ")[0] : affiche uniquement le prénom */}
           <p>Bienvenue, {user?.name?.split(" ")[0]}</p>
         </div>
         <span className="season-badge">AW 2026</span>
@@ -87,6 +97,7 @@ function StudentDashboard() {
             <p>Stylisme 2024 · Paris — Milan · Semestre 3 en cours · AW 2026</p>
           </div>
 
+          {/* Stats : cours assignés + moyenne réelle */}
           <div className="stats-grid">
             <div className="stat-card">
               <small>Cours suivis</small>
@@ -100,6 +111,7 @@ function StudentDashboard() {
             </div>
           </div>
 
+          {/* Barres de progression par cours */}
           <div className="progress-section">
             <h3>Progression par Module</h3>
             {loading ? (
@@ -128,6 +140,7 @@ function StudentDashboard() {
         </div>
 
         <div className="dashboard-right">
+          {/* Prochaine leçon : la leçon à l'index = nombre de leçons complétées */}
           <div className="next-lesson-card">
             <small>Prochaine Leçon</small>
             <h3>{nextLesson?.title ?? "—"}</h3>
@@ -150,6 +163,7 @@ function StudentDashboard() {
             </button>
           </div>
 
+          {/* 5 derniers quiz passés avec score et date relative */}
           <div className="activity-section">
             <h3>Activité Récente</h3>
             {attempts.length === 0 && (
