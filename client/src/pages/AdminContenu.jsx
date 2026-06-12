@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 import { useAuth } from "../context/AuthContext.jsx";
 import "./AdminContenu.css";
+import { useEditor, EditorContent } from '@tiptap/react'
+import StarterKit from '@tiptap/starter-kit'
 
 function AdminContenu() {
   const { token } = useAuth();
@@ -15,6 +17,14 @@ function AdminContenu() {
   const [courses, setCourses] = useState([]);
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState(null);
+
+  const editor = useEditor({
+    extensions: [StarterKit],
+    content: '',
+    onUpdate: ({ editor }) => {
+      setLessonForm(prev => ({ ...prev, content: editor.getHTML() }))
+    },
+  })
 
   useEffect(() => {
     fetch("http://localhost:4242/api/admin/courses", {
@@ -45,12 +55,8 @@ function AdminContenu() {
       .then((res) => res.json())
       .then(() => {
         setMessage({ type: "success", text: "Leçon créée avec succès." });
-        setLessonForm({
-          title: "",
-          content: "",
-          courseId: "",
-          availableFrom: "",
-        });
+        setLessonForm({ title: "", content: "", courseId: "", availableFrom: "" });
+        editor.commands.setContent('')
       })
       .catch(() =>
         setMessage({ type: "error", text: "Erreur lors de la création." }),
@@ -132,14 +138,58 @@ function AdminContenu() {
               />
             </div>
             <div className="form-group">
-              <label>Contenu HTML</label>
-              <textarea
-                name="content"
-                value={lessonForm.content}
-                onChange={handleLessonChange}
-                rows={6}
-                required
+              <label>Importer depuis un fichier HTML</label>
+              <input
+                type="file"
+                accept=".html"
+                onChange={(e) => {
+                  const file = e.target.files[0]
+                  if (!file) return
+                  const reader = new FileReader()
+                  reader.onload = (event) => {
+                    const html = event.target.result
+                    editor.commands.setContent(html)
+                    setLessonForm(prev => ({ ...prev, content: html }))
+                  }
+                  reader.readAsText(file)
+                }}
               />
+            </div>
+            <div className="form-group">
+              <label>Contenu HTML</label>
+              <div className="editor-toolbar">
+                <button type="button"
+                  onClick={() => editor.chain().focus().toggleBold().run()}
+                  className={editor?.isActive('bold') ? 'active' : ''}>
+                  <b>G</b>
+                </button>
+                <button type="button"
+                  onClick={() => editor.chain().focus().toggleItalic().run()}
+                  className={editor?.isActive('italic') ? 'active' : ''}>
+                  <i>I</i>
+                </button>
+                <button type="button"
+                  onClick={() => editor.chain().focus().toggleHeading({ level: 2 }).run()}
+                  className={editor?.isActive('heading', { level: 2 }) ? 'active' : ''}>
+                  H2
+                </button>
+                <button type="button"
+                  onClick={() => editor.chain().focus().toggleHeading({ level: 3 }).run()}
+                  className={editor?.isActive('heading', { level: 3 }) ? 'active' : ''}>
+                  H3
+                </button>
+                <button type="button"
+                  onClick={() => editor.chain().focus().toggleBulletList().run()}
+                  className={editor?.isActive('bulletList') ? 'active' : ''}>
+                  • Liste
+                </button>
+                <button type="button"
+                  onClick={() => editor.chain().focus().toggleOrderedList().run()}
+                  className={editor?.isActive('orderedList') ? 'active' : ''}>
+                  1. Liste
+                </button>
+              </div>
+              <EditorContent editor={editor} className="editor-content" />
             </div>
             <button type="submit" className="submit-btn" disabled={loading}>
               {loading ? "Envoi…" : "Créer la leçon"}
