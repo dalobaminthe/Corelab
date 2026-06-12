@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext.jsx";
-import { fetchProgress } from "../api/student.js";
+import { fetchProgress, getLessons, getAttempts } from "../api/student.js";
 import "./StudentDashboard.css";
 
 const courseNames = [
@@ -12,36 +13,19 @@ const courseNames = [
   "Mode Mondiale",
 ];
 
-const mockActivity = [
-  {
-    type: "success",
-    text: "QCM Histoire — Module 1 validé",
-    detail: "Score : 18/20",
-    time: "Il y a 2j",
-  },
-  {
-    type: "lesson",
-    text: "Leçon : Fibres naturelles et synthétiques",
-    detail: "Vue à 80%",
-    time: "Il y a 3j",
-  },
-  {
-    type: "cert",
-    text: "Certificat Stylisme & Création obtenu",
-    detail: "Félicitations !",
-    time: "Il y a 5j",
-  },
-  {
-    type: "fail",
-    text: "QCM Couture — Module 2 à repasser",
-    detail: "Score insuffisant : 8/20",
-    time: "Il y a 7j",
-  },
-];
+function timeAgo(dateStr) {
+  const days = Math.floor((Date.now() - new Date(dateStr).getTime()) / 86400000);
+  if (days === 0) return "Aujourd'hui";
+  if (days === 1) return "Il y a 1j";
+  return `Il y a ${days}j`;
+}
 
 function StudentDashboard() {
   const { user, token } = useAuth();
+  const navigate = useNavigate();
   const [modules, setModules] = useState([]);
+  const [nextLesson, setNextLesson] = useState(null);
+  const [attempts, setAttempts] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -53,16 +37,25 @@ function StudentDashboard() {
       }
       try {
         // Promise.all lance tous les appels API en parallèle (plus rapide qu'un par un)
-        const progressData = await Promise.all(
-          user.courses.map((courseId, i) =>
-            fetchProgress(courseId, token).then((data) => ({
-              name: courseNames[i] || `Cours ${i + 1}`,
-              progress: data.progressPercent,
-              lessons: `${data.completedLessons}/${data.totalLessons}`,
-            })),
+        const [progressData, firstLessons, attemptsData] = await Promise.all([
+          Promise.all(
+            user.courses.map((courseId, i) =>
+              fetchProgress(courseId, token).then((data) => ({
+                name: courseNames[i] || `Cours ${i + 1}`,
+                progress: data.progressPercent,
+                lessons: `${data.completedLessons}/${data.totalLessons}`,
+                completedLessons: data.completedLessons,
+              })),
+            ),
           ),
-        );
+          getLessons(user.courses[0], token),
+          getAttempts(token),
+        ]);
         setModules(progressData);
+        setAttempts(attemptsData);
+        const completed = progressData[0]?.completedLessons ?? 0;
+        const nextIndex = Math.min(completed, firstLessons.length - 1);
+        setNextLesson(firstLessons[nextIndex] ?? null);
       } catch (err) {
         console.error(err);
       } finally {
@@ -78,7 +71,7 @@ function StudentDashboard() {
       <div className="dashboard-header">
         <div>
           <h1>Mon Parcours</h1>
-          <p>Bienvenue, {user?.name}</p>
+          <p>Bienvenue, {user?.name?.split(" ")[0]}</p>
         </div>
         <span className="season-badge">AW 2026</span>
       </div>
@@ -86,7 +79,7 @@ function StudentDashboard() {
       <div className="dashboard-body">
         <div className="dashboard-left">
           <div className="welcome-card">
-            <h2>Bonne reprise, {user?.name} ✦</h2>
+            <h2>Bonne reprise, {user?.name?.split(" ")[0]} ✦</h2>
             <p>Stylisme 2024 · Paris — Milan · Semestre 3 en cours · AW 2026</p>
           </div>
 
@@ -143,36 +136,38 @@ function StudentDashboard() {
         <div className="dashboard-right">
           <div className="next-lesson-card">
             <small>Prochaine Leçon</small>
-            <h3>L'évolution du costume occidental — XVIIe au XXe</h3>
+            <h3>{nextLesson?.title ?? "—"}</h3>
             <div className="lesson-meta">
               <div>
                 <small>Module</small>
-                <span>Histoire de la Mode</span>
-              </div>
-              <div>
-                <small>Durée</small>
-                <span>45 min</span>
-              </div>
-              <div>
-                <small>Semestre</small>
-                <span>3 — AW 2026</span>
+                <span>{courseNames[0]}</span>
               </div>
             </div>
-            <div className="progress-bar">
-              <div className="progress-fill" style={{ width: "75%" }} />
-            </div>
-            <button className="resume-btn">▶ Reprendre la leçon</button>
+            <button
+              className="resume-btn"
+              onClick={() =>
+                nextLesson &&
+                navigate(`/dashboard/cours/${nextLesson._id}`, {
+                  state: { courseName: courseNames[0] },
+                })
+              }
+            >
+              ▶ Reprendre la leçon
+            </button>
           </div>
 
           <div className="activity-section">
             <h3>Activité Récente</h3>
-            {mockActivity.map((item, i) => (
-              <div key={i} className={`activity-item ${item.type}`}>
+            {attempts.length === 0 && (
+              <p style={{ color: "#9a9a9a", fontSize: "13px" }}>Aucune activité.</p>
+            )}
+            {attempts.slice(0, 5).map((attempt) => (
+              <div key={attempt._id} className={`activity-item ${attempt.passed ? "success" : "fail"}`}>
                 <div>
-                  <p>{item.text}</p>
-                  <small>{item.detail}</small>
+                  <p>{attempt.quiz?.title ?? "Quiz"}</p>
+                  <small>Score : {attempt.score} / 100</small>
                 </div>
-                <span>{item.time}</span>
+                <span>{timeAgo(attempt.attemptedAt)}</span>
               </div>
             ))}
           </div>
