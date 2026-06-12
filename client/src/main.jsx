@@ -19,6 +19,8 @@ import AdminContenu from "./pages/AdminContenu.jsx";
 import AdminNotes from "./pages/AdminNotes.jsx";
 import StudentNotifications from "./pages/StudentNotifications.jsx";
 import StudentExamens from "./pages/StudentExamens.jsx";
+import StudentCours from "./pages/StudentCours.jsx";
+import StudentLecon from "./pages/StudentLecon.jsx";
 
 // Définition des routes : path = URL, element = composant à afficher
 const router = createBrowserRouter([
@@ -34,6 +36,8 @@ const router = createBrowserRouter([
     ),
     children: [
       { index: true, element: <StudentDashboard /> },
+      { path: "cours", element: <StudentCours /> },
+      { path: "cours/:lessonId", element: <StudentLecon /> },
       { path: "notifications", element: <StudentNotifications /> },
       { path: "quiz/:quizId", element: <QuizPage /> },
       { path: "examens", element: <StudentExamens /> },

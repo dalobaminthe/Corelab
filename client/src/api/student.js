@@ -62,6 +62,15 @@ export async function submitQuiz(quizId, answers, token) {
   return data;
 }
 
+export async function getAttempts(token) {
+  const response = await fetch(`${API_URL}/student/attempts`, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+  const data = await response.json();
+  if (!response.ok) throw new Error(data.error || "Erreur");
+  return data;
+}
+
 export async function getNotifications(token) {
   const response = await fetch(`${API_URL}/student/notifications`, {
     headers: { Authorization: `Bearer ${token}` },
