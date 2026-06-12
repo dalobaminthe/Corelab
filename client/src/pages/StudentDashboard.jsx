@@ -66,6 +66,10 @@ function StudentDashboard() {
     loadProgress();
   }, [user, token]); // se relance si user ou token change
 
+  const moyenne = attempts.length > 0
+    ? Math.round((attempts.reduce((sum, a) => sum + a.score, 0) / attempts.length) / 5 * 10) / 10
+    : null;
+
   return (
     <div className="dashboard">
       <div className="dashboard-header">
@@ -91,18 +95,8 @@ function StudentDashboard() {
             </div>
             <div className="stat-card">
               <small>Moyenne générale</small>
-              <strong>17,6</strong>
-              <span>sur 20 · Excellent</span>
-            </div>
-            <div className="stat-card">
-              <small>Prochain examen</small>
-              <strong>15 Sep</strong>
-              <span>Histoire — QCM 03</span>
-            </div>
-            <div className="stat-card">
-              <small>Certificats</small>
-              <strong>2</strong>
-              <span>obtenus cette année</span>
+              <strong>{moyenne !== null ? `${moyenne}/20` : "—"}</strong>
+              <span>{attempts.length} quiz passés</span>
             </div>
           </div>
 
