@@ -1,32 +1,30 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext.jsx";
-import { getLessons, fetchProgress } from "../api/student.js";
+import { getLessons, fetchProgress, getStudentCourses } from "../api/student.js";
 import "./StudentCours.css";
 
-const courseNames = [
-  "Histoire de la Mode",
-  "Stylisme & Création",
-  "Textile & Matières",
-  "Couture & Patronage",
-  "Mode Digitale",
-  "Mode Mondiale",
-];
-
 function StudentCours() {
-  const { user, token } = useAuth();
+  const { token } = useAuth();
   const navigate = useNavigate();
+  const [courses, setCourses] = useState([]);
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [lessons, setLessons] = useState([]);
   const [progress, setProgress] = useState(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (!user?.courses?.length) {
-      setLoading(false);
-      return;
-    }
-    const courseId = user.courses[selectedIndex];
+    getStudentCourses(token)
+      .then((data) => {
+        setCourses(data);
+        setLoading(false);
+      })
+      .catch(() => setLoading(false));
+  }, [token]);
+
+  useEffect(() => {
+    if (!courses.length) return;
+    const courseId = courses[selectedIndex]._id;
     setLoading(true);
     Promise.all([getLessons(courseId, token), fetchProgress(courseId, token)])
       .then(([lessonsData, progressData]) => {
@@ -35,9 +33,9 @@ function StudentCours() {
         setLoading(false);
       })
       .catch(() => setLoading(false));
-  }, [selectedIndex, user, token]);
+  }, [selectedIndex, courses, token]);
 
-  const courseName = courseNames[selectedIndex] || `Cours ${selectedIndex + 1}`;
+  const courseName = courses[selectedIndex]?.title ?? `Cours ${selectedIndex + 1}`;
 
   return (
     <div className="student-cours">
@@ -50,13 +48,13 @@ function StudentCours() {
       </div>
 
       <div className="cours-tabs">
-        {user?.courses?.map((courseId, i) => (
+        {courses.map((course, i) => (
           <button
-            key={courseId}
+            key={course._id}
             className={`cours-tab ${selectedIndex === i ? "active" : ""}`}
             onClick={() => setSelectedIndex(i)}
           >
-            {courseNames[i] || `Cours ${i + 1}`}
+            {course.title}
           </button>
         ))}
       </div>
