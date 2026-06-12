@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useAuth } from "../context/AuthContext.jsx";
-import { getLessons } from "../api/student.js";
+import { getLessons, getLessonQuiz } from "../api/student.js";
 import { useNavigate } from "react-router-dom";
 import "./StudentExamens.css";
 
@@ -9,6 +9,7 @@ function StudentExamens() {
   const navigate = useNavigate();
   const [lessonsByCourse, setLessonsByCourse] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [loadingQuiz, setLoadingQuiz] = useState(null);
 
   useEffect(() => {
     if (!user?.courses?.length) {
@@ -26,6 +27,18 @@ function StudentExamens() {
       })
       .catch(() => setLoading(false));
   }, [user, token]);
+
+  async function handleQuizClick(lessonId) {
+    setLoadingQuiz(lessonId);
+    try {
+      const quiz = await getLessonQuiz(lessonId, token);
+      navigate(`/dashboard/quiz/${quiz._id}`);
+    } catch {
+      alert("Aucun quiz disponible pour cette leçon.");
+    } finally {
+      setLoadingQuiz(null);
+    }
+  }
 
   return (
     <div className="student-examens">
@@ -55,10 +68,10 @@ function StudentExamens() {
                   </div>
                   <button
                     className="quiz-link-btn"
-                    disabled
-                    title="En attente de la route backend"
+                    onClick={() => handleQuizClick(lesson._id)}
+                    disabled={loadingQuiz === lesson._id}
                   >
-                    Passer le quiz
+                    {loadingQuiz === lesson._id ? "…" : "Passer le quiz"}
                   </button>
                 </div>
               ))

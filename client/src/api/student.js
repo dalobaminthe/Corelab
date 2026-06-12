@@ -21,6 +21,15 @@ export async function getLessons(courseId, token) {
   return data;
 }
 
+export async function getLessonQuiz(lessonId, token) {
+  const response = await fetch(`${API_URL}/student/lessons/${lessonId}/quiz`, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+  const data = await response.json();
+  if (!response.ok) throw new Error(data.error || "Erreur");
+  return data;
+}
+
 export async function getLesson(id, token) {
   const response = await fetch(`${API_URL}/student/lessons/${id}`, {
     headers: { Authorization: `Bearer ${token}` },
