@@ -16,6 +16,7 @@ import QuizPage from "./pages/QuizPage.jsx";
 import AdminLayout from "./layouts/AdminLayout.jsx";
 import AdminEtudiants from "./pages/AdminEtudiants.jsx";
 import AdminContenu from "./pages/AdminContenu.jsx";
+import AdminNotes from "./pages/AdminNotes.jsx";
 import StudentNotifications from "./pages/StudentNotifications.jsx";
 import StudentExamens from "./pages/StudentExamens.jsx";
 
@@ -49,6 +50,7 @@ const router = createBrowserRouter([
       { index: true, element: <AdminDashboard /> },
       { path: "etudiants", element: <AdminEtudiants /> },
       { path: "contenu", element: <AdminContenu /> },
+      { path: "notes", element: <AdminNotes /> },
     ],
   },
   {
