@@ -4,10 +4,27 @@ import Lesson from '../models/Lesson.js'
 import Quiz from '../models/Quiz.js'
 import Attempt from '../models/Attempt.js'
 import Notification from '../models/Notification.js'
+import User from '../models/User.js'
 import { validate, submitAttemptSchema } from '../middleware/validate.js'
 import mongoose from 'mongoose'
 
+
 const router = Router()
+
+// ─── GET /api/student/courses ─────────────────────────────────────────────────
+// Retourne les cours de l'étudiant connecté avec leurs leçons
+router.get('/courses', verifyToken, async (req, res, next) => {
+  try {
+    const user = await User.findById(req.user.userId).populate({
+      path: 'courses',
+      populate: { path: 'lessons', select: 'title availableFrom' }
+    })
+    if (!user) return res.status(404).json({ error: 'User not found' })
+    res.json(user.courses)
+  } catch (err) {
+    next(err)
+  }
+})
 
 router.get('/lessons', verifyToken, async (req, res) => {
     try {
