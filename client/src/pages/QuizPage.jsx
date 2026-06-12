@@ -1,11 +1,13 @@
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
+import { useAuth } from "../context/AuthContext.jsx";
 import { getQuiz, submitQuiz } from "../api/student";
 import "./QuizPage.css";
 
 function QuizPage() {
     const { quizId } = useParams();
     const navigate = useNavigate();
+    const { token } = useAuth();
 
     const [quiz, setQuiz] = useState(null);
     const [answers, setAnswers] = useState([]);
@@ -15,7 +17,7 @@ function QuizPage() {
     const [submitting, setSubmitting] = useState(false);
 
     useEffect(() => {
-        getQuiz(quizId)
+        getQuiz(quizId, token)
         .then((data) => {
         setQuiz(data);
         setAnswers(new Array(data.questions.length).fill(null));
@@ -40,7 +42,7 @@ function QuizPage() {
         }
         setSubmitting(true);
         try {
-            const data = await submitQuiz(quizId, answers);
+            const data = await submitQuiz(quizId, answers, token);
             setResult(data);
         } catch (err) {
             setError(err.message);

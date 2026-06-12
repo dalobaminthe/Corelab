@@ -4,6 +4,9 @@
   --bg-card: #252220;
   --text: #f5f5f5;
   --text-muted: #9a9a9a;
+}
+
+.admin-layout {
   --border: rgba(201, 168, 76, 0.2);
 }
 

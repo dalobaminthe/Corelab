@@ -17,6 +17,7 @@ import AdminLayout from "./layouts/AdminLayout.jsx";
 import AdminEtudiants from "./pages/AdminEtudiants.jsx";
 import AdminContenu from "./pages/AdminContenu.jsx";
 import StudentNotifications from "./pages/StudentNotifications.jsx";
+import StudentExamens from "./pages/StudentExamens.jsx";
 
 // Définition des routes : path = URL, element = composant à afficher
 const router = createBrowserRouter([
@@ -33,6 +34,8 @@ const router = createBrowserRouter([
     children: [
       { index: true, element: <StudentDashboard /> },
       { path: "notifications", element: <StudentNotifications /> },
+      { path: "quiz/:quizId", element: <QuizPage /> },
+      { path: "examens", element: <StudentExamens /> },
     ],
   },
   {
@@ -53,14 +56,6 @@ const router = createBrowserRouter([
     element: (
       <ProtectedRoute>
         <SetPassword />
-      </ProtectedRoute>
-    ),
-  },
-  {
-    path: "/quiz/:quizId",
-    element: (
-      <ProtectedRoute>
-        <QuizPage />
       </ProtectedRoute>
     ),
   },
