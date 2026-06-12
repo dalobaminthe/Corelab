@@ -4,7 +4,87 @@
 }
 
 .contenu-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
   margin-bottom: 32px;
+}
+
+/* ── Bouton liste des cours ── */
+.btn-courses {
+  background: transparent;
+  border: 1px solid var(--gold);
+  color: var(--gold);
+  padding: 10px 20px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background 0.15s;
+}
+
+.btn-courses:hover {
+  background: rgba(201, 168, 76, 0.1);
+}
+
+/* ── Table liste des cours ── */
+.courses-list-wrap {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  padding: 24px;
+  margin-bottom: 28px;
+}
+
+.courses-list-wrap h2 {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--text);
+  margin-bottom: 16px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--border);
+}
+
+.courses-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+
+.courses-table th {
+  text-align: left;
+  color: var(--text-muted);
+  font-weight: 500;
+  padding: 10px 14px;
+  border-bottom: 1px solid var(--border);
+}
+
+.courses-table td {
+  padding: 12px 14px;
+  border-bottom: 1px solid rgba(201, 168, 76, 0.08);
+  color: var(--text);
+}
+
+.courses-table tr:last-child td {
+  border-bottom: none;
+}
+
+.courses-table .num {
+  color: var(--text-muted);
+  width: 40px;
+}
+
+.courses-table .course-title {
+  font-weight: 600;
+}
+
+.courses-table .muted {
+  color: var(--text-muted);
+}
+
+.courses-table .empty {
+  text-align: center;
+  color: var(--text-muted);
+  padding: 24px !important;
 }
 
 .contenu-header h1 {

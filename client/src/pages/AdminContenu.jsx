@@ -17,6 +17,7 @@ function AdminContenu() {
   const [courses, setCourses] = useState([]);
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState(null);
+  const [showCourses, setShowCourses] = useState(false);
 
   const editor = useEditor({
     extensions: [StarterKit],
@@ -89,12 +90,47 @@ function AdminContenu() {
   return (
     <div className="admin-contenu">
       <div className="contenu-header">
-        <h1>Gestion du contenu</h1>
-        <p>Créer des leçons et importer des QCM</p>
+        <div>
+          <h1>Gestion du contenu</h1>
+          <p>Créer des leçons et importer des QCM</p>
+        </div>
+        <button className="btn-courses" onClick={() => setShowCourses((v) => !v)}>
+          {showCourses ? "Fermer la liste" : "Liste des cours"}
+        </button>
       </div>
 
       {message && (
         <p className={`contenu-message ${message.type}`}>{message.text}</p>
+      )}
+
+      {showCourses && (
+        <div className="courses-list-wrap">
+          <h2>Cours disponibles ({courses.length})</h2>
+          <table className="courses-table">
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Titre</th>
+                <th>Description</th>
+              </tr>
+            </thead>
+            <tbody>
+              {courses.length === 0 ? (
+                <tr>
+                  <td colSpan={3} className="empty">Aucun cours trouvé.</td>
+                </tr>
+              ) : (
+                courses.map((course, i) => (
+                  <tr key={course._id}>
+                    <td className="num">{String(i + 1).padStart(2, "0")}</td>
+                    <td className="course-title">{course.title}</td>
+                    <td className="muted">{course.description || "—"}</td>
+                  </tr>
+                ))
+              )}
+            </tbody>
+          </table>
+        </div>
       )}
 
       <div className="contenu-grid">
