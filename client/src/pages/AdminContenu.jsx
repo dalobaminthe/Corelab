@@ -3,7 +3,7 @@ import { useAuth } from "../context/AuthContext.jsx";
 import "./AdminContenu.css";
 import { useEditor, EditorContent } from '@tiptap/react'
 import StarterKit from '@tiptap/starter-kit'
-import { updateCourse, deleteCourse } from "../api/admin.js"
+import { createCourse, updateCourse, deleteCourse } from "../api/admin.js"
 
 function AdminContenu() {
   const { token } = useAuth();
@@ -21,6 +21,8 @@ function AdminContenu() {
   const [showCourses, setShowCourses] = useState(false);
   const [editingCourse, setEditingCourse] = useState(null);
   const [editForm, setEditForm] = useState({ title: "", description: "" });
+  const [showCreateCourse, setShowCreateCourse] = useState(false);
+  const [courseForm, setCourseForm] = useState({ title: "", description: "" });
 
   const editor = useEditor({
     extensions: [StarterKit],
@@ -66,6 +68,22 @@ function AdminContenu() {
         setMessage({ type: "error", text: "Erreur lors de la création." }),
       )
       .finally(() => setLoading(false));
+  }
+
+  async function handleCourseSubmit(e) {
+    e.preventDefault();
+    setLoading(true);
+    try {
+      const newCourse = await createCourse(courseForm, token);
+      setCourses([...courses, newCourse]);
+      setCourseForm({ title: "", description: "" });
+      setShowCreateCourse(false);
+      setMessage({ type: "success", text: "Cours créé avec succès." });
+    } catch (err) {
+      setMessage({ type: "error", text: err.message });
+    } finally {
+      setLoading(false);
+    }
   }
 
   function handleEditClick(course) {
@@ -136,13 +154,46 @@ function AdminContenu() {
           <h1>Gestion du contenu</h1>
           <p>Créer des leçons et importer des QCM</p>
         </div>
-        <button className="btn-courses" onClick={() => setShowCourses((v) => !v)}>
-          {showCourses ? "Fermer la liste" : "Liste des cours"}
-        </button>
+        <div className="header-actions">
+          <button className="btn-courses" onClick={() => setShowCourses((v) => !v)}>
+            {showCourses ? "Fermer la liste" : "Liste des cours"}
+          </button>
+          <button className="btn-create-course" onClick={() => setShowCreateCourse((v) => !v)}>
+            {showCreateCourse ? "Annuler" : "+ Créer un cours"}
+          </button>
+        </div>
       </div>
 
       {message && (
         <p className={`contenu-message ${message.type}`}>{message.text}</p>
+      )}
+
+      {showCreateCourse && (
+        <div className="create-course-form">
+          <h2>Créer un cours</h2>
+          <form onSubmit={handleCourseSubmit}>
+            <div className="form-group">
+              <label>Titre</label>
+              <input
+                value={courseForm.title}
+                onChange={(e) => setCourseForm({ ...courseForm, title: e.target.value })}
+                placeholder="Ex : Histoire de la Mode"
+                required
+              />
+            </div>
+            <div className="form-group">
+              <label>Description</label>
+              <input
+                value={courseForm.description}
+                onChange={(e) => setCourseForm({ ...courseForm, description: e.target.value })}
+                placeholder="Courte description du cours (optionnel)"
+              />
+            </div>
+            <button type="submit" className="submit-btn" disabled={loading}>
+              {loading ? "Création…" : "Créer le cours"}
+            </button>
+          </form>
+        </div>
       )}
 
       {showCourses && (

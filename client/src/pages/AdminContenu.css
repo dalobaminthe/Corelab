@@ -10,7 +10,13 @@
   margin-bottom: 32px;
 }
 
-/* ── Bouton liste des cours ── */
+/* ── Boutons header ── */
+.header-actions {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
 .btn-courses {
   background: transparent;
   border: 1px solid var(--gold);
@@ -25,6 +31,39 @@
 
 .btn-courses:hover {
   background: rgba(201, 168, 76, 0.1);
+}
+
+.btn-create-course {
+  background: var(--gold);
+  color: var(--bg-dark);
+  border: none;
+  padding: 10px 20px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: opacity 0.15s;
+}
+
+.btn-create-course:hover {
+  opacity: 0.85;
+}
+
+/* ── Formulaire création cours ── */
+.create-course-form {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  padding: 24px;
+  margin-bottom: 28px;
+  max-width: 480px;
+}
+
+.create-course-form h2 {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--text);
+  margin-bottom: 16px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--border);
 }
 
 /* ── Table liste des cours ── */
