@@ -3,6 +3,7 @@ import { useAuth } from "../context/AuthContext.jsx";
 import "./AdminContenu.css";
 import { useEditor, EditorContent } from '@tiptap/react'
 import StarterKit from '@tiptap/starter-kit'
+import { updateCourse, deleteCourse } from "../api/admin.js"
 
 function AdminContenu() {
   const { token } = useAuth();
@@ -18,6 +19,8 @@ function AdminContenu() {
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState(null);
   const [showCourses, setShowCourses] = useState(false);
+  const [editingCourse, setEditingCourse] = useState(null);
+  const [editForm, setEditForm] = useState({ title: "", description: "" });
 
   const editor = useEditor({
     extensions: [StarterKit],
@@ -63,6 +66,45 @@ function AdminContenu() {
         setMessage({ type: "error", text: "Erreur lors de la création." }),
       )
       .finally(() => setLoading(false));
+  }
+
+  function handleEditClick(course) {
+    setEditingCourse(course);
+    setEditForm({ title: course.title, description: course.description || "" });
+  }
+
+  function handleEditCancel() {
+    setEditingCourse(null);
+    setEditForm({ title: "", description: "" });
+  }
+
+  async function handleEditSubmit(e) {
+    e.preventDefault();
+    setLoading(true);
+    try {
+      const updated = await updateCourse(editingCourse._id, editForm, token);
+      setCourses(courses.map((c) => (c._id === updated._id ? updated : c)));
+      setEditingCourse(null);
+      setMessage({ type: "success", text: "Cours modifié avec succès." });
+    } catch (err) {
+      setMessage({ type: "error", text: err.message });
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  async function handleDelete(courseId) {
+    if (!window.confirm("Supprimer ce cours ? Cette action est irréversible.")) return;
+    setLoading(true);
+    try {
+      await deleteCourse(courseId, token);
+      setCourses(courses.filter((c) => c._id !== courseId));
+      setMessage({ type: "success", text: "Cours supprimé." });
+    } catch (err) {
+      setMessage({ type: "error", text: err.message });
+    } finally {
+      setLoading(false);
+    }
   }
 
   function handleQuizSubmit(e) {
@@ -113,7 +155,7 @@ function AdminContenu() {
                 <th>Titre</th>
                 <th>Description</th>
                 <th>Date d'ajout</th>
-                <th>Disponible depuis</th>
+                <th>Actions</th>
               </tr>
             </thead>
             <tbody>
@@ -130,12 +172,55 @@ function AdminContenu() {
                     <td className="muted">
                       {new Date(course.createdAt).toLocaleDateString("fr-FR")}
                     </td>
-                    <td className="muted">—</td>
+                    <td className="actions-cell">
+                      <button
+                        className="btn-edit"
+                        onClick={() => handleEditClick(course)}
+                      >
+                        Modifier
+                      </button>
+                      <button
+                        className="btn-delete"
+                        onClick={() => handleDelete(course._id)}
+                      >
+                        Supprimer
+                      </button>
+                    </td>
                   </tr>
                 ))
               )}
             </tbody>
           </table>
+          {editingCourse && (
+            <div className="edit-course-form">
+              <h3>Modifier : {editingCourse.title}</h3>
+              <form onSubmit={handleEditSubmit}>
+                <div className="form-group">
+                  <label>Titre</label>
+                  <input
+                    value={editForm.title}
+                    onChange={(e) => setEditForm({ ...editForm, title: e.target.value })}
+                    required
+                  />
+                </div>
+                <div className="form-group">
+                  <label>Description</label>
+                  <input
+                    value={editForm.description}
+                    onChange={(e) => setEditForm({ ...editForm, description: e.target.value })}
+                  />
+                </div>
+                <div className="edit-course-actions">
+                  <button type="submit" className="submit-btn" disabled={loading}>
+                    {loading ? "Enregistrement…" : "Enregistrer"}
+                  </button>
+                  <button type="button" className="btn-cancel" onClick={handleEditCancel}>
+                    Annuler
+                  </button>
+                </div>
+              </form>
+            </div>
+          )}
         </div>
       )}
 

@@ -156,4 +156,41 @@ router.get('/activity', verifyToken, requireAdmin, async (req, res, next) => {
   }
 })
 
+// ─── PUT /api/admin/courses/:id ──────────────────────────────────────────────
+// Modifie le titre et/ou la description d'un cours existant
+router.put('/courses/:id', verifyToken, requireAdmin, async (req, res, next) => {
+  try {
+    const { title, description } = req.body
+    const course = await Course.findByIdAndUpdate(
+      req.params.id,
+      { title, description },
+      { new: true, runValidators: true }
+    )
+    if (!course) return res.status(404).json({ error: 'Course not found' })
+    res.json(course)
+  } catch (err) {
+    next(err)
+  }
+})
+
+// ─── DELETE /api/admin/courses/:id ───────────────────────────────────────────
+// Supprime un cours et retire sa référence de tous les étudiants concernés
+router.delete('/courses/:id', verifyToken, requireAdmin, async (req, res, next) => {
+  try {
+    const course = await Course.findById(req.params.id)
+    if (!course) return res.status(404).json({ error: 'Course not found' })
+
+    // Retire le cours de user.courses[] pour chaque étudiant assigné
+    await User.updateMany(
+      { _id: { $in: course.students } },
+      { $pull: { courses: course._id } }
+    )
+
+    await course.deleteOne()
+    res.json({ message: 'Course deleted' })
+  } catch (err) {
+    next(err)
+  }
+})
+
 export default router
