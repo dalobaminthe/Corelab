@@ -238,3 +238,80 @@
 }
 
 .editor-content:focus-within { border-color: #c9a96e; }
+
+/* ── Boutons actions du tableau des cours ── */
+.actions-cell {
+  display: flex;
+  gap: 8px;
+}
+
+.btn-edit,
+.btn-delete {
+  padding: 5px 12px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  border: none;
+  transition: opacity 0.15s;
+}
+
+.btn-edit {
+  background: rgba(201, 168, 76, 0.15);
+  color: var(--gold);
+  border: 1px solid var(--gold);
+}
+
+.btn-edit:hover {
+  background: rgba(201, 168, 76, 0.3);
+}
+
+.btn-delete {
+  background: rgba(235, 87, 87, 0.1);
+  color: #eb5757;
+  border: 1px solid #eb5757;
+}
+
+.btn-delete:hover {
+  background: rgba(235, 87, 87, 0.25);
+}
+
+/* ── Formulaire d'édition inline ── */
+.edit-course-form {
+  margin-top: 24px;
+  padding: 20px;
+  border: 1px solid var(--gold);
+  background: rgba(201, 168, 76, 0.04);
+}
+
+.edit-course-form h3 {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--gold);
+  margin-bottom: 16px;
+}
+
+.edit-course-actions {
+  display: flex;
+  gap: 12px;
+  margin-top: 8px;
+}
+
+.edit-course-actions .submit-btn {
+  width: auto;
+  margin-top: 0;
+}
+
+.btn-cancel {
+  background: transparent;
+  border: 1px solid var(--border);
+  color: var(--text-muted);
+  padding: 10px 20px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: border-color 0.15s;
+}
+
+.btn-cancel:hover {
+  border-color: var(--text-muted);
+}

@@ -41,6 +41,32 @@ export async function assignCourses(userId, courseIds, token) {
   return data;
 }
 
+// Modifie le titre et/ou la description d'un cours
+export async function updateCourse(id, data, token) {
+  const response = await fetch(`${API_URL}/admin/courses/${id}`, {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify(data),
+  });
+  const result = await response.json();
+  if (!response.ok) throw new Error(result.error || "Erreur");
+  return result;
+}
+
+// Supprime un cours (le back nettoie aussi les étudiants concernés)
+export async function deleteCourse(id, token) {
+  const response = await fetch(`${API_URL}/admin/courses/${id}`, {
+    method: "DELETE",
+    headers: { Authorization: `Bearer ${token}` },
+  });
+  const result = await response.json();
+  if (!response.ok) throw new Error(result.error || "Erreur");
+  return result;
+}
+
 // 20 derniers passages de quiz avec étudiant et quiz peuplés (pour AdminNotes)
 export async function getActivity(token) {
   const response = await fetch(`${API_URL}/admin/activity`, {
