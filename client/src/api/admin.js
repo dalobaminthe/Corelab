@@ -41,6 +41,21 @@ export async function assignCourses(userId, courseIds, token) {
   return data;
 }
 
+// Crée un nouveau cours (title requis, description optionnelle)
+export async function createCourse(data, token) {
+  const response = await fetch(`${API_URL}/admin/courses`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify(data),
+  });
+  const result = await response.json();
+  if (!response.ok) throw new Error(result.error || "Erreur");
+  return result;
+}
+
 // Modifie le titre et/ou la description d'un cours
 export async function updateCourse(id, data, token) {
   const response = await fetch(`${API_URL}/admin/courses/${id}`, {
