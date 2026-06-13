@@ -7,12 +7,15 @@ import "./StudentCours.css";
 function StudentCours() {
   const { token } = useAuth();
   const navigate = useNavigate();
-  const [courses, setCourses] = useState([]);
-  const [selectedIndex, setSelectedIndex] = useState(0);
-  const [lessons, setLessons] = useState([]);
-  const [progress, setProgress] = useState(null);
+
+  // ── États ──────────────────────────────────────────────────────────────────
+  const [courses, setCourses] = useState([]);        // liste des cours de l'étudiant
+  const [selectedIndex, setSelectedIndex] = useState(0); // onglet actif
+  const [lessons, setLessons] = useState([]);        // leçons du cours sélectionné
+  const [progress, setProgress] = useState(null);    // progression du cours sélectionné
   const [loading, setLoading] = useState(true);
 
+  // ── 1er useEffect : charge les cours une seule fois au montage ─────────────
   useEffect(() => {
     getStudentCourses(token)
       .then((data) => {
@@ -22,10 +25,12 @@ function StudentCours() {
       .catch(() => setLoading(false));
   }, [token]);
 
+  // ── 2ème useEffect : recharge leçons + progression à chaque changement d'onglet ──
   useEffect(() => {
     if (!courses.length) return;
     const courseId = courses[selectedIndex]._id;
     setLoading(true);
+    // Promise.all : leçons et progression chargées en parallèle
     Promise.all([getLessons(courseId, token), fetchProgress(courseId, token)])
       .then(([lessonsData, progressData]) => {
         setLessons(lessonsData);
@@ -37,6 +42,7 @@ function StudentCours() {
 
   const courseName = courses[selectedIndex]?.title ?? `Cours ${selectedIndex + 1}`;
 
+  // ── Rendu ──────────────────────────────────────────────────────────────────
   return (
     <div className="student-cours">
       <div className="cours-header">
@@ -47,6 +53,7 @@ function StudentCours() {
         <span className="cours-season">AW 2026</span>
       </div>
 
+      {/* Onglets : un par cours assigné à l'étudiant */}
       <div className="cours-tabs">
         {courses.map((course, i) => (
           <button
@@ -69,6 +76,7 @@ function StudentCours() {
           )}
         </div>
 
+        {/* Barre de progression du cours sélectionné */}
         {progress && (
           <div className="cours-progress-row">
             <div className="cours-progress-bar">
@@ -90,6 +98,7 @@ function StudentCours() {
           <p className="cours-state">Aucune leçon disponible.</p>
         )}
 
+        {/* Liste des leçons disponibles */}
         {!loading && lessons.length > 0 && (
           <div className="lessons-list">
             {lessons.map((lesson, i) => (
@@ -105,6 +114,7 @@ function StudentCours() {
                   </small>
                 </div>
                 <span className="lesson-badge">Disponible</span>
+                {/* On passe courseName en state pour l'afficher sur la page leçon */}
                 <button
                   className="lesson-open-btn"
                   onClick={() =>

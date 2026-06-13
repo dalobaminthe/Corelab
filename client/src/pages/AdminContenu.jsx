@@ -112,12 +112,14 @@ function AdminContenu() {
                 <th>#</th>
                 <th>Titre</th>
                 <th>Description</th>
+                <th>Date d'ajout</th>
+                <th>Disponible depuis</th>
               </tr>
             </thead>
             <tbody>
               {courses.length === 0 ? (
                 <tr>
-                  <td colSpan={3} className="empty">Aucun cours trouvé.</td>
+                  <td colSpan={5} className="empty">Aucun cours trouvé.</td>
                 </tr>
               ) : (
                 courses.map((course, i) => (
@@ -125,6 +127,10 @@ function AdminContenu() {
                     <td className="num">{String(i + 1).padStart(2, "0")}</td>
                     <td className="course-title">{course.title}</td>
                     <td className="muted">{course.description || "—"}</td>
+                    <td className="muted">
+                      {new Date(course.createdAt).toLocaleDateString("fr-FR")}
+                    </td>
+                    <td className="muted">—</td>
                   </tr>
                 ))
               )}

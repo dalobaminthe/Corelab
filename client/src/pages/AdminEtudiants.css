@@ -250,3 +250,38 @@
   background: rgba(242, 153, 74, 0.12);
   color: #f2994a;
 }
+
+/* ── Bouton assigner par ligne ── */
+.btn-assign {
+  background: transparent;
+  border: 1px solid var(--border);
+  color: var(--text-muted);
+  padding: 5px 12px;
+  font-size: 12px;
+  cursor: pointer;
+  transition: border-color 0.15s, color 0.15s;
+}
+
+.btn-assign:hover {
+  border-color: var(--gold);
+  color: var(--gold);
+}
+
+/* ── Ligne d'assignation dépliée ── */
+.assign-row td {
+  background: rgba(201, 168, 76, 0.04);
+  padding: 16px 20px;
+}
+
+.assign-panel {
+  display: flex;
+  align-items: flex-start;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.assign-save-btn {
+  width: auto;
+  padding: 9px 20px;
+  margin-top: 0;
+}

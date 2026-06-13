@@ -17,6 +17,11 @@ function AdminEtudiants() {
   const [formLoading, setFormLoading] = useState(false);
   const [formError, setFormError] = useState(null);
 
+  const [editingStudentId, setEditingStudentId] = useState(null);
+  const [editCourseIds, setEditCourseIds] = useState([]);
+  const [editLoading, setEditLoading] = useState(false);
+  const [editError, setEditError] = useState(null);
+
   useEffect(() => {
     fetch("http://localhost:4242/api/admin/users", {
       headers: { Authorization: `Bearer ${token}` },
@@ -66,6 +71,36 @@ function AdminEtudiants() {
       setFormError(err.message);
     } finally {
       setFormLoading(false);
+    }
+  }
+
+  function handleAssignOpen(student) {
+    setEditingStudentId(student._id);
+    setEditCourseIds(student.courses?.map((c) => c._id) ?? []);
+    setEditError(null);
+  }
+
+  function handleEditToggle(courseId) {
+    setEditCourseIds((prev) =>
+      prev.includes(courseId)
+        ? prev.filter((id) => id !== courseId)
+        : [...prev, courseId]
+    );
+  }
+
+  async function handleAssignSubmit(studentId) {
+    setEditLoading(true);
+    setEditError(null);
+    try {
+      const updated = await assignCourses(studentId, editCourseIds, token);
+      setStudents((prev) =>
+        prev.map((s) => (s._id === studentId ? { ...s, courses: updated.courses } : s))
+      );
+      setEditingStudentId(null);
+    } catch (err) {
+      setEditError(err.message);
+    } finally {
+      setEditLoading(false);
     }
   }
 
@@ -155,31 +190,74 @@ function AdminEtudiants() {
                 <th>Email</th>
                 <th>Cours assignés</th>
                 <th>Statut</th>
+                <th>Actions</th>
               </tr>
             </thead>
             <tbody>
               {filtered.length === 0 ? (
                 <tr>
-                  <td colSpan={4} className="empty">Aucun étudiant trouvé.</td>
+                  <td colSpan={5} className="empty">Aucun étudiant trouvé.</td>
                 </tr>
               ) : (
                 filtered.map((s) => (
-                  <tr key={s._id}>
-                    <td className="bold">{s.name}</td>
-                    <td className="muted">{s.email}</td>
-                    <td>
-                      {s.courses?.length > 0
-                        ? s.courses.map((c) => (
-                            <span key={c._id} className="course-tag">{c.title}</span>
-                          ))
-                        : <span className="muted">—</span>}
-                    </td>
-                    <td>
-                      {s.isFirstLogin
-                        ? <span className="badge pending">En attente</span>
-                        : <span className="badge active">Actif</span>}
-                    </td>
-                  </tr>
+                  <>
+                    <tr key={s._id}>
+                      <td className="bold">{s.name}</td>
+                      <td className="muted">{s.email}</td>
+                      <td>
+                        {s.courses?.length > 0
+                          ? s.courses.map((c) => (
+                              <span key={c._id} className="course-tag">{c.title}</span>
+                            ))
+                          : <span className="muted">—</span>}
+                      </td>
+                      <td>
+                        {s.isFirstLogin
+                          ? <span className="badge pending">En attente</span>
+                          : <span className="badge active">Actif</span>}
+                      </td>
+                      <td>
+                        <button
+                          className="btn-assign"
+                          onClick={() =>
+                            editingStudentId === s._id
+                              ? setEditingStudentId(null)
+                              : handleAssignOpen(s)
+                          }
+                        >
+                          {editingStudentId === s._id ? "Annuler" : "Assigner cours"}
+                        </button>
+                      </td>
+                    </tr>
+                    {editingStudentId === s._id && (
+                      <tr key={`${s._id}-edit`} className="assign-row">
+                        <td colSpan={5}>
+                          {editError && <p className="state-msg error">{editError}</p>}
+                          <div className="assign-panel">
+                            <div className="courses-checkboxes">
+                              {allCourses.map((course) => (
+                                <label key={course._id} className="checkbox-label">
+                                  <input
+                                    type="checkbox"
+                                    checked={editCourseIds.includes(course._id)}
+                                    onChange={() => handleEditToggle(course._id)}
+                                  />
+                                  {course.title}
+                                </label>
+                              ))}
+                            </div>
+                            <button
+                              className="submit-btn assign-save-btn"
+                              onClick={() => handleAssignSubmit(s._id)}
+                              disabled={editLoading}
+                            >
+                              {editLoading ? "Enregistrement…" : "Enregistrer"}
+                            </button>
+                          </div>
+                        </td>
+                      </tr>
+                    )}
+                  </>
                 ))
               )}
             </tbody>
