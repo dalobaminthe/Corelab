@@ -300,3 +300,110 @@ describe('POST /api/admin/courses', () => {
     expect(res.status).toBe(401)
   })
 })
+
+// ─── PUT /api/admin/courses/:id ──────────────────────────────────────────────
+describe('PUT /api/admin/courses/:id', () => {
+  it('modifie le titre d un cours existant', async () => {
+    const admin = await makeAdmin()
+    const token = tokenFor(admin)
+    const course = await Course.create({ title: 'Ancien titre', createdBy: admin._id })
+    const res = await request(app)
+      .put(`/api/admin/courses/${course._id}`)
+      .set('Authorization', `Bearer ${token}`)
+      .send({ title: 'Nouveau titre' })
+    expect(res.status).toBe(200)
+    expect(res.body.title).toBe('Nouveau titre')
+  })
+
+  it('retourne 404 si cours inexistant', async () => {
+    const admin = await makeAdmin()
+    const token = tokenFor(admin)
+    const fakeId = new mongoose.Types.ObjectId()
+    const res = await request(app)
+      .put(`/api/admin/courses/${fakeId}`)
+      .set('Authorization', `Bearer ${token}`)
+      .send({ title: 'Titre' })
+    expect(res.status).toBe(404)
+  })
+
+  it('retourne 403 si appelé par un student', async () => {
+    const admin = await makeAdmin()
+    const student = await makeStudent()
+    const token = tokenFor(student)
+    const course = await Course.create({ title: 'Cours', createdBy: admin._id })
+    const res = await request(app)
+      .put(`/api/admin/courses/${course._id}`)
+      .set('Authorization', `Bearer ${token}`)
+      .send({ title: 'Titre' })
+    expect(res.status).toBe(403)
+  })
+
+  it('retourne 401 sans token', async () => {
+    const admin = await makeAdmin()
+    const course = await Course.create({ title: 'Cours', createdBy: admin._id })
+    const res = await request(app)
+      .put(`/api/admin/courses/${course._id}`)
+      .send({ title: 'Titre' })
+    expect(res.status).toBe(401)
+  })
+})
+
+// ─── DELETE /api/admin/courses/:id ───────────────────────────────────────────
+describe('DELETE /api/admin/courses/:id', () => {
+  it('supprime un cours existant', async () => {
+    const admin = await makeAdmin()
+    const token = tokenFor(admin)
+    const course = await Course.create({ title: 'Cours à supprimer', createdBy: admin._id })
+    const res = await request(app)
+      .delete(`/api/admin/courses/${course._id}`)
+      .set('Authorization', `Bearer ${token}`)
+    expect(res.status).toBe(200)
+    expect(res.body.message).toBe('Course deleted')
+  })
+
+  it('retire le cours des étudiants assignés', async () => {
+    const admin = await makeAdmin()
+    const student = await makeStudent()
+    const token = tokenFor(admin)
+    const course = await Course.create({
+      title: 'Cours',
+      createdBy: admin._id,
+      students: [student._id]
+    })
+    await User.findByIdAndUpdate(student._id, { courses: [course._id] })
+    await request(app)
+      .delete(`/api/admin/courses/${course._id}`)
+      .set('Authorization', `Bearer ${token}`)
+    const updatedStudent = await User.findById(student._id)
+    expect(updatedStudent.courses).toHaveLength(0)
+  })
+
+  it('retourne 404 si cours inexistant', async () => {
+    const admin = await makeAdmin()
+    const token = tokenFor(admin)
+    const fakeId = new mongoose.Types.ObjectId()
+    const res = await request(app)
+      .delete(`/api/admin/courses/${fakeId}`)
+      .set('Authorization', `Bearer ${token}`)
+    expect(res.status).toBe(404)
+  })
+
+  it('retourne 403 si appelé par un student', async () => {
+    const admin = await makeAdmin()
+    const student = await makeStudent()
+    const token = tokenFor(student)
+    const course = await Course.create({ title: 'Cours', createdBy: admin._id })
+    const res = await request(app)
+      .delete(`/api/admin/courses/${course._id}`)
+      .set('Authorization', `Bearer ${token}`)
+    expect(res.status).toBe(403)
+  })
+
+  it('retourne 401 sans token', async () => {
+    const admin = await makeAdmin()
+    const course = await Course.create({ title: 'Cours', createdBy: admin._id })
+    const res = await request(app)
+      .delete(`/api/admin/courses/${course._id}`)
+    expect(res.status).toBe(401)
+  })
+})
