@@ -17,6 +17,9 @@ function AdminContenu() {
     courseId: "",
     availableFrom: "",
   });
+  const [editingLessonId, setEditingLessonId] = useState(null); // Savoir si on modifie une leçon
+  const [courseLessons, setCourseLessons] = useState([]); // Leçons du cours sélectionné
+
   const [quizJson, setQuizJson] = useState("");
   const [quizCourseId, setQuizCourseId] = useState(""); 
   const [courses, setCourses] = useState([]);
@@ -47,15 +50,56 @@ function AdminContenu() {
       );
   }, [token]);
 
+  // Si on sélectionne un cours, on récupère ses leçons pour potentiellement les modifier
+  useEffect(() => {
+    if (lessonForm.courseId) {
+      fetch(`${API_URL}/student/lessons?courseId=${lessonForm.courseId}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      })
+      .then(res => res.json())
+      .then(data => setCourseLessons(data))
+      .catch(() => setCourseLessons([]));
+    } else {
+      setCourseLessons([]);
+    }
+  }, [lessonForm.courseId, token]);
+
   function handleLessonChange(e) {
     setLessonForm({ ...lessonForm, [e.target.name]: e.target.value });
+  }
+
+  // Permet de charger le contenu d'une leçon existante dans l'éditeur
+  function handleSelectLessonToEdit(e) {
+    const lessonId = e.target.value;
+    if (!lessonId) {
+      setEditingLessonId(null);
+      setLessonForm(prev => ({ ...prev, title: "", content: "", availableFrom: "" }));
+      editor.commands.setContent('');
+      return;
+    }
+    const lesson = courseLessons.find(l => l._id === lessonId);
+    if (lesson) {
+      setEditingLessonId(lessonId);
+      const formattedDate = new Date(lesson.availableFrom).toISOString().slice(0, 16);
+      setLessonForm(prev => ({
+        ...prev,
+        title: lesson.title,
+        content: lesson.content,
+        availableFrom: formattedDate
+      }));
+      editor.commands.setContent(lesson.content);
+    }
   }
 
   function handleLessonSubmit(e) {
     e.preventDefault();
     setLoading(true);
-    fetch(`${API_URL}/admin/lessons`, {
-      method: "POST",
+
+    const method = editingLessonId ? "PUT" : "POST";
+    const endpoint = editingLessonId ? `${API_URL}/admin/lessons/${editingLessonId}` : `${API_URL}/admin/lessons`;
+
+    fetch(endpoint, {
+      method: method,
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${token}`,
@@ -64,12 +108,19 @@ function AdminContenu() {
     })
       .then((res) => res.json())
       .then(() => {
-        setMessage({ type: "success", text: "Leçon créée avec succès." });
+        setMessage({ type: "success", text: editingLessonId ? "Leçon modifiée." : "Leçon créée avec succès." });
         setLessonForm({ title: "", content: "", courseId: "", availableFrom: "" });
-        editor.commands.setContent('')
+        setEditingLessonId(null);
+        editor.commands.setContent('');
+        // Rafraîchir les leçons du cours
+        if (lessonForm.courseId) {
+          fetch(`${API_URL}/student/lessons?courseId=${lessonForm.courseId}`, {
+            headers: { Authorization: `Bearer ${token}` }
+          }).then(res => res.json()).then(data => setCourseLessons(data));
+        }
       })
       .catch(() =>
-        setMessage({ type: "error", text: "Erreur lors de la création." }),
+        setMessage({ type: "error", text: "Erreur lors de l'enregistrement." }),
       )
       .finally(() => setLoading(false));
   }
@@ -298,17 +349,8 @@ function AdminContenu() {
       <div className="contenu-grid">
         {/* Formulaire leçon */}
         <div className="contenu-card">
-          <h2>Créer une leçon</h2>
+          <h2>{editingLessonId ? "Modifier la leçon" : "Créer une leçon"}</h2>
           <form onSubmit={handleLessonSubmit}>
-            <div className="form-group">
-              <label>Titre</label>
-              <input
-                name="title"
-                value={lessonForm.title}
-                onChange={handleLessonChange}
-                required
-              />
-            </div>
             <div className="form-group">
               <label>Cours</label>
               <select
@@ -324,6 +366,29 @@ function AdminContenu() {
                   </option>
                 ))}
               </select>
+            </div>
+
+            {/* Menu pour modifier une leçon existante une fois le cours sélectionné */}
+            {lessonForm.courseId && courseLessons.length > 0 && (
+              <div className="form-group" style={{ padding: "10px", background: "#f9f9f9", borderRadius: "8px" }}>
+                <label>Mode édition : Sélectionner une leçon existante (Optionnel)</label>
+                <select value={editingLessonId || ""} onChange={handleSelectLessonToEdit}>
+                  <option value="">-- Nouvelle leçon --</option>
+                  {courseLessons.map((l) => (
+                    <option key={l._id} value={l._id}>{l.title}</option>
+                  ))}
+                </select>
+              </div>
+            )}
+
+            <div className="form-group">
+              <label>Titre</label>
+              <input
+                name="title"
+                value={lessonForm.title}
+                onChange={handleLessonChange}
+                required
+              />
             </div>
             <div className="form-group">
               <label>Disponible à partir du</label>
@@ -390,7 +455,7 @@ function AdminContenu() {
               <EditorContent editor={editor} className="editor-content" />
             </div>
             <button type="submit" className="submit-btn" disabled={loading}>
-              {loading ? "Envoi…" : "Créer la leçon"}
+              {loading ? "Envoi…" : editingLessonId ? "Enregistrer les modifications" : "Créer la leçon"}
             </button>
           </form>
         </div>

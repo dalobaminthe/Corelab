@@ -32,9 +32,9 @@ const router = createBrowserRouter([
   {
     path: "/dashboard",
     element: (
-      <ProtectedRoute>
-        {" "}
-        <StudentLayout />{" "}
+      // VERROUILLAGE ÉTUDIANT
+      <ProtectedRoute allowedRole="student">
+        <StudentLayout />
       </ProtectedRoute>
     ),
     children: [
@@ -49,7 +49,8 @@ const router = createBrowserRouter([
   {
     path: "/admin",
     element: (
-      <ProtectedRoute>
+      // VERROUILLAGE ADMIN
+      <ProtectedRoute allowedRole="admin">
         <AdminLayout />
       </ProtectedRoute>
     ),

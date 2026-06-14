@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, Fragment } from "react";
 import { useAuth } from "../context/AuthContext";
 import { getCourses, assignCourses } from "../api/admin.js";
 import "./AdminEtudiants.css";
@@ -245,7 +245,7 @@ function AdminEtudiants() {
                 </tr>
               ) : (
                 filtered.map((s) => (
-                  <div key={s._id} style={{ display: "contents" }}>
+                  <Fragment key={s._id}>
                     <tr>
                       <td className="bold">{s.name}</td>
                       <td className="muted">{s.email}</td>
@@ -302,7 +302,7 @@ function AdminEtudiants() {
                         </td>
                       </tr>
                     )}
-                  </div>
+                  </Fragment>
                 ))
               )}
             </tbody>

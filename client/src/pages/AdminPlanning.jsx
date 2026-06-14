@@ -3,6 +3,9 @@ import { useAuth } from "../context/AuthContext.jsx";
 import { getCourses } from "../api/admin.js";
 import "./AdminPlanning.css";
 
+// Résolution de l'URL de l'API via les variables d'environnement
+const API_URL = import.meta.env.VITE_API_URL || "http://localhost:4242/api";
+
 // Page de planification : permet de modifier la date de mise à disposition
 // d'une leçon (PATCH /api/admin/lessons/:id/schedule).
 function AdminPlanning() {
@@ -32,7 +35,7 @@ function AdminPlanning() {
     }
     setLoading(true);
     // On récupère toutes les leçons du cours via la route admin
-    fetch(`http://localhost:4242/api/student/lessons?courseId=${selectedCourse}`, {
+    fetch(`${API_URL}/student/lessons?courseId=${selectedCourse}`, {
       headers: { Authorization: `Bearer ${token}` },
     })
       .then((res) => res.json())
@@ -52,7 +55,7 @@ function AdminPlanning() {
     setMessage(null);
     try {
       const res = await fetch(
-        `http://localhost:4242/api/admin/lessons/${lessonId}/schedule`,
+        `${API_URL}/admin/lessons/${lessonId}/schedule`,
         {
           method: "PATCH",
           headers: {
