@@ -1,37 +1,31 @@
-import { useEffect, useState, Fragment } from "react";
+import { useEffect, useState } from "react";
 import { useAuth } from "../context/AuthContext";
 import { getCourses, assignCourses } from "../api/admin.js";
 import "./AdminEtudiants.css";
 
-// Résolution de l'URL de l'API via les variables d'environnement
 const API_URL = import.meta.env.VITE_API_URL || "http://localhost:4242/api";
 
 function AdminEtudiants() {
   const { token } = useAuth();
   
-  // Liste et recherche globale
   const [students, setStudents] = useState([]);
   const [search, setSearch] = useState("");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  // Données référentielles
   const [allCourses, setAllCourses] = useState([]);
   
-  // États du formulaire d'import de masse (JSON)
   const [showForm, setShowForm] = useState(false);
   const [importJson, setImportJson] = useState("");
   const [selectedCourseIds, setSelectedCourseIds] = useState([]);
   const [formLoading, setFormLoading] = useState(false);
   const [formError, setFormError] = useState(null);
 
-  // États pour l'édition de l'assignation des cours
   const [editingStudentId, setEditingStudentId] = useState(null);
   const [editCourseIds, setEditCourseIds] = useState([]);
   const [editLoading, setEditLoading] = useState(false);
   const [editError, setEditError] = useState(null);
 
-  // Chargement initial des étudiants et du catalogue de cours
   useEffect(() => {
     fetch(`${API_URL}/admin/users`, {
       headers: { Authorization: `Bearer ${token}` },
@@ -49,7 +43,6 @@ function AdminEtudiants() {
     getCourses(token).then(setAllCourses).catch(() => {});
   }, [token]);
 
-  // Gestion de la sélection des cours lors de la création
   function handleCourseToggle(courseId) {
     setSelectedCourseIds((prev) =>
       prev.includes(courseId)
@@ -58,7 +51,6 @@ function AdminEtudiants() {
     );
   }
 
-  // Soumission du payload JSON pour l'import en masse
   async function handleImportSubmit(e) {
     e.preventDefault();
     setFormLoading(true);
@@ -86,7 +78,6 @@ function AdminEtudiants() {
       const result = await response.json();
       let finalStudents = [...result.created];
 
-      // Assignation des cours post-création si la sélection n'est pas vide
       if (selectedCourseIds.length > 0 && finalStudents.length > 0) {
         for (let i = 0; i < finalStudents.length; i++) {
           finalStudents[i] = await assignCourses(finalStudents[i]._id, selectedCourseIds, token);
@@ -106,14 +97,12 @@ function AdminEtudiants() {
     }
   }
 
-  // Initialisation du mode édition pour un étudiant spécifique
   function handleAssignOpen(student) {
     setEditingStudentId(student._id);
     setEditCourseIds(student.courses?.map((c) => c._id) ?? []);
     setEditError(null);
   }
 
-  // Gestion de la sélection des cours en mode édition
   function handleEditToggle(courseId) {
     setEditCourseIds((prev) =>
       prev.includes(courseId)
@@ -122,7 +111,6 @@ function AdminEtudiants() {
     );
   }
 
-  // Sauvegarde des nouvelles assignations de cours
   async function handleAssignSubmit(studentId) {
     setEditLoading(true);
     setEditError(null);
@@ -139,7 +127,6 @@ function AdminEtudiants() {
     }
   }
 
-  // Filtrage des résultats côté client
   const filtered = students.filter(
     (s) =>
       s.name.toLowerCase().includes(search.toLowerCase()) ||
@@ -227,7 +214,7 @@ function AdminEtudiants() {
       {error && <p className="state-msg error">{error}</p>}
 
       {!loading && !error && (
-        <div className="etudiants-table-wrap">
+        <div className="table-container">
           <table className="etudiants-table">
             <thead>
               <tr>
@@ -238,74 +225,74 @@ function AdminEtudiants() {
                 <th>Actions</th>
               </tr>
             </thead>
-            <tbody>
-              {filtered.length === 0 ? (
+            {filtered.length === 0 ? (
+              <tbody>
                 <tr>
                   <td colSpan={5} className="empty">Aucun étudiant trouvé.</td>
                 </tr>
-              ) : (
-                filtered.map((s) => (
-                  <Fragment key={s._id}>
-                    <tr>
-                      <td className="bold">{s.name}</td>
-                      <td className="muted">{s.email}</td>
-                      <td>
-                        {s.courses?.length > 0
-                          ? s.courses.map((c) => (
-                              <span key={c._id} className="course-tag">{c.title}</span>
-                            ))
-                          : <span className="muted">-</span>}
-                      </td>
-                      <td>
-                        {s.isFirstLogin
-                          ? <span className="badge pending">En attente</span>
-                          : <span className="badge active">Actif</span>}
-                      </td>
-                      <td>
-                        <button
-                          className="btn-assign"
-                          onClick={() =>
-                            editingStudentId === s._id
-                              ? setEditingStudentId(null)
-                              : handleAssignOpen(s)
-                          }
-                        >
-                          {editingStudentId === s._id ? "Annuler" : "Gérer les cours"}
-                        </button>
+              </tbody>
+            ) : (
+              filtered.map((s) => (
+                <tbody key={s._id} className="student-card-group">
+                  <tr>
+                    <td data-label="Nom" className="bold">{s.name}</td>
+                    <td data-label="Email" className="muted">{s.email}</td>
+                    <td data-label="Cours assignés">
+                      {s.courses?.length > 0
+                        ? s.courses.map((c) => (
+                            <span key={c._id} className="course-tag">{c.title}</span>
+                          ))
+                        : <span className="muted">-</span>}
+                    </td>
+                    <td data-label="Statut">
+                      {s.isFirstLogin
+                        ? <span className="badge pending">En attente</span>
+                        : <span className="badge active">Actif</span>}
+                    </td>
+                    <td data-label="Actions">
+                      <button
+                        className="btn-assign"
+                        onClick={() =>
+                          editingStudentId === s._id
+                            ? setEditingStudentId(null)
+                            : handleAssignOpen(s)
+                        }
+                      >
+                        {editingStudentId === s._id ? "Annuler" : "Gérer les cours"}
+                      </button>
+                    </td>
+                  </tr>
+                  {editingStudentId === s._id && (
+                    <tr className="assign-row">
+                      <td colSpan={5}>
+                        {editError && <p className="state-msg error">{editError}</p>}
+                        <div className="assign-panel">
+                          <div className="courses-checkboxes">
+                            {allCourses.map((course) => (
+                              <label key={course._id} className="checkbox-label">
+                                <input
+                                  type="checkbox"
+                                  checked={editCourseIds.includes(course._id)}
+                                  onChange={() => handleEditToggle(course._id)}
+                                />
+                                {course.title}
+                              </label>
+                            ))}
+                          </div>
+                          <button
+                            className="submit-btn assign-save-btn"
+                            onClick={() => handleAssignSubmit(s._id)}
+                            disabled={editLoading}
+                          >
+                            {editLoading ? "Enregistrement…" : "Enregistrer"}
+                          </button>
+                        </div>
                       </td>
                     </tr>
-                    {editingStudentId === s._id && (
-                      <tr className="assign-row">
-                        <td colSpan={5}>
-                          {editError && <p className="state-msg error">{editError}</p>}
-                          <div className="assign-panel">
-                            <div className="courses-checkboxes">
-                              {allCourses.map((course) => (
-                                <label key={course._id} className="checkbox-label">
-                                  <input
-                                    type="checkbox"
-                                    checked={editCourseIds.includes(course._id)}
-                                    onChange={() => handleEditToggle(course._id)}
-                                  />
-                                  {course.title}
-                                </label>
-                              ))}
-                            </div>
-                            <button
-                              className="submit-btn assign-save-btn"
-                              onClick={() => handleAssignSubmit(s._id)}
-                              disabled={editLoading}
-                            >
-                              {editLoading ? "Enregistrement…" : "Enregistrer"}
-                            </button>
-                          </div>
-                        </td>
-                      </tr>
-                    )}
-                  </Fragment>
-                ))
-              )}
-            </tbody>
+                  )}
+                </tbody>
+              ))
+            )}
           </table>
         </div>
       )}

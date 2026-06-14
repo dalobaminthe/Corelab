@@ -91,3 +91,14 @@
   color: var(--green);
   white-space: nowrap;
 }
+
+/* ── Responsive ── */
+@media (max-width: 768px) {
+  .student-notifications { padding: 24px 16px; }
+  .notif-item { flex-direction: column; align-items: flex-start; gap: 8px; padding: 14px 16px; }
+  .notif-cta { align-self: flex-end; }
+}
+
+@media (max-width: 480px) {
+  .student-notifications { padding: 16px 12px; }
+}

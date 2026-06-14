@@ -99,32 +99,34 @@ function AdminDashboard() {
 
       <div className="admin-activity">
         <p className="section-label">Activité récente</p>
-        <table className="activity-table">
-          <thead>
-            <tr>
-              <th>Étudiant</th>
-              <th>Cours</th>
-              <th>Action</th>
-              <th>Date</th>
-              <th>Résultat</th>
-            </tr>
-          </thead>
-          <tbody>
-            {activity.map((row) => (
-              <tr key={row._id}>
-                <td className="bold">{row.student?.name}</td>
-                <td className="muted">{row.quiz?.title}</td>
-                <td>Examen terminé</td>
-                <td className="muted">
-                  {new Date(row.attemptedAt).toLocaleDateString("fr-FR")}
-                </td>
-                <td className={row.passed ? "success" : "fail"}>
-                  {row.score}% {row.passed ? "✓" : "✗"}
-                </td>
+        <div className="table-container">
+          <table className="activity-table">
+            <thead>
+              <tr>
+                <th>Étudiant</th>
+                <th>Cours</th>
+                <th>Action</th>
+                <th>Date</th>
+                <th>Résultat</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {activity.map((row) => (
+                <tr key={row._id}>
+                  <td data-label="Étudiant" className="bold">{row.student?.name}</td>
+                  <td data-label="Cours" className="muted">{row.quiz?.title}</td>
+                  <td data-label="Action">Examen terminé</td>
+                  <td data-label="Date" className="muted">
+                    {new Date(row.attemptedAt).toLocaleDateString("fr-FR")}
+                  </td>
+                  <td data-label="Résultat" className={row.passed ? "success" : "fail"}>
+                    {row.score}% {row.passed ? "✓" : "✗"}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
   );

@@ -159,3 +159,21 @@
   flex-direction: column;
   gap: 4px;
 }
+
+/* ── Responsive ── */
+@media (max-width: 768px) {
+  .role-page { padding: 32px 16px; gap: 28px; }
+  .role-header h1 { font-size: 36px; }
+  .role-cards { flex-direction: column; gap: 20px; }
+  .role-card { width: 100%; max-width: 400px; padding: 24px; }
+  .role-card h2 { font-size: 18px; }
+  .role-tagline { font-size: 14px; }
+  .role-instruction { font-size: 13px; }
+}
+
+@media (max-width: 480px) {
+  .role-page { padding: 24px 12px; }
+  .role-header h1 { font-size: 28px; letter-spacing: 2px; }
+  .role-card { padding: 20px; }
+  .role-card button { padding: 12px; font-size: 13px; }
+}

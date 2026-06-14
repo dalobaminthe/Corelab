@@ -98,7 +98,7 @@ function StudentCours() {
           <p className="cours-state">Aucune leçon disponible.</p>
         )}
 
-        {/* Liste des leçons disponibles */}
+        {/* Liste des leçons disponibles (déjà structurée comme des cartes) */}
         {!loading && lessons.length > 0 && (
           <div className="lessons-list">
             {lessons.map((lesson, i) => (

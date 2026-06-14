@@ -86,3 +86,14 @@
   padding: 3px 10px;
   font-size: 11px;
 }
+
+/* ── Responsive ── */
+@media (max-width: 768px) {
+  .admin-parametres { padding: 24px 16px; }
+  .parametres-card { max-width: 100%; padding: 20px; }
+  .info-row { flex-direction: column; align-items: flex-start; gap: 4px; }
+}
+
+@media (max-width: 480px) {
+  .admin-parametres { padding: 16px 12px; }
+}

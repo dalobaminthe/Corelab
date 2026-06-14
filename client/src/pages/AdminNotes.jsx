@@ -39,37 +39,39 @@ function AdminNotes() {
         <p className="notes-state">Aucune tentative enregistrée.</p>
       )}
 
-      {/* Tableau : student et quiz sont "peuplés" par le back (populate) */}
+      {/* Tableau enveloppé dans une div pour le responsive adaptatif */}
       {!loading && !error && attempts.length > 0 && (
-        <table className="notes-table">
-          <thead>
-            <tr>
-              <th>Étudiant</th>
-              <th>Leçon</th>
-              <th>Quiz</th>
-              <th>Score</th>
-              <th>Résultat</th>
-              <th>Date</th>
-            </tr>
-          </thead>
-          <tbody>
-            {attempts.map((attempt) => (
-              <tr key={attempt._id}>
-                <td>{attempt.student?.name ?? "-"}</td>
-                {/* quiz.lesson.title : accès imbriqué grâce au populate du back */}
-                <td>{attempt.quiz?.lesson?.title ?? "-"}</td>
-                <td>{attempt.quiz?.title ?? "-"}</td>
-                <td>{attempt.score} / 100</td>
-                <td>
-                  <span className={`result-badge ${attempt.passed ? "passed" : "failed"}`}>
-                    {attempt.passed ? "Réussi" : "Échoué"}
-                  </span>
-                </td>
-                <td>{new Date(attempt.attemptedAt).toLocaleDateString("fr-FR")}</td>
+        <div className="table-container">
+          <table className="notes-table">
+            <thead>
+              <tr>
+                <th>Étudiant</th>
+                <th>Leçon</th>
+                <th>Quiz</th>
+                <th>Score</th>
+                <th>Résultat</th>
+                <th>Date</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {attempts.map((attempt) => (
+                <tr key={attempt._id}>
+                  <td data-label="Étudiant">{attempt.student?.name ?? "-"}</td>
+                  {/* quiz.lesson.title : accès imbriqué grâce au populate du back */}
+                  <td data-label="Leçon">{attempt.quiz?.lesson?.title ?? "-"}</td>
+                  <td data-label="Quiz">{attempt.quiz?.title ?? "-"}</td>
+                  <td data-label="Score">{attempt.score} / 100</td>
+                  <td data-label="Résultat">
+                    <span className={`result-badge ${attempt.passed ? "passed" : "failed"}`}>
+                      {attempt.passed ? "Réussi" : "Échoué"}
+                    </span>
+                  </td>
+                  <td data-label="Date">{new Date(attempt.attemptedAt).toLocaleDateString("fr-FR")}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       )}
     </div>
   );

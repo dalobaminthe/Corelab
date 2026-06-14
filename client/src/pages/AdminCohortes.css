@@ -110,3 +110,14 @@
   color: var(--text-muted);
   font-size: 13px;
 }
+
+/* ── Responsive ── */
+@media (max-width: 768px) {
+  .admin-cohortes { padding: 24px 16px; }
+  .cohortes-grid { grid-template-columns: 1fr; }
+  .cohorte-card { padding: 20px; }
+}
+
+@media (max-width: 480px) {
+  .admin-cohortes { padding: 16px 12px; }
+}
