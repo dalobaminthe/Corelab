@@ -380,3 +380,24 @@
 .mode-edition-box select {
   width: 100%;
 }
+/* ── Responsive ── */
+@media (max-width: 1024px) {
+  .admin-contenu { padding: 32px 24px; }
+  .contenu-grid { grid-template-columns: 1fr; }
+}
+
+@media (max-width: 768px) {
+  .admin-contenu { padding: 24px 16px; }
+  .contenu-header { flex-direction: column; gap: 12px; }
+  .header-actions { flex-direction: column; width: 100%; }
+  .btn-courses, .btn-create-course { width: 100%; text-align: center; }
+  .contenu-card { padding: 20px; }
+  .courses-table { display: block; overflow-x: auto; }
+  .courses-list-wrap { padding: 16px; }
+  .create-course-form { max-width: 100%; }
+  .actions-cell { flex-direction: column; gap: 4px; }
+}
+
+@media (max-width: 480px) {
+  .admin-contenu { padding: 16px 12px; }
+}

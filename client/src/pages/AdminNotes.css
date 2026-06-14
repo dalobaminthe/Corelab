@@ -27,6 +27,12 @@
   color: #e07070;
 }
 
+.table-container {
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
 .notes-table {
   width: 100%;
   border-collapse: collapse;
@@ -78,4 +84,72 @@
   background: rgba(224, 112, 112, 0.12);
   color: #e07070;
   border: 1px solid rgba(224, 112, 112, 0.3);
+}
+
+/* ── Responsive ── */
+@media (max-width: 768px) {
+  .admin-notes { 
+    padding: 24px 16px; 
+  }
+
+  .table-container {
+    overflow-x: visible;
+  }
+
+  /* Masquage de l'en-tête global */
+  .notes-table thead {
+    display: none;
+  }
+
+  /* Transformation du tableau en blocs verticaux */
+  .notes-table, 
+  .notes-table tbody, 
+  .notes-table tr, 
+  .notes-table td {
+    display: block;
+    width: 100%;
+  }
+
+  .notes-table tr {
+    margin-bottom: 20px;
+    border: 1px solid rgba(201, 168, 76, 0.2); 
+    border-radius: 8px;
+    padding: 4px 0;
+    background: transparent;
+    border-bottom: 1px solid rgba(201, 168, 76, 0.2); 
+  }
+  
+  .notes-table tbody tr:hover {
+    background: rgba(201, 168, 76, 0.02); 
+  }
+
+  .notes-table td {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    text-align: right;
+    padding: 12px 16px;
+    border-bottom: 1px solid rgba(201, 168, 76, 0.08); 
+  }
+
+  .notes-table td:last-child {
+    border-bottom: none;
+  }
+
+  .notes-table td::before {
+    content: attr(data-label);
+    font-weight: 600;
+    font-size: 11px;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    text-align: left;
+    margin-right: 16px;
+  }
+}
+
+@media (max-width: 480px) {
+  .admin-notes { 
+    padding: 16px 12px; 
+  }
 }

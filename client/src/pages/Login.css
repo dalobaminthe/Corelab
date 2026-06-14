@@ -313,3 +313,38 @@ input:focus {
   font-size: 13px;
   text-decoration: none;
 }
+
+/* ── Responsive ── */
+@media (max-width: 1024px) {
+  .left-panel { width: 340px; padding: 40px 28px; }
+  .panel-espace { font-size: 28px; }
+  .panel-title h2 { font-size: 28px; }
+  .login-card h2 { font-size: 26px; }
+}
+
+@media (max-width: 768px) {
+  .login-page { flex-direction: column; }
+  .left-panel {
+    width: 100%;
+    min-height: auto;
+    padding: 32px 24px;
+    border-right: none;
+    border-bottom: 1px solid var(--border-dark);
+  }
+  .panel-espace { font-size: 20px; }
+  .panel-title h2 { font-size: 24px; }
+  .admin-stats { flex-wrap: wrap; }
+  .admin-stats div { flex: 1 1 80px; margin-right: 12px; padding-right: 12px; }
+  .admin-stats strong { font-size: 22px; }
+  .module-list { margin-top: 16px; }
+  .change-space { margin-top: 16px; }
+  .right-panel { padding: 32px 24px; }
+  .login-card h2 { font-size: 22px; }
+}
+
+@media (max-width: 480px) {
+  .left-panel { padding: 24px 16px; }
+  .right-panel { padding: 24px 16px; }
+  .panel-logo h1 { font-size: 18px; }
+  .submit-btn { padding: 12px; font-size: 13px; }
+}

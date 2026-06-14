@@ -88,3 +88,15 @@
   opacity: 0.35;
   cursor: not-allowed;
 }
+
+/* ── Responsive ── */
+@media (max-width: 768px) {
+  .student-examens { padding: 24px 16px; }
+  .lesson-row { flex-direction: column; align-items: flex-start; gap: 10px; }
+  .quiz-link-btn { width: 100%; text-align: center; }
+  .course-block { padding: 16px; }
+}
+
+@media (max-width: 480px) {
+  .student-examens { padding: 16px 12px; }
+}

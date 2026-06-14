@@ -208,3 +208,24 @@
   opacity: 0.3;
   cursor: not-allowed;
 }
+
+/* ── Responsive ── */
+@media (max-width: 1024px) {
+  .student-lecon { padding: 32px 24px; }
+  .lecon-sidebar { width: 240px; }
+}
+
+@media (max-width: 768px) {
+  .student-lecon { padding: 24px 16px; }
+  .lecon-header { flex-direction: column; gap: 12px; }
+  .lecon-body { flex-direction: column; }
+  .lecon-sidebar { width: 100%; }
+  .lecon-content { padding: 20px; }
+  .lecon-nav { flex-direction: column; }
+  .nav-btn { width: 100%; }
+}
+
+@media (max-width: 480px) {
+  .student-lecon { padding: 16px 12px; }
+  .lecon-content { padding: 16px; }
+}

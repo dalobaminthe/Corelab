@@ -183,3 +183,16 @@
 .btn-cancel:hover {
   border-color: var(--text-muted);
 }
+
+/* ── Responsive ── */
+@media (max-width: 768px) {
+  .admin-planning { padding: 24px 16px; }
+  .planning-filter { max-width: 100%; }
+  .planning-table { display: block; overflow-x: auto; }
+  .schedule-edit { flex-direction: column; align-items: stretch; }
+  .schedule-edit input { width: 100%; }
+}
+
+@media (max-width: 480px) {
+  .admin-planning { padding: 16px 12px; }
+}
