@@ -164,7 +164,7 @@ router.put('/courses/:id', verifyToken, requireAdmin, async (req, res, next) => 
     const course = await Course.findByIdAndUpdate(
       req.params.id,
       { title, description },
-      { new: true, runValidators: true }
+      { returnDocument: 'after', runValidators: true }
     )
     if (!course) return res.status(404).json({ error: 'Course not found' })
     res.json(course)
