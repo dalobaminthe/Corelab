@@ -1,0 +1,375 @@
+.admin-etudiants {
+  padding: 40px 48px;
+  max-width: 1100px;
+}
+
+/* ── Header ── */
+.etudiants-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 28px;
+}
+
+/* ── Bouton ajout ── */
+.btn-add {
+  background: var(--gold);
+  color: var(--bg-dark);
+  border: none;
+  padding: 10px 20px;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: opacity 0.15s;
+  white-space: nowrap;
+}
+
+.btn-add:hover {
+  opacity: 0.85;
+}
+
+/* ── Formulaire nouvel étudiant ── */
+.student-form {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  padding: 28px;
+  margin-bottom: 28px;
+}
+
+.student-form h2 {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--text);
+  margin-bottom: 20px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--border);
+}
+
+.form-row {
+  display: flex;
+  gap: 20px;
+  margin-bottom: 20px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  flex: 1;
+}
+
+.form-group label {
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--text-muted);
+}
+
+.form-group input[type="text"],
+.form-group input[type="email"] {
+  background: var(--bg-dark);
+  border: 1px solid var(--border);
+  color: var(--text);
+  padding: 10px 14px;
+  font-size: 14px;
+  outline: none;
+  transition: border-color 0.15s;
+}
+
+.form-group input:focus {
+  border-color: var(--gold);
+}
+
+.courses-checkboxes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 4px;
+}
+
+.checkbox-label {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 13px;
+  color: var(--text);
+  cursor: pointer;
+  background: var(--bg-dark);
+  border: 1px solid var(--border);
+  padding: 6px 12px;
+  transition: border-color 0.15s;
+}
+
+.checkbox-label:hover {
+  border-color: var(--gold);
+}
+
+.checkbox-label input[type="checkbox"] {
+  accent-color: var(--gold);
+  width: 14px;
+  height: 14px;
+}
+
+.submit-btn {
+  background: var(--gold);
+  color: var(--bg-dark);
+  border: none;
+  padding: 11px 24px;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  margin-top: 8px;
+  transition: opacity 0.15s;
+}
+
+.submit-btn:hover:not(:disabled) {
+  opacity: 0.85;
+}
+
+.submit-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.etudiants-header h1 {
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.etudiants-header p {
+  color: var(--text-muted);
+  font-size: 14px;
+  margin-top: 4px;
+}
+
+/* ── Toolbar ── */
+.etudiants-toolbar {
+  margin-bottom: 20px;
+}
+
+.search-input {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  color: var(--text);
+  padding: 10px 16px;
+  font-size: 14px;
+  width: 320px;
+  outline: none;
+}
+
+.search-input::placeholder {
+  color: var(--text-muted);
+}
+
+.search-input:focus {
+  border-color: var(--gold);
+}
+
+/* ── Messages état ── */
+.state-msg {
+  color: var(--text-muted);
+  font-size: 14px;
+  padding: 20px 0;
+}
+
+.state-msg.error {
+  color: #eb5757;
+}
+
+/* ── Tableau & Conteneur ── */
+.table-container {
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+}
+
+.etudiants-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+
+.etudiants-table th {
+  text-align: left;
+  color: var(--text-muted);
+  font-weight: 500;
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--border);
+}
+
+.etudiants-table td {
+  padding: 14px 16px;
+  border-bottom: 1px solid rgba(201, 168, 76, 0.08);
+  color: var(--text);
+  vertical-align: middle;
+}
+
+.student-card-group:last-child tr:last-child td {
+  border-bottom: none;
+}
+
+.bold {
+  font-weight: 600;
+}
+
+.muted {
+  color: var(--text-muted);
+}
+
+.empty {
+  text-align: center;
+  color: var(--text-muted);
+  padding: 32px !important;
+}
+
+/* ── Tags cours ── */
+.course-tag {
+  display: inline-block;
+  background: rgba(201, 168, 76, 0.1);
+  border: 1px solid var(--border);
+  color: var(--gold);
+  font-size: 11px;
+  padding: 2px 8px;
+  margin-right: 6px;
+  margin-bottom: 2px;
+}
+
+/* ── Badges statut ── */
+.badge {
+  font-size: 11px;
+  padding: 3px 10px;
+  font-weight: 600;
+}
+
+.badge.active {
+  background: rgba(111, 207, 151, 0.12);
+  color: #6fcf97;
+}
+
+.badge.pending {
+  background: rgba(242, 153, 74, 0.12);
+  color: #f2994a;
+}
+
+/* ── Bouton assigner par ligne ── */
+.btn-assign {
+  background: transparent;
+  border: 1px solid var(--border);
+  color: var(--text-muted);
+  padding: 5px 12px;
+  font-size: 12px;
+  cursor: pointer;
+  transition: border-color 0.15s, color 0.15s;
+}
+
+.btn-assign:hover {
+  border-color: var(--gold);
+  color: var(--gold);
+}
+
+/* ── Ligne d'assignation dépliée ── */
+.assign-row td {
+  background: rgba(201, 168, 76, 0.04);
+  padding: 16px 20px;
+}
+
+.assign-panel {
+  display: flex;
+  align-items: flex-start;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.assign-save-btn {
+  width: auto;
+  padding: 9px 20px;
+  margin-top: 0;
+}
+
+/* ── Responsive ── */
+@media (max-width: 1024px) {
+  .admin-etudiants { padding: 32px 24px; }
+  .search-input { width: 100%; }
+}
+
+@media (max-width: 768px) {
+  .admin-etudiants { padding: 24px 16px; }
+  .etudiants-header { flex-direction: column; gap: 12px; }
+  .btn-add { width: 100%; text-align: center; }
+  .form-row { flex-direction: column; gap: 12px; }
+  .student-form { padding: 20px; }
+  .courses-checkboxes { flex-direction: column; }
+  .assign-panel { flex-direction: column; }
+  .assign-save-btn { width: 100%; }
+
+  /* Passage du tableau en mode cartes */
+  .table-container {
+    overflow-x: visible;
+    background: transparent;
+    border: none;
+  }
+
+  .etudiants-table thead {
+    display: none;
+  }
+
+  .etudiants-table, 
+  .etudiants-table tbody, 
+  .etudiants-table tr, 
+  .etudiants-table td {
+    display: block;
+    width: 100%;
+  }
+
+  /* Le tbody devient la carte globale */
+  .etudiants-table tbody.student-card-group {
+    margin-bottom: 20px;
+    border: 1px solid rgba(201, 168, 76, 0.2);
+    border-radius: 8px;
+    background: var(--bg-card);
+    overflow: hidden;
+  }
+
+  .etudiants-table td {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    text-align: right;
+    padding: 12px 16px;
+    border-bottom: 1px solid rgba(201, 168, 76, 0.08);
+  }
+
+  .etudiants-table tr:last-child td {
+    border-bottom: none;
+  }
+
+  .etudiants-table td[data-label]::before {
+    content: attr(data-label);
+    font-weight: 600;
+    font-size: 11px;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    text-align: left;
+    margin-right: 16px;
+  }
+
+  /* Adaptation spécifique de la ligne d'assignation */
+  .etudiants-table .assign-row td {
+    display: block;
+    text-align: left;
+    background: rgba(201, 168, 76, 0.04);
+    border-top: 1px solid rgba(201, 168, 76, 0.2);
+  }
+
+  .etudiants-table .assign-row td::before {
+    content: none;
+  }
+}
+
+@media (max-width: 480px) {
+  .admin-etudiants { padding: 16px 12px; }
+}

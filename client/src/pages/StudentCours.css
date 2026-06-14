@@ -1,0 +1,222 @@
+.student-cours {
+  padding: 40px 48px;
+  min-height: 100vh;
+}
+
+.cours-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 32px;
+}
+
+.cours-header h1 {
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.cours-header p {
+  color: var(--text-muted);
+  font-size: 14px;
+  margin-top: 4px;
+}
+
+.cours-season {
+  border: 1px solid rgba(100, 180, 160, 0.4);
+  color: var(--green);
+  padding: 6px 14px;
+  font-size: 13px;
+}
+
+/* ── Onglets ── */
+.cours-tabs {
+  display: flex;
+  gap: 0;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 32px;
+  overflow-x: auto;
+}
+
+.cours-tab {
+  background: none;
+  border: none;
+  border-bottom: 2px solid transparent;
+  color: var(--text-muted);
+  padding: 12px 20px;
+  font-size: 14px;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.15s;
+}
+
+.cours-tab:hover {
+  color: var(--text);
+}
+
+.cours-tab.active {
+  color: var(--green);
+  border-bottom-color: var(--green);
+}
+
+/* ── Contenu ── */
+.cours-body {
+  max-width: 900px;
+}
+
+.cours-title-row {
+  margin-bottom: 12px;
+}
+
+.cours-title-row h2 {
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.cours-meta {
+  color: var(--text-muted);
+  font-size: 13px;
+  margin-top: 4px;
+}
+
+/* ── Barre de progression ── */
+.cours-progress-row {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 28px;
+}
+
+.cours-progress-bar {
+  flex: 1;
+  height: 4px;
+  background: #333;
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.cours-progress-fill {
+  height: 100%;
+  background: var(--green);
+  border-radius: 2px;
+  transition: width 0.3s ease;
+}
+
+.cours-progress-row span {
+  font-size: 12px;
+  color: var(--text-muted);
+  white-space: nowrap;
+}
+
+.cours-state {
+  color: var(--text-muted);
+  font-size: 14px;
+}
+
+/* ── Liste des leçons ── */
+.lessons-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.lesson-item {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  padding: 18px 20px;
+  border-left: 3px solid transparent;
+  transition: border-color 0.15s;
+}
+
+.lesson-item:hover {
+  border-left-color: var(--green);
+}
+
+.lesson-number {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--green);
+  min-width: 28px;
+}
+
+.lesson-info {
+  flex: 1;
+}
+
+.lesson-title {
+  font-size: 14px;
+  color: var(--text);
+  margin-bottom: 4px;
+}
+
+.lesson-info small {
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+.lesson-badge {
+  font-size: 12px;
+  padding: 4px 12px;
+  background: rgba(100, 180, 160, 0.1);
+  color: var(--green);
+  border: 1px solid rgba(100, 180, 160, 0.3);
+  white-space: nowrap;
+}
+
+.lesson-open-btn {
+  background: var(--green);
+  color: var(--bg-dark);
+  border: none;
+  padding: 8px 16px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: opacity 0.15s;
+  white-space: nowrap;
+}
+
+.lesson-open-btn:hover {
+  opacity: 0.85;
+}
+
+/* ── Responsive ── */
+@media (max-width: 768px) {
+  .student-cours { padding: 24px 16px; }
+  .cours-header { flex-direction: column; gap: 12px; }
+  .cours-tabs { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+  .cours-tab { flex-shrink: 0; }
+  
+  .lesson-item { 
+    flex-direction: column; 
+    align-items: stretch; 
+    gap: 12px; 
+    position: relative;
+  }
+  
+  .lesson-number {
+    position: absolute;
+    top: 18px;
+    right: 20px;
+    font-size: 16px; 
+  }
+
+  .lesson-info {
+    padding-right: 30px;
+  }
+
+  .lesson-badge {
+    align-self: flex-start; 
+  }
+
+  .lesson-open-btn { width: 100%; text-align: center; margin-top: 4px; }
+  .cours-progress-row { flex-direction: column; gap: 8px; align-items: flex-start; }
+  .cours-progress-bar { width: 100%; } 
+}
+
+@media (max-width: 480px) {
+  .student-cours { padding: 16px 12px; }
+}

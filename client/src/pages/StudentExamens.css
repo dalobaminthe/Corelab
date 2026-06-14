@@ -1,0 +1,102 @@
+.student-examens {
+  padding: 40px 48px;
+  max-width: 800px;
+}
+
+.examens-header {
+  margin-bottom: 32px;
+}
+
+.examens-header h1 {
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.examens-header p {
+  color: var(--text-muted);
+  font-size: 14px;
+  margin-top: 4px;
+}
+
+.examens-state {
+  color: var(--text-muted);
+  font-size: 14px;
+}
+
+.examens-list {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.course-block {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  padding: 24px;
+}
+
+.course-block h2 {
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  color: var(--green);
+  margin-bottom: 16px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--border);
+}
+
+.lesson-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 0;
+  border-bottom: 1px solid rgba(100, 180, 160, 0.08);
+}
+
+.lesson-row:last-child {
+  border-bottom: none;
+}
+
+.lesson-title {
+  font-size: 14px;
+  color: var(--text);
+  margin-bottom: 4px;
+}
+
+.lesson-row small {
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+.quiz-link-btn {
+  background: var(--green);
+  color: var(--bg-dark);
+  border: none;
+  padding: 8px 16px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: opacity 0.15s;
+}
+
+.quiz-link-btn:hover:not(:disabled) {
+  opacity: 0.85;
+}
+
+.quiz-link-btn:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+/* ── Responsive ── */
+@media (max-width: 768px) {
+  .student-examens { padding: 24px 16px; }
+  .lesson-row { flex-direction: column; align-items: flex-start; gap: 10px; }
+  .quiz-link-btn { width: 100%; text-align: center; }
+  .course-block { padding: 16px; }
+}
+
+@media (max-width: 480px) {
+  .student-examens { padding: 16px 12px; }
+}

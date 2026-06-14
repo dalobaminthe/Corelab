@@ -1,0 +1,296 @@
+/* ── Page wrapper ── */
+.admin-dashboard {
+  padding: 40px 48px;
+  max-width: 1100px;
+}
+
+/* ── Header ── */
+.admin-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 32px;
+}
+
+.admin-header h1 {
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.admin-header p {
+  color: var(--text-muted);
+  font-size: 14px;
+  margin-top: 4px;
+}
+
+.admin-header-right {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.season-badge {
+  border: 1px solid var(--gold);
+  color: var(--gold);
+  font-size: 11px;
+  padding: 4px 10px;
+  letter-spacing: 1px;
+}
+
+.admin-avatar {
+  width: 38px;
+  height: 38px;
+  background: var(--gold);
+  color: var(--bg-dark);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 15px;
+}
+
+/* ── Bloc bienvenue ── */
+.admin-welcome {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  padding: 24px 28px;
+  margin-bottom: 32px;
+}
+
+.admin-welcome h2 {
+  font-size: 20px;
+  color: var(--gold);
+  margin-bottom: 6px;
+}
+
+.admin-welcome p {
+  color: var(--text-muted);
+  font-size: 14px;
+}
+
+/* ── Cartes stats ── */
+.admin-stats {
+  display: grid;
+  /* La correction est ici : minmax(0, 1fr) force les colonnes à être strictement égales */
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  align-items: stretch;
+  gap: 16px;
+  margin-bottom: 32px;
+}
+
+.admin-stat-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  padding: 24px 20px;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.admin-stat-card strong {
+  font-size: 32px;
+  font-weight: 700;
+  color: var(--text);
+  line-height: 1;
+  margin-bottom: 6px;
+}
+
+.admin-stat-card span {
+  font-size: 13px;
+  color: var(--text-muted);
+}
+
+.admin-stat-card small {
+  font-size: 12px;
+  color: var(--text-muted);
+  margin-top: auto;
+  padding-top: 16px;
+}
+
+.admin-stat-card small.positive {
+  color: #6fcf97;
+}
+
+.admin-stat-card small.warning {
+  color: #f2994a;
+}
+
+/* ── Actions rapides ── */
+.admin-actions {
+  margin-bottom: 32px;
+}
+
+.section-label {
+  font-size: 11px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin-bottom: 12px;
+}
+
+.actions-grid {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.action-btn {
+  background: var(--gold);
+  color: var(--bg-dark);
+  border: none;
+  padding: 10px 20px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: opacity 0.15s;
+}
+
+.action-btn:hover {
+  opacity: 0.85;
+}
+
+.action-btn.outline {
+  background: transparent;
+  border: 1px solid var(--gold);
+  color: var(--gold);
+}
+
+.action-btn.outline:hover {
+  background: rgba(201, 168, 76, 0.08);
+}
+
+/* ── Tableau activité ── */
+.admin-activity {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  padding: 24px;
+}
+
+.admin-activity .section-label {
+  margin-bottom: 16px;
+}
+
+.table-container {
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.activity-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+
+.activity-table th {
+  text-align: left;
+  color: var(--text-muted);
+  font-weight: 500;
+  padding: 8px 12px;
+  border-bottom: 1px solid var(--border);
+}
+
+.activity-table td {
+  padding: 12px 12px;
+  border-bottom: 1px solid rgba(201, 168, 76, 0.08);
+  color: var(--text);
+}
+
+.activity-table tr:last-child td {
+  border-bottom: none;
+}
+
+.activity-table .bold {
+  font-weight: 600;
+}
+
+.activity-table .muted {
+  color: var(--text-muted);
+}
+
+.activity-table .success {
+  color: #6fcf97;
+  font-weight: 600;
+}
+
+.activity-table .fail {
+  color: #eb5757;
+  font-weight: 600;
+}
+
+/* ── Responsive ── */
+@media (max-width: 1024px) {
+  .admin-dashboard { padding: 32px 24px; }
+  /* Appliqué ici aussi pour l'affichage par 2 */
+  .admin-stats { grid-template-columns: repeat(2, minmax(0, 1fr)); } 
+}
+
+@media (max-width: 768px) {
+  .admin-dashboard { padding: 24px 16px; }
+  .admin-header { flex-direction: column; gap: 12px; }
+  .admin-stats { grid-template-columns: minmax(0, 1fr); }
+  .admin-stat-card strong { font-size: 24px; }
+  .actions-grid { flex-direction: column; }
+  .action-btn { width: 100%; text-align: center; }
+  
+  .table-container {
+    overflow-x: visible;
+  }
+
+  .activity-table thead {
+    display: none;
+  }
+
+  .activity-table, 
+  .activity-table tbody, 
+  .activity-table tr, 
+  .activity-table td {
+    display: block;
+    width: 100%;
+  }
+
+  .activity-table tr {
+    margin-bottom: 20px;
+    border: 1px solid rgba(201, 168, 76, 0.2);
+    border-radius: 8px;
+    padding: 4px 0;
+    background: transparent;
+    border-bottom: 1px solid rgba(201, 168, 76, 0.2);
+  }
+
+  .activity-table tbody tr:hover {
+    background: rgba(201, 168, 76, 0.02);
+  }
+
+  .activity-table td {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    text-align: right;
+    padding: 12px 16px;
+    border-bottom: 1px solid rgba(201, 168, 76, 0.08);
+  }
+
+  .activity-table td:last-child {
+    border-bottom: none;
+  }
+
+  .activity-table td::before {
+    content: attr(data-label);
+    font-weight: 600;
+    font-size: 11px;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    text-align: left;
+    margin-right: 16px;
+  }
+}
+
+@media (max-width: 480px) {
+  .admin-dashboard { padding: 16px 12px; }
+  .admin-welcome { padding: 16px; }
+  .admin-welcome h2 { font-size: 16px; }
+}

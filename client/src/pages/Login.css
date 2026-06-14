@@ -1,0 +1,350 @@
+/* ── Variables ── */
+:root {
+  --bg: #0f0e0c;
+  --card-bg: #1a1916;
+  --text: #f5f5f5;
+  --muted: #9a9a9a;
+  --border-dark: rgba(255, 255, 255, 0.08);
+}
+
+.login-page.admin {
+  --accent: #c9a84c;
+  --accent-faint: rgba(201, 168, 76, 0.12);
+}
+.login-page.student {
+  --accent: #64b4a0;
+  --accent-faint: rgba(100, 180, 160, 0.12);
+}
+
+/* ── Reset ── */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: sans-serif;
+}
+
+/* ── Layout ── */
+.login-page {
+  display: flex;
+  min-height: 100vh;
+  position: relative;
+  overflow: hidden;
+}
+
+.video-bg {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  z-index: 0;
+  opacity: 0.12;
+}
+
+/* ── Panneau gauche ── */
+.left-panel {
+  position: relative;
+  z-index: 1;
+  width: 420px;
+  min-height: 100vh;
+  background: var(--card-bg);
+  border-right: 1px solid var(--border-dark);
+  padding: 48px 40px;
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+}
+
+.panel-logo h1 {
+  font-size: 22px;
+  font-weight: 800;
+  color: var(--accent);
+  letter-spacing: 3px;
+}
+
+.panel-logo span {
+  display: block;
+  font-size: 12px;
+  color: var(--muted);
+  margin-top: 4px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--border-dark);
+}
+
+.panel-espace {
+  font-size: 36px;
+  color: #444;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.panel-title h2 {
+  font-size: 36px;
+  font-weight: 800;
+  line-height: 1;
+  margin-bottom: 16px;
+}
+
+.panel-divider {
+  width: 48px;
+  height: 2px;
+  background: var(--accent);
+  margin-bottom: 16px;
+}
+
+.panel-badge {
+  display: inline-block;
+  background: var(--accent-faint);
+  border: 1px solid var(--accent);
+  color: var(--accent);
+  font-size: 12px;
+  padding: 4px 10px;
+  margin-bottom: 16px;
+}
+
+.panel-desc {
+  font-size: 14px;
+  color: var(--muted);
+  line-height: 1.6;
+}
+
+/* Stats admin */
+.admin-stats {
+  display: flex;
+  gap: 0;
+  margin-top: auto;
+}
+
+.admin-stats div {
+  flex: 1;
+  padding-right: 20px;
+  border-right: 1px solid var(--border-dark);
+  margin-right: 20px;
+}
+
+.admin-stats div:last-child {
+  border: none;
+  margin: 0;
+}
+
+.admin-stats strong {
+  display: block;
+  font-size: 28px;
+  font-weight: 800;
+  color: var(--accent);
+}
+
+.admin-stats small {
+  font-size: 11px;
+  color: var(--muted);
+}
+
+/* Liste modules student */
+.module-list {
+  margin-top: auto;
+}
+.module-list > small {
+  color: var(--muted);
+  font-size: 11px;
+  display: block;
+  margin-bottom: 10px;
+}
+.module-list ul {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.module-list li {
+  font-size: 13px;
+  color: #ccc;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.module-list li::before {
+  content: "■";
+  font-size: 7px;
+  color: var(--accent);
+}
+
+.change-space {
+  color: var(--muted);
+  font-size: 13px;
+  text-decoration: none;
+  margin-top: auto;
+}
+
+.change-space:hover {
+  color: var(--text);
+}
+
+/* ── Panneau droit ── */
+.right-panel {
+  position: relative;
+  z-index: 1;
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 48px;
+}
+
+.login-card {
+  width: 100%;
+  max-width: 440px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.login-card h2 {
+  font-size: 32px;
+  font-weight: 700;
+  border-bottom: 2px solid var(--accent);
+  padding-bottom: 10px;
+  width: fit-content;
+}
+
+.login-card > p {
+  color: var(--muted);
+  font-size: 14px;
+}
+
+/* ── Formulaire ── */
+form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+label {
+  font-size: 13px;
+  color: var(--muted);
+}
+
+input {
+  width: 100%;
+  background: transparent;
+  border: 1px solid var(--accent);
+  color: var(--text);
+  padding: 12px 14px;
+  font-size: 14px;
+  outline: none;
+}
+
+input:focus {
+  border-color: var(--accent);
+  background: var(--accent-faint);
+}
+
+.password-wrapper {
+  position: relative;
+}
+.password-wrapper input {
+  padding-right: 44px;
+}
+
+.toggle-password {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 16px;
+  color: var(--muted);
+}
+
+.info-banner {
+  background: var(--accent-faint);
+  border: 1px solid var(--accent);
+  color: var(--accent);
+  padding: 12px 14px;
+  font-size: 13px;
+}
+
+.submit-btn {
+  background: var(--accent);
+  color: #0f0e0c;
+  border: none;
+  padding: 15px;
+  font-weight: 700;
+  font-size: 14px;
+  cursor: pointer;
+  width: 100%;
+  letter-spacing: 0.5px;
+}
+
+.error {
+  color: #e07070;
+  font-size: 13px;
+}
+
+.forgot {
+  font-size: 13px;
+  color: var(--muted);
+  text-align: center;
+}
+
+.card-divider {
+  height: 1px;
+  background: var(--border-dark);
+}
+
+.switch-role {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.switch-role p {
+  font-size: 13px;
+  color: var(--muted);
+}
+.switch-role a {
+  color: var(--accent);
+  font-size: 13px;
+  text-decoration: none;
+}
+
+/* ── Responsive ── */
+@media (max-width: 1024px) {
+  .left-panel { width: 340px; padding: 40px 28px; }
+  .panel-espace { font-size: 28px; }
+  .panel-title h2 { font-size: 28px; }
+  .login-card h2 { font-size: 26px; }
+}
+
+@media (max-width: 768px) {
+  .login-page { flex-direction: column; }
+  .left-panel {
+    width: 100%;
+    min-height: auto;
+    padding: 32px 24px;
+    border-right: none;
+    border-bottom: 1px solid var(--border-dark);
+  }
+  .panel-espace { font-size: 20px; }
+  .panel-title h2 { font-size: 24px; }
+  .admin-stats { flex-wrap: wrap; }
+  .admin-stats div { flex: 1 1 80px; margin-right: 12px; padding-right: 12px; }
+  .admin-stats strong { font-size: 22px; }
+  .module-list { margin-top: 16px; }
+  .change-space { margin-top: 16px; }
+  .right-panel { padding: 32px 24px; }
+  .login-card h2 { font-size: 22px; }
+}
+
+@media (max-width: 480px) {
+  .left-panel { padding: 24px 16px; }
+  .right-panel { padding: 24px 16px; }
+  .panel-logo h1 { font-size: 18px; }
+  .submit-btn { padding: 12px; font-size: 13px; }
+}

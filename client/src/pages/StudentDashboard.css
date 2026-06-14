@@ -1,0 +1,267 @@
+.dashboard {
+  padding: 32px 40px;
+  min-height: 100vh;
+  background: var(--bg-dark, #1c1a17);
+  color: var(--text, #f5f5f5);
+  font-family: sans-serif;
+}
+
+/* ── Header ── */
+.dashboard-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 32px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid rgba(100, 180, 160, 0.2);
+}
+
+.dashboard-header h1 {
+  font-size: 28px;
+  font-weight: 700;
+  color: #f5f5f5;
+  margin-bottom: 4px;
+}
+
+.dashboard-header p {
+  color: #9a9a9a;
+  font-size: 14px;
+}
+
+.dashboard .season-badge {
+  border: 1px solid rgba(100, 180, 160, 0.4);
+  color: #64b4a0;
+  padding: 6px 14px;
+  font-size: 13px;
+}
+
+/* ── Body - deux colonnes ── */
+.dashboard-body {
+  display: flex;
+  gap: 32px;
+}
+
+.dashboard-left {
+  flex: 1.4;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+.dashboard-right {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+/* ── Carte bienvenue ── */
+.welcome-card {
+  background: #252220;
+  border: 1px solid rgba(100, 180, 160, 0.2);
+  padding: 24px;
+}
+
+.welcome-card h2 {
+  font-size: 20px;
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+.welcome-card p {
+  color: #9a9a9a;
+  font-size: 13px;
+}
+
+/* ── Stats ── */
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+}
+
+.stat-card {
+  background: #252220;
+  border: 1px solid rgba(100, 180, 160, 0.15);
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.stat-card small {
+  color: #9a9a9a;
+  font-size: 11px;
+}
+.stat-card strong {
+  font-size: 22px;
+  font-weight: 700;
+  color: #64b4a0;
+}
+.stat-card span {
+  font-size: 11px;
+  color: #9a9a9a;
+}
+
+/* ── Progression ── */
+.progress-section {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.progress-section h3 {
+  font-size: 15px;
+  font-weight: 600;
+  color: #64b4a0;
+  margin-bottom: 12px;
+}
+
+.progress-row {
+  margin-bottom: 14px;
+}
+
+.progress-info {
+  display: flex;
+  justify-content: space-between;
+  font-size: 13px;
+  margin-bottom: 6px;
+  color: #ccc;
+}
+
+.progress-info span:last-child {
+  color: #9a9a9a;
+  font-size: 12px;
+}
+
+.progress-bar {
+  height: 6px;
+  background: #333;
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.progress-fill {
+  height: 100%;
+  background: #64b4a0;
+  border-radius: 3px;
+  transition: width 0.3s ease;
+}
+
+/* ── Prochaine leçon ── */
+.next-lesson-card {
+  background: #252220;
+  border: 1px solid rgba(100, 180, 160, 0.2);
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.next-lesson-card small {
+  color: #64b4a0;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+.next-lesson-card h3 {
+  font-size: 16px;
+  font-weight: 700;
+  line-height: 1.4;
+}
+
+.lesson-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.lesson-meta div {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.lesson-meta small {
+  color: #9a9a9a;
+  font-size: 11px;
+}
+.lesson-meta span {
+  font-size: 13px;
+}
+
+.resume-btn {
+  background: #64b4a0;
+  color: #1c1a17;
+  border: none;
+  padding: 14px;
+  font-weight: 700;
+  font-size: 14px;
+  cursor: pointer;
+  width: 100%;
+  margin-top: 4px;
+}
+
+/* ── Activité récente ── */
+.activity-section h3 {
+  font-size: 15px;
+  font-weight: 600;
+  margin-bottom: 12px;
+  color: #f5f5f5;
+}
+
+.activity-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding: 12px 0;
+  border-bottom: 1px solid #2a2a2a;
+  gap: 12px;
+}
+
+.activity-item p {
+  font-size: 13px;
+  margin-bottom: 3px;
+}
+.activity-item small {
+  color: #9a9a9a;
+  font-size: 12px;
+}
+.activity-item span {
+  color: #555;
+  font-size: 11px;
+  white-space: nowrap;
+}
+
+.activity-item.success p {
+  color: #64b4a0;
+}
+.activity-item.fail p {
+  color: #e07070;
+}
+.activity-item.cert p {
+  color: #c9a84c;
+}
+.activity-item.lesson p {
+  color: #f5f5f5;
+}
+
+/* ── Responsive ── */
+@media (max-width: 1024px) {
+  .dashboard { padding: 24px 24px; }
+  .stats-grid { grid-template-columns: repeat(2, 1fr); }
+}
+
+@media (max-width: 768px) {
+  .dashboard { padding: 20px 16px; }
+  .dashboard-header { flex-direction: column; gap: 12px; }
+  .dashboard-body { flex-direction: column; }
+  .dashboard-left, .dashboard-right { flex: 1; }
+  .stats-grid { grid-template-columns: 1fr 1fr; }
+  .welcome-card { padding: 16px; }
+  .welcome-card h2 { font-size: 16px; }
+  .next-lesson-card { padding: 16px; }
+}
+
+@media (max-width: 480px) {
+  .dashboard { padding: 16px 12px; }
+  .stats-grid { grid-template-columns: 1fr; }
+  .stat-card strong { font-size: 18px; }
+}

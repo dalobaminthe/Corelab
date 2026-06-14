@@ -1,0 +1,123 @@
+.admin-cohortes {
+  padding: 40px 48px;
+  max-width: 1100px;
+}
+
+.cohortes-header {
+  margin-bottom: 32px;
+}
+
+.cohortes-header h1 {
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.cohortes-header p {
+  color: var(--text-muted);
+  font-size: 14px;
+  margin-top: 4px;
+}
+
+.cohortes-state {
+  color: var(--text-muted);
+  font-size: 14px;
+}
+
+.cohortes-error {
+  color: #e07070;
+}
+
+.cohortes-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 20px;
+}
+
+.cohorte-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  padding: 24px;
+}
+
+.cohorte-card-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--border);
+}
+
+.cohorte-card-head h2 {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.cohorte-count {
+  font-size: 11px;
+  color: var(--gold);
+  border: 1px solid var(--gold);
+  padding: 3px 10px;
+  white-space: nowrap;
+}
+
+.cohorte-desc {
+  color: var(--text-muted);
+  font-size: 13px;
+  margin-bottom: 16px;
+}
+
+.cohorte-students {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 12px;
+}
+
+.cohorte-student {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.student-avatar {
+  width: 32px;
+  height: 32px;
+  background: var(--gold);
+  color: var(--bg-dark);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 13px;
+  flex-shrink: 0;
+}
+
+.student-name {
+  font-size: 14px;
+  color: var(--text);
+}
+
+.student-email {
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+.cohorte-empty {
+  color: var(--text-muted);
+  font-size: 13px;
+}
+
+/* ── Responsive ── */
+@media (max-width: 768px) {
+  .admin-cohortes { padding: 24px 16px; }
+  .cohortes-grid { grid-template-columns: 1fr; }
+  .cohorte-card { padding: 20px; }
+}
+
+@media (max-width: 480px) {
+  .admin-cohortes { padding: 16px 12px; }
+}
