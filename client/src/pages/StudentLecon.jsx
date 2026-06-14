@@ -71,7 +71,7 @@ function StudentLecon() {
         <div>
           <h1>Lecture de Leçon</h1>
           <p>
-            {courseName} — Leçon{" "}
+            {courseName} - Leçon{" "}
             {String(currentIndex + 1).padStart(2, "0")}
           </p>
         </div>

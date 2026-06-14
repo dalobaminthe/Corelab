@@ -117,6 +117,25 @@ body {
   font-size: 11px;
 }
 
+/* ── Bouton déconnexion ── */
+.student-layout .logout-btn {
+  margin-top: 12px;
+  background: transparent;
+  border: 1px solid var(--border);
+  color: var(--text-muted);
+  padding: 8px 12px;
+  border-radius: 6px;
+  font-size: 13px;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.student-layout .logout-btn:hover {
+  color: var(--green);
+  border-color: var(--green);
+  background: rgba(100, 180, 160, 0.05);
+}
+
 /* ── Contenu principal ── */
 .layout-main {
   margin-left: 260px;

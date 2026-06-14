@@ -39,7 +39,7 @@ export function startNotificationJob() {
                             type: 'lesson',
                             read: false,
                         })
-                        console.log(`Notification créée pour ${student.email} — leçon : ${lesson.title}`)
+                        console.log(`Notification créée pour ${student.email} - leçon : ${lesson.title}`)
                     }
                 }
             }

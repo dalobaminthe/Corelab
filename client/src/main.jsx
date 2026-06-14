@@ -5,7 +5,7 @@ import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import { AuthProvider } from "./context/AuthContext.jsx";
 import RoleSelection from "./pages/RoleSelection.jsx";
 
-// Import de chaque page — une page = une route dans le router
+// Import de chaque page - une page = une route dans le router
 import LoginPage from "./pages/Login.jsx";
 import StudentDashboard from "./pages/StudentDashboard.jsx";
 import AdminDashboard from "./pages/AdminDashboard.jsx";
@@ -17,6 +17,9 @@ import AdminLayout from "./layouts/AdminLayout.jsx";
 import AdminEtudiants from "./pages/AdminEtudiants.jsx";
 import AdminContenu from "./pages/AdminContenu.jsx";
 import AdminNotes from "./pages/AdminNotes.jsx";
+import AdminCohortes from "./pages/AdminCohortes.jsx";
+import AdminPlanning from "./pages/AdminPlanning.jsx";
+import AdminParametres from "./pages/AdminParametres.jsx";
 import StudentNotifications from "./pages/StudentNotifications.jsx";
 import StudentExamens from "./pages/StudentExamens.jsx";
 import StudentCours from "./pages/StudentCours.jsx";
@@ -29,9 +32,9 @@ const router = createBrowserRouter([
   {
     path: "/dashboard",
     element: (
-      <ProtectedRoute>
-        {" "}
-        <StudentLayout />{" "}
+      // VERROUILLAGE ÉTUDIANT
+      <ProtectedRoute allowedRole="student">
+        <StudentLayout />
       </ProtectedRoute>
     ),
     children: [
@@ -46,15 +49,19 @@ const router = createBrowserRouter([
   {
     path: "/admin",
     element: (
-      <ProtectedRoute>
+      // VERROUILLAGE ADMIN
+      <ProtectedRoute allowedRole="admin">
         <AdminLayout />
       </ProtectedRoute>
     ),
     children: [
       { index: true, element: <AdminDashboard /> },
       { path: "etudiants", element: <AdminEtudiants /> },
+      { path: "cohortes", element: <AdminCohortes /> },
       { path: "contenu", element: <AdminContenu /> },
+      { path: "planning", element: <AdminPlanning /> },
       { path: "notes", element: <AdminNotes /> },
+      { path: "parametres", element: <AdminParametres /> },
     ],
   },
   {

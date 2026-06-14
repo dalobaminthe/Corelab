@@ -86,7 +86,7 @@ function StudentCours() {
               />
             </div>
             <span>
-              {progress.progressPercent}% complété —{" "}
+              {progress.progressPercent}% complété -{" "}
               {progress.completedLessons}/{progress.totalLessons} leçons
             </span>
           </div>
