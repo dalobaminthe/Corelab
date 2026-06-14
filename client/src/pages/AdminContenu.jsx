@@ -5,6 +5,9 @@ import { useEditor, EditorContent } from '@tiptap/react'
 import StarterKit from '@tiptap/starter-kit'
 import { createCourse, updateCourse, deleteCourse } from "../api/admin.js"
 
+// Résolution de l'URL de l'API via les variables d'environnement
+const API_URL = import.meta.env.VITE_API_URL || "http://localhost:4242/api";
+
 function AdminContenu() {
   const { token } = useAuth();
 
@@ -15,6 +18,7 @@ function AdminContenu() {
     availableFrom: "",
   });
   const [quizJson, setQuizJson] = useState("");
+  const [quizCourseId, setQuizCourseId] = useState(""); 
   const [courses, setCourses] = useState([]);
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState(null);
@@ -33,7 +37,7 @@ function AdminContenu() {
   })
 
   useEffect(() => {
-    fetch("http://localhost:4242/api/admin/courses", {
+    fetch(`${API_URL}/admin/courses`, {
       headers: { Authorization: `Bearer ${token}` },
     })
       .then((res) => res.json())
@@ -50,7 +54,7 @@ function AdminContenu() {
   function handleLessonSubmit(e) {
     e.preventDefault();
     setLoading(true);
-    fetch("http://localhost:4242/api/admin/lessons", {
+    fetch(`${API_URL}/admin/lessons`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -128,21 +132,37 @@ function AdminContenu() {
   function handleQuizSubmit(e) {
     e.preventDefault();
     setLoading(true);
-    fetch("http://localhost:4242/api/admin/quizzes/import", {
+
+    let finalBody = quizJson;
+
+    if (quizCourseId) {
+      try {
+        const parsedJson = JSON.parse(quizJson);
+        parsedJson.courseId = quizCourseId; 
+        finalBody = JSON.stringify(parsedJson);
+      } catch (err) {
+        setMessage({ type: "error", text: "Le texte dans le champ n'est pas un JSON valide." });
+        setLoading(false);
+        return;
+      }
+    }
+
+    fetch(`${API_URL}/admin/quizzes/import`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${token}`,
       },
-      body: quizJson,
+      body: finalBody,
     })
       .then((res) => res.json())
       .then(() => {
         setMessage({ type: "success", text: "QCM importé avec succès." });
         setQuizJson("");
+        setQuizCourseId("");
       })
       .catch(() =>
-        setMessage({ type: "error", text: "JSON invalide ou erreur serveur." }),
+        setMessage({ type: "error", text: "Erreur serveur lors de l'import." }),
       )
       .finally(() => setLoading(false));
   }
@@ -379,13 +399,47 @@ function AdminContenu() {
         <div className="contenu-card">
           <h2>Importer un QCM</h2>
           <form onSubmit={handleQuizSubmit}>
+            
             <div className="form-group">
-              <label>Coller le JSON du QCM</label>
+              <label>Associer à un cours</label>
+              <select
+                value={quizCourseId}
+                onChange={(e) => setQuizCourseId(e.target.value)}
+                required
+              >
+                <option value="">-- Sélectionner un cours --</option>
+                {courses.map((c) => (
+                  <option key={c._id} value={c._id}>
+                    {c.title}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            <div className="form-group">
+              <label>Importer depuis un fichier JSON</label>
+              <input
+                type="file"
+                accept=".json"
+                onChange={(e) => {
+                  const file = e.target.files[0];
+                  if (!file) return;
+                  const reader = new FileReader();
+                  reader.onload = (event) => {
+                    const jsonText = event.target.result;
+                    setQuizJson(jsonText);
+                  };
+                  reader.readAsText(file);
+                }}
+              />
+            </div>
+            <div className="form-group">
+              <label>Contenu du JSON</label>
               <textarea
                 value={quizJson}
                 onChange={(e) => setQuizJson(e.target.value)}
-                rows={14}
-                placeholder='{ "title": "Quiz JS", "lesson": "...", "passingScore": 60, "questions": [...] }'
+                rows={10}
+                placeholder='{ "title": "Quiz JS", "passingScore": 60, "questions": [...] }'
                 required
               />
             </div>

@@ -1,29 +1,39 @@
 import { useEffect, useState } from "react";
 import { useAuth } from "../context/AuthContext";
-import { getCourses, createStudent, assignCourses } from "../api/admin.js";
+import { getCourses, assignCourses } from "../api/admin.js";
 import "./AdminEtudiants.css";
+
+// Résolution de l'URL de l'API via les variables d'environnement
+const API_URL = import.meta.env.VITE_API_URL || "http://localhost:4242/api";
 
 function AdminEtudiants() {
   const { token } = useAuth();
+  
+  // Liste et recherche globale
   const [students, setStudents] = useState([]);
   const [search, setSearch] = useState("");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  const [showForm, setShowForm] = useState(false);
+  // Données référentielles
   const [allCourses, setAllCourses] = useState([]);
-  const [newStudent, setNewStudent] = useState({ name: "", email: "" });
+  
+  // États du formulaire d'import de masse (JSON)
+  const [showForm, setShowForm] = useState(false);
+  const [importJson, setImportJson] = useState("");
   const [selectedCourseIds, setSelectedCourseIds] = useState([]);
   const [formLoading, setFormLoading] = useState(false);
   const [formError, setFormError] = useState(null);
 
+  // États pour l'édition de l'assignation des cours
   const [editingStudentId, setEditingStudentId] = useState(null);
   const [editCourseIds, setEditCourseIds] = useState([]);
   const [editLoading, setEditLoading] = useState(false);
   const [editError, setEditError] = useState(null);
 
+  // Chargement initial des étudiants et du catalogue de cours
   useEffect(() => {
-    fetch("http://localhost:4242/api/admin/users", {
+    fetch(`${API_URL}/admin/users`, {
       headers: { Authorization: `Bearer ${token}` },
     })
       .then((res) => res.json())
@@ -39,6 +49,7 @@ function AdminEtudiants() {
     getCourses(token).then(setAllCourses).catch(() => {});
   }, [token]);
 
+  // Gestion de la sélection des cours lors de la création
   function handleCourseToggle(courseId) {
     setSelectedCourseIds((prev) =>
       prev.includes(courseId)
@@ -47,39 +58,62 @@ function AdminEtudiants() {
     );
   }
 
-  async function handleSubmit(e) {
+  // Soumission du payload JSON pour l'import en masse
+  async function handleImportSubmit(e) {
     e.preventDefault();
     setFormLoading(true);
     setFormError(null);
-    try {
-      const result = await createStudent(
-        { name: newStudent.name, email: newStudent.email, role: "student" },
-        token
-      );
-      const created = result.created[0];
 
-      let finalStudent = created;
-      if (selectedCourseIds.length > 0) {
-        finalStudent = await assignCourses(created._id, selectedCourseIds, token);
+    try {
+      const parsedUsers = JSON.parse(importJson);
+      if (!Array.isArray(parsedUsers)) {
+        throw new Error("Format invalide : Un tableau d'objets est attendu.");
       }
 
-      setStudents((prev) => [...prev, finalStudent]);
+      const response = await fetch(`${API_URL}/admin/users/import`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(parsedUsers),
+      });
+
+      if (!response.ok) {
+        throw new Error("Erreur serveur lors de l'importation.");
+      }
+
+      const result = await response.json();
+      let finalStudents = [...result.created];
+
+      // Assignation des cours post-création si la sélection n'est pas vide
+      if (selectedCourseIds.length > 0 && finalStudents.length > 0) {
+        for (let i = 0; i < finalStudents.length; i++) {
+          finalStudents[i] = await assignCourses(finalStudents[i]._id, selectedCourseIds, token);
+        }
+      }
+
+      setStudents((prev) => [...prev, ...finalStudents]);
       setShowForm(false);
-      setNewStudent({ name: "", email: "" });
+      setImportJson("");
       setSelectedCourseIds([]);
+      alert(`Import terminé : ${result.created.length} ajout(s), ${result.skipped.length} ignoré(s).`);
+      
     } catch (err) {
-      setFormError(err.message);
+      setFormError(err.message || "Erreur lors du traitement JSON.");
     } finally {
       setFormLoading(false);
     }
   }
 
+  // Initialisation du mode édition pour un étudiant spécifique
   function handleAssignOpen(student) {
     setEditingStudentId(student._id);
     setEditCourseIds(student.courses?.map((c) => c._id) ?? []);
     setEditError(null);
   }
 
+  // Gestion de la sélection des cours en mode édition
   function handleEditToggle(courseId) {
     setEditCourseIds((prev) =>
       prev.includes(courseId)
@@ -88,6 +122,7 @@ function AdminEtudiants() {
     );
   }
 
+  // Sauvegarde des nouvelles assignations de cours
   async function handleAssignSubmit(studentId) {
     setEditLoading(true);
     setEditError(null);
@@ -104,6 +139,7 @@ function AdminEtudiants() {
     }
   }
 
+  // Filtrage des résultats côté client
   const filtered = students.filter(
     (s) =>
       s.name.toLowerCase().includes(search.toLowerCase()) ||
@@ -118,36 +154,45 @@ function AdminEtudiants() {
           <p>{students.length} inscrits sur la plateforme</p>
         </div>
         <button className="btn-add" onClick={() => setShowForm((v) => !v)}>
-          {showForm ? "Annuler" : "Nouvel étudiant +"}
+          {showForm ? "Annuler" : "Importer une liste +"}
         </button>
       </div>
 
       {showForm && (
-        <form className="student-form" onSubmit={handleSubmit}>
-          <h2>Ajouter un étudiant</h2>
+        <form className="student-form" onSubmit={handleImportSubmit}>
+          <h2>Importer des étudiants (JSON)</h2>
+          <p className="muted" style={{ marginBottom: '16px', fontSize: '13px' }}>
+            Format attendu : <code>{`[{"name": "Jean Dupont", "email": "jean@test.fr", "role": "student"}]`}</code>
+          </p>
+          
           {formError && <p className="state-msg error">{formError}</p>}
-          <div className="form-row">
-            <div className="form-group">
-              <label>Nom complet</label>
-              <input
-                value={newStudent.name}
-                onChange={(e) => setNewStudent((prev) => ({ ...prev, name: e.target.value }))}
-                required
-              />
-            </div>
-            <div className="form-group">
-              <label>Email</label>
-              <input
-                type="email"
-                value={newStudent.email}
-                onChange={(e) => setNewStudent((prev) => ({ ...prev, email: e.target.value }))}
-                required
-              />
-            </div>
+          
+          <div className="form-group">
+            <label>Upload du fichier ou saisie brute JSON</label>
+            <input
+              type="file"
+              accept=".json"
+              style={{ marginBottom: '10px' }}
+              onChange={(e) => {
+                const file = e.target.files[0];
+                if (!file) return;
+                const reader = new FileReader();
+                reader.onload = (event) => setImportJson(event.target.result);
+                reader.readAsText(file);
+              }}
+            />
+            <textarea
+              value={importJson}
+              onChange={(e) => setImportJson(e.target.value)}
+              rows={8}
+              placeholder='[ { "name": "Jane Doe", "email": "jane@test.com", "role": "student" } ]'
+              required
+            />
           </div>
+
           {allCourses.length > 0 && (
             <div className="form-group">
-              <label>Assigner à une cohorte (cours)</label>
+              <label>Assignation automatique aux cours existants (Optionnel)</label>
               <div className="courses-checkboxes">
                 {allCourses.map((course) => (
                   <label key={course._id} className="checkbox-label">
@@ -163,7 +208,7 @@ function AdminEtudiants() {
             </div>
           )}
           <button type="submit" className="submit-btn" disabled={formLoading}>
-            {formLoading ? "Création…" : "Créer l'étudiant"}
+            {formLoading ? "Importation en cours…" : "Exécuter l'import"}
           </button>
         </form>
       )}
@@ -200,8 +245,8 @@ function AdminEtudiants() {
                 </tr>
               ) : (
                 filtered.map((s) => (
-                  <>
-                    <tr key={s._id}>
+                  <div key={s._id} style={{ display: "contents" }}>
+                    <tr>
                       <td className="bold">{s.name}</td>
                       <td className="muted">{s.email}</td>
                       <td>
@@ -225,12 +270,12 @@ function AdminEtudiants() {
                               : handleAssignOpen(s)
                           }
                         >
-                          {editingStudentId === s._id ? "Annuler" : "Assigner cours"}
+                          {editingStudentId === s._id ? "Annuler" : "Gérer les cours"}
                         </button>
                       </td>
                     </tr>
                     {editingStudentId === s._id && (
-                      <tr key={`${s._id}-edit`} className="assign-row">
+                      <tr className="assign-row">
                         <td colSpan={5}>
                           {editError && <p className="state-msg error">{editError}</p>}
                           <div className="assign-panel">
@@ -257,7 +302,7 @@ function AdminEtudiants() {
                         </td>
                       </tr>
                     )}
-                  </>
+                  </div>
                 ))
               )}
             </tbody>

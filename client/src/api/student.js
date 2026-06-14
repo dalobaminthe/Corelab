@@ -80,7 +80,7 @@ export async function submitQuiz(quizId, answers, token) {
 }
 
 // Tous les passages de quiz de l'étudiant, triés du plus récent au plus ancien
-export async function getAttempts(token) {
+export async function getStudentAttempts(token) {
   const response = await fetch(`${API_URL}/student/attempts`, {
     headers: { Authorization: `Bearer ${token}` },
   });
@@ -88,6 +88,9 @@ export async function getAttempts(token) {
   if (!response.ok) throw new Error(data.error || "Erreur");
   return data;
 }
+
+// Pour éviter de casser d'autres composants qui utilisaient l'ancien nom "getAttempts"
+export const getAttempts = getStudentAttempts;
 
 // Notifications de l'étudiant (non lues en premier)
 export async function getNotifications(token) {

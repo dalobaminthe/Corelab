@@ -105,7 +105,7 @@ router.post('/quizzes/submit', verifyToken, validate(submitAttemptSchema), async
 router.get('/attempts', verifyToken, async (req, res) => {
   try {
     const attempts = await Attempt.find({ student: req.user.userId })
-      .populate('quiz', 'title')
+      .populate({ path: 'quiz', select: 'title lesson' })
       .sort({ attemptedAt: -1 })
     res.json(attempts)
   } catch (err) {
