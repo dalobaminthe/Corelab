@@ -123,9 +123,17 @@ function AdminContenu() {
         "Content-Type": "application/json",
         Authorization: `Bearer ${token}`,
       },
-      body: JSON.stringify(lessonForm),
+      body: JSON.stringify(payload),
     })
-      .then((res) => res.json())
+      .then(async (res) => {
+        const data = await res.json();
+        // 2. LA VÉRIFICATION : Si le backend refuse (400, 401, 500), on arrête tout et on affiche l'erreur
+        if (!res.ok) {
+          console.error("Détails du rejet par le backend :", data);
+          throw new Error(data.error || "Le serveur a refusé la création (voir console)");
+        }
+        return data;
+      })
       .then(() => {
         setMessage({ type: "success", text: editingLessonId ? "Leçon modifiée." : "Leçon créée avec succès." });
         setLessonForm({ title: "", content: "", courseId: "", availableFrom: "" });
@@ -143,6 +151,7 @@ function AdminContenu() {
       )
       .finally(() => setLoading(false));
   }
+  // --------------------------------
 
   async function handleCourseSubmit(e) {
     e.preventDefault();
@@ -437,7 +446,7 @@ function AdminContenu() {
                   const reader = new FileReader()
                   reader.onload = (event) => {
                     const html = event.target.result
-                    editor.commands.setContent(html)
+                    if (editor) editor.commands.setContent(html)
                     setLessonForm(prev => ({ ...prev, content: html }))
                   }
                   reader.readAsText(file)
