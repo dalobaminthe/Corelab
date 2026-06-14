@@ -1,16 +1,24 @@
-import { NavLink, Outlet } from "react-router-dom";
+import { NavLink, Outlet, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import "./AdminLayout.css";
 
 function AdminLayout() {
-  const { user } = useAuth();
+  const { user, logout } = useAuth();
+  const navigate = useNavigate();
+
+  // Déconnexion : on vide le token (côté front uniquement, JWT stateless)
+  // puis on renvoie vers la page de choix d'espace
+  function handleLogout() {
+    logout();
+    navigate("/");
+  }
 
   return (
     <div className="admin-layout">
       <aside className="sidebar">
         <div className="sidebar-logo">
           <span className="sidebar-tag">SS 2026</span>
-          <h2>Corlab</h2>
+          <h2>Corelab</h2>
           <span>Administration</span>
         </div>
 
@@ -28,6 +36,9 @@ function AdminLayout() {
           <div className="user-avatar">{user?.name?.[0] ?? "A"}</div>
           <span>{user?.name ?? "Admin"}</span>
           <small>Administrateur</small>
+          <button className="logout-btn" onClick={handleLogout}>
+            Déconnexion
+          </button>
         </div>
       </aside>
 

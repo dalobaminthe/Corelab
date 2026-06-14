@@ -1,6 +1,6 @@
 import "./Login.css";
 import { useState } from "react";
-import { useLocation, useNavigate, Link } from "react-router-dom";
+import { useLocation, useNavigate, Link, Navigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { loginUser } from "../api/auth";
 
@@ -14,12 +14,19 @@ function LoginPage() {
   const { login } = useAuth();
   const [error, setError] = useState("");
 
+  // Si on arrive sur /login sans avoir choisi d'espace (reload, accès direct),
+  // on renvoie vers la page de sélection pour choisir Admin ou Étudiant
+  if (!role) {
+    return <Navigate to="/" replace />;
+  }
+
   async function handleSubmit(e) {
     e.preventDefault();
     setError("");
     try {
       const data = await loginUser(email, password);
       login(data.user, data.token);
+      // La redirection se fait selon le rôle réel du compte, pas selon le formulaire choisi
       if (data.isFirstLogin) {
         navigate("/set-password");
       } else if (data.user.role === "admin") {
@@ -48,7 +55,7 @@ function LoginPage() {
       {/* Panneau gauche */}
       <div className="left-panel">
         <div className="panel-logo">
-          <h1>CORLAB</h1>
+          <h1>CORELAB</h1>
           <span>Atelier Numérique de la Mode</span>
         </div>
 
@@ -57,43 +64,14 @@ function LoginPage() {
           <h2>{isAdmin ? "Administrateur" : "Étudiant"}</h2>
           <div className="panel-divider" />
           <span className="panel-badge">
-            {isAdmin ? "⬛ Accès restreint" : "◈ AW 2026 en cours"}
+            {isAdmin ? "⬛ Accès restreint" : "◈ Espace de formation"}
           </span>
           <p className="panel-desc">
             {isAdmin
               ? "Gérez votre plateforme, vos cohortes et vos contenus depuis un espace dédié."
-              : "Suivez vos cours, progressez à votre rythme et obtenez vos certificats de mode."}
+              : "Suivez vos cours, progressez à votre rythme et passez vos examens."}
           </p>
         </div>
-
-        {isAdmin ? (
-          <div className="admin-stats">
-            <div>
-              <strong>42</strong>
-              <small>Étudiants actifs</small>
-            </div>
-            <div>
-              <strong>6</strong>
-              <small>Modules en cours</small>
-            </div>
-            <div>
-              <strong>AW</strong>
-              <small>Saison 2026</small>
-            </div>
-          </div>
-        ) : (
-          <div className="module-list">
-            <small>Modules disponibles</small>
-            <ul>
-              <li>Histoire de la Mode</li>
-              <li>Stylisme & Création</li>
-              <li>Textile & Matières</li>
-              <li>Couture & Patronage</li>
-              <li>Mode Digitale</li>
-              <li>Mode Mondiale</li>
-            </ul>
-          </div>
-        )}
 
         <Link to="/" className="change-space">
           ← Changer d'espace
@@ -114,9 +92,7 @@ function LoginPage() {
             <label>Adresse e-mail</label>
             <input
               type="email"
-              placeholder={
-                isAdmin ? "admin@corlab.fr" : "prenom.nom@ecole-mode.fr"
-              }
+              placeholder={isAdmin ? "admin@corelab.dev" : "prenom.nom@corelab.dev"}
               value={email}
               onChange={(e) => setEmail(e.target.value)}
             />
@@ -138,12 +114,6 @@ function LoginPage() {
               </button>
             </div>
 
-            <div className="info-banner">
-              {isAdmin
-                ? "⬛ Vous vous connectez en tant qu'Administrateur"
-                : "◈ Cohorte détectée : Stylisme 2024 — Paris · Milan"}
-            </div>
-
             <button type="submit" className="submit-btn">
               {isAdmin
                 ? "Se connecter — Espace Admin"
@@ -154,7 +124,7 @@ function LoginPage() {
 
           <p className="forgot">
             {isAdmin
-              ? "Mot de passe oublié ? Contactez l'équipe Corlab"
+              ? "Mot de passe oublié ? Contactez l'équipe Corelab"
               : "Mot de passe oublié ? Contactez votre professeur référent"}
           </p>
           <div className="card-divider" />
@@ -168,18 +138,10 @@ function LoginPage() {
             </div>
           ) : (
             <div className="switch-role">
-              <p>
-                Première connexion ?{" "}
-                <Link to="/login" state={{ role: "student" }}>
-                  → Configurer mon compte
-                </Link>
-              </p>
-              <p>
-                Vous êtes admin ?{" "}
-                <Link to="/login" state={{ role: "admin" }}>
-                  → Accéder à l'espace Admin
-                </Link>
-              </p>
+              <p>Vous êtes admin ?</p>
+              <Link to="/login" state={{ role: "admin" }}>
+                → Accéder à l'espace Admin
+              </Link>
             </div>
           )}
         </div>

@@ -28,15 +28,15 @@ const importLessonSchema = z.object({
   content: z.string().min(1),
   courseId: z.string().regex(objectIdRegex),
   order: z.number().optional().default(0),
-  availableAt: z.string().datetime().optional(),
+  availableFrom: z.string().datetime().optional(),
 })
 
 // Champs optionnels — on ne met à jour que ce qui est envoyé
 
 const patchLessonSchema = z.object({
   title: z.string().min(1).optional(),
-  htmlContent: z.string().optional(),
-  availableAt: z.string().datetime().nullable().optional(),
+  content: z.string().optional(),
+  availableFrom: z.string().datetime().nullable().optional(),
   order: z.number().optional(),
   cohort: z.array(z.string().regex(objectIdRegex)).optional(),
 })

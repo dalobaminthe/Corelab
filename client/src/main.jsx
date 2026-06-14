@@ -17,6 +17,9 @@ import AdminLayout from "./layouts/AdminLayout.jsx";
 import AdminEtudiants from "./pages/AdminEtudiants.jsx";
 import AdminContenu from "./pages/AdminContenu.jsx";
 import AdminNotes from "./pages/AdminNotes.jsx";
+import AdminCohortes from "./pages/AdminCohortes.jsx";
+import AdminPlanning from "./pages/AdminPlanning.jsx";
+import AdminParametres from "./pages/AdminParametres.jsx";
 import StudentNotifications from "./pages/StudentNotifications.jsx";
 import StudentExamens from "./pages/StudentExamens.jsx";
 import StudentCours from "./pages/StudentCours.jsx";
@@ -53,8 +56,11 @@ const router = createBrowserRouter([
     children: [
       { index: true, element: <AdminDashboard /> },
       { path: "etudiants", element: <AdminEtudiants /> },
+      { path: "cohortes", element: <AdminCohortes /> },
       { path: "contenu", element: <AdminContenu /> },
+      { path: "planning", element: <AdminPlanning /> },
       { path: "notes", element: <AdminNotes /> },
+      { path: "parametres", element: <AdminParametres /> },
     ],
   },
   {

@@ -9,6 +9,7 @@ import "./SetPassword.css";
 function SetPassword() {
   const [newPassword, setNewPassword] = useState("");
   const [confirm, setConfirm] = useState("");
+  const [showPassword, setShowPassword] = useState(false); // afficher/masquer les mots de passe
   const [error, setError] = useState("");
   const navigate = useNavigate();
   const { token, user, login } = useAuth();
@@ -46,7 +47,7 @@ function SetPassword() {
   return (
     <div className="setpassword-page">
       <div className="setpassword-card">
-        <h1>CORLAB</h1>
+        <h1>CORELAB</h1>
         <h2>Bienvenue, {user?.name} !</h2>
         <p>
           Avant d'accéder à votre espace, choisissez votre mot de passe
@@ -55,20 +56,32 @@ function SetPassword() {
 
         <form onSubmit={handleSubmit}>
           <label>Nouveau mot de passe</label>
-          <input
-            type="password"
-            placeholder="8 caractères minimum"
-            value={newPassword}
-            onChange={(e) => setNewPassword(e.target.value)}
-          />
+          {/* Le même toggle s'applique aux deux champs pour rester cohérent */}
+          <div className="password-wrapper">
+            <input
+              type={showPassword ? "text" : "password"}
+              placeholder="8 caractères minimum"
+              value={newPassword}
+              onChange={(e) => setNewPassword(e.target.value)}
+            />
+            <button
+              type="button"
+              className="toggle-password"
+              onClick={() => setShowPassword(!showPassword)}
+            >
+              {showPassword ? "🙈" : "👁"}
+            </button>
+          </div>
 
           <label>Confirmer le mot de passe</label>
-          <input
-            type="password"
-            placeholder="Répétez votre mot de passe"
-            value={confirm}
-            onChange={(e) => setConfirm(e.target.value)}
-          />
+          <div className="password-wrapper">
+            <input
+              type={showPassword ? "text" : "password"}
+              placeholder="Répétez votre mot de passe"
+              value={confirm}
+              onChange={(e) => setConfirm(e.target.value)}
+            />
+          </div>
 
           {error && <p className="error">{error}</p>}
 
