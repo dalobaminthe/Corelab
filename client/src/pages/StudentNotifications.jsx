@@ -53,7 +53,7 @@ function StudentNotifications() {
             <div className="notif-body">
               <p>{n.message}</p>
               <small>
-                {n.lesson?.title} —{" "}
+                {n.lesson?.title} -{" "}
                 {new Date(n.sentAt).toLocaleDateString("fr-FR")}
               </small>
             </div>

@@ -1,15 +1,23 @@
-import { NavLink, Outlet } from "react-router-dom";
+import { NavLink, Outlet, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext.jsx";
 import "./StudentLayout.css";
 
 function StudentLayout() {
-  const { user } = useAuth();
+  const { user, logout } = useAuth();
+  const navigate = useNavigate();
+
+  // Déconnexion : on vide le token (côté front uniquement, JWT stateless)
+  // puis on renvoie vers la page de choix d'espace
+  function handleLogout() {
+    logout();
+    navigate("/");
+  }
 
   return (
     <div className="student-layout">
       <aside className="sidebar">
         <div className="sidebar-logo">
-          <h2>CORLAB</h2>
+          <h2>CORELAB</h2>
           <span>Atelier Numérique</span>
         </div>
 
@@ -23,7 +31,10 @@ function StudentLayout() {
         <div className="sidebar-user">
           <div className="user-avatar">{user?.name?.[0] ?? "E"}</div>
           <span>{user?.name?.split(" ")[0] ?? "Étudiant"}</span>
-          <small>AW 2026 — Saison Active</small>
+          <small>AW 2026 - Saison Active</small>
+          <button className="logout-btn" onClick={handleLogout}>
+            Déconnexion
+          </button>
         </div>
       </aside>
 

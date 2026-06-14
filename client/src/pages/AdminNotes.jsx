@@ -55,10 +55,10 @@ function AdminNotes() {
           <tbody>
             {attempts.map((attempt) => (
               <tr key={attempt._id}>
-                <td>{attempt.student?.name ?? "—"}</td>
+                <td>{attempt.student?.name ?? "-"}</td>
                 {/* quiz.lesson.title : accès imbriqué grâce au populate du back */}
-                <td>{attempt.quiz?.lesson?.title ?? "—"}</td>
-                <td>{attempt.quiz?.title ?? "—"}</td>
+                <td>{attempt.quiz?.lesson?.title ?? "-"}</td>
+                <td>{attempt.quiz?.title ?? "-"}</td>
                 <td>{attempt.score} / 100</td>
                 <td>
                   <span className={`result-badge ${attempt.passed ? "passed" : "failed"}`}>

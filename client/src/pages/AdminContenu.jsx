@@ -93,7 +93,7 @@ function AdminContenu() {
     if (!lessonId) {
       setEditingLessonId(null);
       setLessonForm(prev => ({ ...prev, title: "", content: "", availableFrom: "" }));
-      if (editor) editor.commands.setContent('');
+      editor.commands.setContent('');
       return;
     }
     const lesson = courseLessons.find(l => l._id === lessonId);
@@ -106,31 +106,16 @@ function AdminContenu() {
         content: lesson.content,
         availableFrom: formattedDate
       }));
-      if (editor) editor.commands.setContent(lesson.content || '');
+      editor.commands.setContent(lesson.content);
     }
   }
 
-  // --- CORRECTION MAJEURE ICI ---
   function handleLessonSubmit(e) {
     e.preventDefault();
     setLoading(true);
 
     const method = editingLessonId ? "PUT" : "POST";
     const endpoint = editingLessonId ? `${API_URL}/admin/lessons/${editingLessonId}` : `${API_URL}/admin/lessons`;
-
-    // 1. Formatage propre de la date pour éviter un rejet de la part du Zod backend
-    let safeDate = lessonForm.availableFrom;
-    if (safeDate) {
-      const parsedDate = new Date(safeDate);
-      if (!isNaN(parsedDate.getTime())) {
-        safeDate = parsedDate.toISOString();
-      }
-    }
-
-    const payload = {
-      ...lessonForm,
-      availableFrom: safeDate
-    };
 
     fetch(endpoint, {
       method: method,
@@ -150,11 +135,10 @@ function AdminContenu() {
         return data;
       })
       .then(() => {
-        setMessage({ type: "success", text: editingLessonId ? "Leçon modifiée avec succès." : "Leçon créée avec succès." });
+        setMessage({ type: "success", text: editingLessonId ? "Leçon modifiée." : "Leçon créée avec succès." });
         setLessonForm({ title: "", content: "", courseId: "", availableFrom: "" });
         setEditingLessonId(null);
-        if (editor) editor.commands.setContent('');
-        
+        editor.commands.setContent('');
         // Rafraîchir les leçons du cours (route admin)
         if (lessonForm.courseId) {
           fetch(`${API_URL}/admin/lessons?courseId=${lessonForm.courseId}`, {
@@ -162,10 +146,9 @@ function AdminContenu() {
           }).then(res => res.json()).then(data => setCourseLessons(data));
         }
       })
-      .catch((err) => {
-        // Le message deviendra rouge et t'indiquera le VRAI problème
-        setMessage({ type: "error", text: err.message });
-      })
+      .catch(() =>
+        setMessage({ type: "error", text: "Erreur lors de l'enregistrement." }),
+      )
       .finally(() => setLoading(false));
   }
   // --------------------------------

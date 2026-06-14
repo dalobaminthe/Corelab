@@ -1,7 +1,7 @@
 import jwt from 'jsonwebtoken'
 
 // ─── verifyToken  / requireAuth (pour matcher autres fichiers) ───────────────────────────────────────────────────────
-// Middleware de vérification JWT — à brancher sur toutes les routes protégées.
+// Middleware de vérification JWT - à brancher sur toutes les routes protégées.
 const verifyToken = (req, res, next) => { // req, res, next : signat<ure standard des middlewares Express
     const authHeader = req.headers.authorization // authorization = bearer <token>
 
@@ -21,7 +21,7 @@ const verifyToken = (req, res, next) => { // req, res, next : signat<ure standar
 }
 
 // ─── requireAdmin ─────────────────────────────────────────────────────────────
-// Middleware de contrôle de rôle — à brancher après verifyToken.
+// Middleware de contrôle de rôle - à brancher après verifyToken.
 const requireAdmin = (req, res, next) => {
     if (req.user?.role !== 'admin') { // vérifie que req.user existe et que son rôle (===) est admin  
         return res.status(403).json({ error: 'Admin access required' }) // rôle insuffisant
@@ -30,7 +30,7 @@ const requireAdmin = (req, res, next) => {
 }
 
 // ─── requireStudent ───────────────────────────────────────────────────────────
-// Middleware de contrôle de rôle — à brancher après verifyToken.
+// Middleware de contrôle de rôle - à brancher après verifyToken.
 const requireStudent = (req, res, next) => {
     if (req.user?.role !== 'student') { // vérifie que req.user existe et que son rôle (===) est student
         return res.status(403).json({ error: 'Student access required' }) // rôle insuffisant

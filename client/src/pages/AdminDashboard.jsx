@@ -1,21 +1,29 @@
 import "./AdminDashboard.css";
 import { useAuth } from "../context/AuthContext.jsx";
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom"; // Ajout de l'import pour la navigation
+
+// Résolution de l'URL de l'API via les variables d'environnement
+const API_URL = import.meta.env.VITE_API_URL || "http://localhost:4242/api";
 
 function AdminDashboard() {
   const { user, token } = useAuth();
+  const navigate = useNavigate(); // Initialisation du hook
   const firstName = user?.name?.split(" ")[0] ?? "Admin";
+  
+  // États de l'interface
   const [stats, setStats] = useState(null);
   const [activity, setActivity] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
+  // Récupération simultanée des métriques globales et de l'historique d'activité
   useEffect(() => {
     Promise.all([
-      fetch("http://localhost:4242/api/admin/stats", {
+      fetch(`${API_URL}/admin/stats`, {
         headers: { Authorization: `Bearer ${token}` },
       }),
-      fetch("http://localhost:4242/api/admin/activity", {
+      fetch(`${API_URL}/admin/activity`, {
         headers: { Authorization: `Bearer ${token}` },
       }),
     ])
@@ -28,14 +36,13 @@ function AdminDashboard() {
         setLoading(false);
       })
       .catch(() => {
-        setError("Impossible de charger les données.");
+        setError("Impossible de charger les données du tableau de bord.");
         setLoading(false);
       });
   }, [token]);
 
   return (
     <div className="admin-dashboard">
-      {/* Header */}
       <div className="admin-header">
         <div>
           <h1>Tableau de bord</h1>
@@ -47,16 +54,15 @@ function AdminDashboard() {
         </div>
       </div>
 
-      {/* Bienvenue */}
       <div className="admin-welcome">
         <h2>Bonjour, {firstName}.</h2>
-        <p>Collection Automne-Hiver 2026 — 12 nouvelles leçons disponibles</p>
+        <p>Collection Automne-Hiver 2026 - 12 nouvelles leçons disponibles</p>
       </div>
 
-      {/* Stats */}
       {error && (
         <p style={{ color: "#eb5757", marginBottom: "16px" }}>{error}</p>
       )}
+      
       <div className="admin-stats">
         <div className="admin-stat-card">
           <strong>{loading ? "…" : stats?.totalStudents}</strong>
@@ -80,18 +86,17 @@ function AdminDashboard() {
         </div>
       </div>
 
-      {/* Actions */}
       <div className="admin-actions">
         <p className="section-label">Actions</p>
         <div className="actions-grid">
-          <button className="action-btn">Importer des étudiants</button>
-          <button className="action-btn">Créer une leçon</button>
-          <button className="action-btn">Importer un QCM</button>
-          <button className="action-btn outline">Consulter les notes</button>
+          {/* Ajout des évènements onClick pour valider l'utilisation du Router */}
+          <button className="action-btn" onClick={() => navigate("/admin/etudiants")}>Importer des étudiants</button>
+          <button className="action-btn" onClick={() => navigate("/admin/contenu")}>Créer une leçon</button>
+          <button className="action-btn" onClick={() => navigate("/admin/contenu")}>Importer un QCM</button>
+          <button className="action-btn outline" onClick={() => navigate("/admin/notes")}>Consulter les notes</button>
         </div>
       </div>
 
-      {/* Tableau activité */}
       <div className="admin-activity">
         <p className="section-label">Activité récente</p>
         <table className="activity-table">
