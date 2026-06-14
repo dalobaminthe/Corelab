@@ -31,7 +31,7 @@ const importLessonSchema = z.object({
   availableFrom: z.string().datetime().optional(),
 })
 
-// Champs optionnels — on ne met à jour que ce qui est envoyé
+// Champs optionnels - on ne met à jour que ce qui est envoyé
 
 const patchLessonSchema = z.object({
   title: z.string().min(1).optional(),

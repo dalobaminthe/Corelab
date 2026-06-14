@@ -19,11 +19,11 @@ function AdminParametres() {
         <div className="parametres-info">
           <div className="info-row">
             <span className="info-label">Nom</span>
-            <span className="info-value">{user?.name ?? "—"}</span>
+            <span className="info-value">{user?.name ?? "-"}</span>
           </div>
           <div className="info-row">
             <span className="info-label">Email</span>
-            <span className="info-value">{user?.email ?? "—"}</span>
+            <span className="info-value">{user?.email ?? "-"}</span>
           </div>
           <div className="info-row">
             <span className="info-label">Rôle</span>
@@ -40,7 +40,7 @@ function AdminParametres() {
         <div className="parametres-info">
           <div className="info-row">
             <span className="info-label">Plateforme</span>
-            <span className="info-value">Corelab — LMS</span>
+            <span className="info-value">Corelab - LMS</span>
           </div>
           <div className="info-row">
             <span className="info-label">Saison</span>

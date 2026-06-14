@@ -1,6 +1,25 @@
-# Corelab — LMS E-learning
+# Corelab - LMS E-learning
 
 > Plateforme de gestion de formations (Learning Management System) développée avec la stack MERN.
+
+---
+
+## Aperçu
+
+<p align="center">
+  <img src="client/public/vueglobale.png" alt="Vue globale de Corelab" width="100%">
+</p>
+
+<table>
+  <tr>
+    <td width="50%"><img src="client/public/dashadmin.png" alt="Dashboard administrateur" width="100%"></td>
+    <td width="50%"><img src="client/public/dashetudiant.png" alt="Dashboard étudiant" width="100%"></td>
+  </tr>
+  <tr>
+    <td align="center"><em>Espace administrateur</em></td>
+    <td align="center"><em>Espace étudiant</em></td>
+  </tr>
+</table>
 
 ---
 
@@ -63,7 +82,7 @@ BCRYPT_SALT_ROUNDS=10
 **`client/.env`** (copier depuis `client/.env.example`) :
 
 ```
-VITE_API_URL=http://localhost:4242
+VITE_API_URL=http://localhost:4242/api
 ```
 
 ### Installation
@@ -103,6 +122,8 @@ Comptes créés :
 | admin@corelab.dev | Admin1234! | Administrateur |
 | bob@corelab.dev | Student1234! | Étudiant |
 | clara@corelab.dev | Student1234! | Étudiant (première connexion) |
+| david@corelab.dev | Student1234! | Étudiant |
+| emma@corelab.dev | Student1234! | Étudiant |
 
 ---
 
@@ -119,13 +140,15 @@ cd server && npm test
 ```
 corelab/
 ├── client/          # Application React
+│   ├── public/      # Assets statiques (logo, vidéo, captures)
 │   ├── src/
 │   └── .env.example
 ├── server/          # API Express
 │   ├── src/
 │   │   ├── models/
 │   │   ├── routes/
-│   │   └── middleware/
+│   │   ├── middleware/
+│   │   └── jobs/
 │   ├── tests/
 │   ├── scripts/
 │   └── .env.example

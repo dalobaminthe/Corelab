@@ -35,7 +35,7 @@ function AdminPlanning() {
     }
     setLoading(true);
     // On récupère toutes les leçons du cours via la route admin
-    fetch(`${API_URL}/student/lessons?courseId=${selectedCourse}`, {
+    fetch(`${API_URL}/admin/lessons?courseId=${selectedCourse}`, {
       headers: { Authorization: `Bearer ${token}` },
     })
       .then((res) => res.json())

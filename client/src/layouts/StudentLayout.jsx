@@ -31,7 +31,7 @@ function StudentLayout() {
         <div className="sidebar-user">
           <div className="user-avatar">{user?.name?.[0] ?? "E"}</div>
           <span>{user?.name?.split(" ")[0] ?? "Étudiant"}</span>
-          <small>AW 2026 — Saison Active</small>
+          <small>AW 2026 - Saison Active</small>
           <button className="logout-btn" onClick={handleLogout}>
             Déconnexion
           </button>

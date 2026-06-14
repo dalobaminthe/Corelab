@@ -78,7 +78,7 @@ function LoginPage() {
         </Link>
       </div>
 
-      {/* Panneau droit — formulaire */}
+      {/* Panneau droit - formulaire */}
       <div className="right-panel">
         <div className="login-card">
           <h2>{isAdmin ? "Connexion Admin" : "Connexion Étudiant"}</h2>
@@ -122,8 +122,8 @@ function LoginPage() {
 
             <button type="submit" className="submit-btn">
               {isAdmin
-                ? "Se connecter — Espace Admin"
-                : "Se connecter — Espace Étudiant"}
+                ? "Se connecter - Espace Admin"
+                : "Se connecter - Espace Étudiant"}
             </button>
             {error && <p className="error">{error}</p>}
           </form>

@@ -21,7 +21,9 @@ function AdminContenu() {
   const [courseLessons, setCourseLessons] = useState([]); // Leçons du cours sélectionné
 
   const [quizJson, setQuizJson] = useState("");
-  const [quizCourseId, setQuizCourseId] = useState(""); 
+  const [quizCourseId, setQuizCourseId] = useState("");   // cours choisi pour filtrer les leçons
+  const [quizLessonId, setQuizLessonId] = useState("");   // leçon à laquelle rattacher le quiz
+  const [quizLessons, setQuizLessons] = useState([]);     // leçons du cours choisi pour le quiz
   const [courses, setCourses] = useState([]);
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState(null);
@@ -50,10 +52,11 @@ function AdminContenu() {
       );
   }, [token]);
 
-  // Si on sélectionne un cours, on récupère ses leçons pour potentiellement les modifier
+  // Si on sélectionne un cours, on récupère TOUTES ses leçons (route admin, sans filtre de date)
+  // pour pouvoir modifier même les leçons planifiées dans le futur.
   useEffect(() => {
     if (lessonForm.courseId) {
-      fetch(`${API_URL}/student/lessons?courseId=${lessonForm.courseId}`, {
+      fetch(`${API_URL}/admin/lessons?courseId=${lessonForm.courseId}`, {
         headers: { Authorization: `Bearer ${token}` },
       })
       .then(res => res.json())
@@ -63,6 +66,22 @@ function AdminContenu() {
       setCourseLessons([]);
     }
   }, [lessonForm.courseId, token]);
+
+  // Pour le quiz : quand on choisit un cours, on charge ses leçons pour pouvoir
+  // rattacher le quiz à une leçon précise (un quiz est lié à une leçon, pas à un cours).
+  useEffect(() => {
+    if (quizCourseId) {
+      fetch(`${API_URL}/admin/lessons?courseId=${quizCourseId}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      })
+      .then(res => res.json())
+      .then(data => setQuizLessons(data))
+      .catch(() => setQuizLessons([]));
+    } else {
+      setQuizLessons([]);
+    }
+    setQuizLessonId(""); // reset la leçon choisie si on change de cours
+  }, [quizCourseId, token]);
 
   function handleLessonChange(e) {
     setLessonForm({ ...lessonForm, [e.target.name]: e.target.value });
@@ -112,9 +131,9 @@ function AdminContenu() {
         setLessonForm({ title: "", content: "", courseId: "", availableFrom: "" });
         setEditingLessonId(null);
         editor.commands.setContent('');
-        // Rafraîchir les leçons du cours
+        // Rafraîchir les leçons du cours (route admin)
         if (lessonForm.courseId) {
-          fetch(`${API_URL}/student/lessons?courseId=${lessonForm.courseId}`, {
+          fetch(`${API_URL}/admin/lessons?courseId=${lessonForm.courseId}`, {
             headers: { Authorization: `Bearer ${token}` }
           }).then(res => res.json()).then(data => setCourseLessons(data));
         }
@@ -182,20 +201,24 @@ function AdminContenu() {
 
   function handleQuizSubmit(e) {
     e.preventDefault();
+
+    // Un quiz doit être rattaché à une leçon précise
+    if (!quizLessonId) {
+      setMessage({ type: "error", text: "Veuillez sélectionner une leçon pour ce QCM." });
+      return;
+    }
+
     setLoading(true);
 
     let finalBody = quizJson;
-
-    if (quizCourseId) {
-      try {
-        const parsedJson = JSON.parse(quizJson);
-        parsedJson.courseId = quizCourseId; 
-        finalBody = JSON.stringify(parsedJson);
-      } catch (err) {
-        setMessage({ type: "error", text: "Le texte dans le champ n'est pas un JSON valide." });
-        setLoading(false);
-        return;
-      }
+    try {
+      const parsedJson = JSON.parse(quizJson);
+      parsedJson.lesson = quizLessonId; // le back attend un champ "lesson"
+      finalBody = JSON.stringify(parsedJson);
+    } catch (err) {
+      setMessage({ type: "error", text: "Le texte dans le champ n'est pas un JSON valide." });
+      setLoading(false);
+      return;
     }
 
     fetch(`${API_URL}/admin/quizzes/import`, {
@@ -206,14 +229,19 @@ function AdminContenu() {
       },
       body: finalBody,
     })
-      .then((res) => res.json())
+      .then(async (res) => {
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error || "Erreur serveur");
+        return data;
+      })
       .then(() => {
         setMessage({ type: "success", text: "QCM importé avec succès." });
         setQuizJson("");
         setQuizCourseId("");
+        setQuizLessonId("");
       })
-      .catch(() =>
-        setMessage({ type: "error", text: "Erreur serveur lors de l'import." }),
+      .catch((err) =>
+        setMessage({ type: "error", text: err.message }),
       )
       .finally(() => setLoading(false));
   }
@@ -290,7 +318,7 @@ function AdminContenu() {
                   <tr key={course._id}>
                     <td className="num">{String(i + 1).padStart(2, "0")}</td>
                     <td className="course-title">{course.title}</td>
-                    <td className="muted">{course.description || "—"}</td>
+                    <td className="muted">{course.description || "-"}</td>
                     <td className="muted">
                       {new Date(course.createdAt).toLocaleDateString("fr-FR")}
                     </td>
@@ -347,7 +375,6 @@ function AdminContenu() {
       )}
 
       <div className="contenu-grid">
-        {/* Formulaire leçon */}
         <div className="contenu-card">
           <h2>{editingLessonId ? "Modifier la leçon" : "Créer une leçon"}</h2>
           <form onSubmit={handleLessonSubmit}>
@@ -368,9 +395,8 @@ function AdminContenu() {
               </select>
             </div>
 
-            {/* Menu pour modifier une leçon existante une fois le cours sélectionné */}
-            {lessonForm.courseId && courseLessons.length > 0 && (
-              <div className="form-group" style={{ padding: "10px", background: "#f9f9f9", borderRadius: "8px" }}>
+            {lessonForm.courseId && (
+              <div className="mode-edition-box">
                 <label>Mode édition : Sélectionner une leçon existante (Optionnel)</label>
                 <select value={editingLessonId || ""} onChange={handleSelectLessonToEdit}>
                   <option value="">-- Nouvelle leçon --</option>
@@ -460,13 +486,12 @@ function AdminContenu() {
           </form>
         </div>
 
-        {/* Formulaire QCM */}
         <div className="contenu-card">
           <h2>Importer un QCM</h2>
           <form onSubmit={handleQuizSubmit}>
-            
+
             <div className="form-group">
-              <label>Associer à un cours</label>
+              <label>Cours</label>
               <select
                 value={quizCourseId}
                 onChange={(e) => setQuizCourseId(e.target.value)}
@@ -480,6 +505,25 @@ function AdminContenu() {
                 ))}
               </select>
             </div>
+
+            {/* Un quiz est rattaché à une leçon précise */}
+            {quizCourseId && (
+              <div className="form-group">
+                <label>Leçon associée</label>
+                <select
+                  value={quizLessonId}
+                  onChange={(e) => setQuizLessonId(e.target.value)}
+                  required
+                >
+                  <option value="">-- Sélectionner une leçon --</option>
+                  {quizLessons.map((l) => (
+                    <option key={l._id} value={l._id}>
+                      {l.title}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            )}
 
             <div className="form-group">
               <label>Importer depuis un fichier JSON</label>

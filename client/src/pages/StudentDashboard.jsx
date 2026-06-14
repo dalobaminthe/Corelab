@@ -94,7 +94,7 @@ function StudentDashboard() {
         <div className="dashboard-left">
           <div className="welcome-card">
             <h2>Bonne reprise, {user?.name?.split(" ")[0]} ✦</h2>
-            <p>Stylisme 2024 · Paris — Milan · Semestre 3 en cours · AW 2026</p>
+            <p>Stylisme 2024 · Paris - Milan · Semestre 3 en cours · AW 2026</p>
           </div>
 
           {/* Stats : cours assignés + moyenne réelle */}
@@ -106,7 +106,7 @@ function StudentDashboard() {
             </div>
             <div className="stat-card">
               <small>Moyenne générale</small>
-              <strong>{moyenne !== null ? `${moyenne}/20` : "—"}</strong>
+              <strong>{moyenne !== null ? `${moyenne}/20` : "-"}</strong>
               <span>{attempts.length} quiz passés</span>
             </div>
           </div>
@@ -143,7 +143,7 @@ function StudentDashboard() {
           {/* Prochaine leçon : la leçon à l'index = nombre de leçons complétées */}
           <div className="next-lesson-card">
             <small>Prochaine Leçon</small>
-            <h3>{nextLesson?.title ?? "—"}</h3>
+            <h3>{nextLesson?.title ?? "-"}</h3>
             <div className="lesson-meta">
               <div>
                 <small>Module</small>

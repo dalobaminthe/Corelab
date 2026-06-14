@@ -56,7 +56,7 @@ function AdminDashboard() {
 
       <div className="admin-welcome">
         <h2>Bonjour, {firstName}.</h2>
-        <p>Collection Automne-Hiver 2026 — 12 nouvelles leçons disponibles</p>
+        <p>Collection Automne-Hiver 2026 - 12 nouvelles leçons disponibles</p>
       </div>
 
       {error && (
@@ -93,7 +93,7 @@ function AdminDashboard() {
           <button className="action-btn" onClick={() => navigate("/admin/etudiants")}>Importer des étudiants</button>
           <button className="action-btn" onClick={() => navigate("/admin/contenu")}>Créer une leçon</button>
           <button className="action-btn" onClick={() => navigate("/admin/contenu")}>Importer un QCM</button>
-          <button className="action-btn outline" onClick={() => navigate("/admin/cohortes")}>Consulter les notes</button>
+          <button className="action-btn outline" onClick={() => navigate("/admin/notes")}>Consulter les notes</button>
         </div>
       </div>
 

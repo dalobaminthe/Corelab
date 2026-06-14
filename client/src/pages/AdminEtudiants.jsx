@@ -254,7 +254,7 @@ function AdminEtudiants() {
                           ? s.courses.map((c) => (
                               <span key={c._id} className="course-tag">{c.title}</span>
                             ))
-                          : <span className="muted">—</span>}
+                          : <span className="muted">-</span>}
                       </td>
                       <td>
                         {s.isFirstLogin

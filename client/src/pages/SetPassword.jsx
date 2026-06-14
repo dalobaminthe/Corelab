@@ -18,7 +18,7 @@ function SetPassword() {
     e.preventDefault();
     setError("");
 
-    // Validation locale AVANT l'appel API — inutile d'appeler le backend si invalide
+    // Validation locale AVANT l'appel API - inutile d'appeler le backend si invalide
     if (newPassword !== confirm) {
       setError("Les mots de passe ne correspondent pas.");
       return;

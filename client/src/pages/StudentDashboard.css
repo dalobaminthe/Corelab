@@ -35,7 +35,7 @@
   font-size: 13px;
 }
 
-/* ── Body — deux colonnes ── */
+/* ── Body - deux colonnes ── */
 .dashboard-body {
   display: flex;
   gap: 32px;

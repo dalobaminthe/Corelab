@@ -11,7 +11,7 @@ export async function getCourses(token) {
   return data;
 }
 
-// Crée un étudiant — le back attend un tableau, d'où JSON.stringify([userData])
+// Crée un étudiant - le back attend un tableau, d'où JSON.stringify([userData])
 export async function createStudent(userData, token) {
   const response = await fetch(`${API_URL}/admin/users/import`, {
     method: "POST",

@@ -7,6 +7,20 @@ import { parse } from 'csv-parse/sync'
 
 const router = Router()
 
+// GET - liste TOUTES les leçons d'un cours (admin, sans filtre de date)
+// Contrairement à GET /student/lessons qui masque les leçons non encore disponibles,
+// l'admin doit voir toutes les leçons pour pouvoir les modifier ou les planifier.
+router.get('/lessons', verifyToken, requireAdmin, async (req, res) => {
+    try {
+        const { courseId } = req.query
+        const filter = courseId ? { courseId } : {}
+        const lessons = await Lesson.find(filter).sort({ availableFrom: 1 })
+        res.json(lessons)
+    } catch (err) {
+        res.status(400).json({ error: err.message })
+    }
+})
+
 // POST - import leçon HTML
 router.post('/lessons', verifyToken, requireAdmin, validate(importLessonSchema), async (req, res) => {
       try {
@@ -46,6 +60,18 @@ router.patch('/lessons/:id/schedule', verifyToken, requireAdmin, async (req, res
     }
 })
 
+// GET - liste des quiz (admin), filtrable par leçon
+router.get('/quizzes', verifyToken, requireAdmin, async (req, res) => {
+    try {
+        const { lessonId } = req.query
+        const filter = lessonId ? { lesson: lessonId } : {}
+        const quizzes = await Quiz.find(filter).populate('lesson', 'title')
+        res.json(quizzes)
+    } catch (err) {
+        res.status(400).json({ error: err.message })
+    }
+})
+
 // POST - import QCM depuis JSON ou CSV
 router.post('/quizzes/import', verifyToken, requireAdmin, async (req, res) => {
   try {
@@ -73,7 +99,7 @@ router.post('/quizzes/import', verifyToken, requireAdmin, async (req, res) => {
         })),
       }
     } else {
-      // JSON — comportement existant
+      // JSON - comportement existant
       quizData = req.body
     }
 

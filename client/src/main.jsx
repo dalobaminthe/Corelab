@@ -5,7 +5,7 @@ import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import { AuthProvider } from "./context/AuthContext.jsx";
 import RoleSelection from "./pages/RoleSelection.jsx";
 
-// Import de chaque page — une page = une route dans le router
+// Import de chaque page - une page = une route dans le router
 import LoginPage from "./pages/Login.jsx";
 import StudentDashboard from "./pages/StudentDashboard.jsx";
 import AdminDashboard from "./pages/AdminDashboard.jsx";

@@ -36,7 +36,7 @@ function RoleSelection() {
           <button
             onClick={() => navigate("/login", { state: { role: "admin" } })}
           >
-            Accéder — Espace Admin →
+            Accéder - Espace Admin →
           </button>
         </div>
 
@@ -55,13 +55,13 @@ function RoleSelection() {
           <button
             onClick={() => navigate("/login", { state: { role: "student" } })}
           >
-            Accéder — Espace Étudiant →
+            Accéder - Espace Étudiant →
           </button>
         </div>
       </div>
 
       <footer className="role-footer">
-        <p>© 2026 Corelab — Atelier Numérique de la Mode · AW 2026</p>
+        <p>© 2026 Corelab - Atelier Numérique de la Mode · AW 2026</p>
         <p>Première connexion ? Contactez votre administrateur de cohorte.</p>
       </footer>
     </div>
