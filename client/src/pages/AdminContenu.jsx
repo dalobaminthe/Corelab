@@ -123,7 +123,7 @@ function AdminContenu() {
         "Content-Type": "application/json",
         Authorization: `Bearer ${token}`,
       },
-      body: JSON.stringify(payload),
+      body: JSON.stringify(lessonForm),
     })
       .then(async (res) => {
         const data = await res.json();

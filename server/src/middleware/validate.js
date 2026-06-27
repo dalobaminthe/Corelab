@@ -28,7 +28,7 @@ const importLessonSchema = z.object({
   content: z.string().min(1),
   courseId: z.string().regex(objectIdRegex),
   order: z.number().optional().default(0),
-  availableFrom: z.string().datetime().optional(),
+  availableFrom: z.string().optional(),
 })
 
 // Champs optionnels - on ne met à jour que ce qui est envoyé
